@@ -1,0 +1,11 @@
+build/
+runtime/
+*.exe
+*.dll
+*.zip
+*.pdb
+*.log
+*.jsonl
+game-path.txt
+state.json
+BongoChat-install.json
