@@ -1,6 +1,6 @@
 # Bongo Chat 0.1
 
-Steam Bongo Cat의 같은 방 대화를 별도 Windows 창에 모아 보여주는 보조 앱입니다.
+Steam Bongo Cat의 같은 방 대화를 별도 Windows 창에 모아 보여주는 보조 앱입니다. 아래 실행·설치 경로는 GitHub Releases에서 받은 실행용 ZIP 기준입니다.
 
 ## 사용
 
@@ -52,3 +52,4 @@ Windows x64, .NET Framework 4.x 및 Bongo Cat 빌드 25723683의 Unity Mono 설�
 
 모드 로더: [BepInEx 5.4.23.5](https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.5), [설치 안내](https://docs.bepinex.dev/v5.4.16/articles/user_guide/installation/index.html).
 런타임 바이너리는 upstream 공식 배포본이며, Doorstop 설정과 기본 BepInEx 설정에 위 호환 구성을 적용했습니다. Windows용 Mono 라이브러리의 출처와 구성요소별 라이선스는 `THIRD-PARTY-NOTICES.md`를 참고하세요.
+

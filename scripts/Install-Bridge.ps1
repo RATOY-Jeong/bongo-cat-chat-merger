@@ -1,4 +1,4 @@
-param([string]$GamePath)
+param([string]$GamePath, [string]$PackagePath = (Split-Path -Parent $PSScriptRoot))
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Find-Game.ps1')
 $GamePath = Resolve-BongoGamePath -GamePath $GamePath
@@ -10,9 +10,10 @@ if (Test-Path -LiteralPath $manifestPath) { throw 'Bongo Chat is already install
 foreach ($name in @('winhttp.dll','version.dll','doorstop_config.ini','BepInEx\core\BepInEx.dll','MelonLoader')) {
     if (Test-Path -LiteralPath (Join-Path $target $name)) { throw "Existing mod loader detected: $name. Installation stopped to preserve it." }
 }
-$source = Join-Path $PSScriptRoot 'runtime'
+$source = Join-Path $PackagePath 'runtime'
 if (-not (Test-Path -LiteralPath (Join-Path $source 'winhttp.dll'))) { throw 'Runtime package is missing.' }
-$pluginFile = Join-Path $PSScriptRoot 'BongoChatBridge.dll'
+$pluginFile = Join-Path $PackagePath 'BongoChatBridge.dll'
+if (-not (Test-Path -LiteralPath $pluginFile)) { $pluginFile = Join-Path $PackagePath 'build\BongoChatBridge.dll' }
 if (-not (Test-Path -LiteralPath $pluginFile)) { throw 'Bridge DLL is missing.' }
 $files = @()
 foreach ($file in (Get-ChildItem -LiteralPath $source -File -Recurse)) {
@@ -43,3 +44,4 @@ foreach ($file in $files) {
 }
 Write-Output "Bongo Chat Bridge installed: $target"
 Write-Output 'Start Bongo Cat from Steam, join a room, then run BongoChat.exe.'
+
