@@ -9,6 +9,46 @@ using Newtonsoft.Json;
 
 namespace BongoChatBridge
 {
+    public static class CatalogCompatibility
+    {
+        // The shipped game uses Mono's legacy string hash. The full Mono
+        // libraries needed by the loader use a randomized string hash instead.
+        // Restore only Addressables' catalog marker, leaving its validation
+        // and the process-wide string hashing behavior intact.
+        public static int LegacyCatalogMagic()
+        {
+            const string value = "ContentCatalogData";
+            unchecked
+            {
+                int first = 5381, second = 5381;
+                for (int i = 0; i < value.Length; i += 2)
+                {
+                    first = ((first << 5) + first) ^ value[i];
+                    if (i + 1 < value.Length) second = ((second << 5) + second) ^ value[i + 1];
+                }
+                return first + second * 1566083941;
+            }
+        }
+
+        public static void Prepare(Type catalogType, string catalogPath)
+        {
+            FieldInfo magic = catalogType.GetField("kMagic", BindingFlags.Static | BindingFlags.NonPublic);
+            FieldInfo version = catalogType.GetField("kVersion", BindingFlags.Static | BindingFlags.NonPublic);
+            if (magic == null || magic.FieldType != typeof(int) || version == null || !version.IsLiteral)
+                throw new NotSupportedException("Addressables catalog fields changed.");
+            int expected = LegacyCatalogMagic();
+            using (var reader = new BinaryReader(File.OpenRead(catalogPath)))
+            {
+                if (reader.BaseStream.Length < 8 || reader.ReadInt32() != expected ||
+                    reader.ReadInt32() != (int)version.GetRawConstantValue())
+                    throw new NotSupportedException("Addressables catalog header is unsupported.");
+            }
+            // GetValue completes the original type initializer before setting
+            // the marker to the deterministic value used by the shipped game.
+            if ((int)magic.GetValue(null) != expected) magic.SetValue(null, expected);
+        }
+    }
+
     public static class StartupEnvironment
     {
         public static void PrepareChildProcesses()
@@ -44,6 +84,10 @@ namespace BongoChatBridge
             directory = Path.Combine(Paths.BepInExRootPath, "BongoChat");
             try
             {
+                CatalogCompatibility.Prepare(
+                    Type.GetType("UnityEngine.AddressableAssets.ResourceLocators.ContentCatalogData, Unity.Addressables", true),
+                    Path.Combine(Paths.GameRootPath, "BongoCat_Data", "StreamingAssets", "aa", "catalog.bin"));
+                Logger.LogInfo("Addressables catalog compatibility ready (legacy marker restored).");
                 Directory.CreateDirectory(directory);
                 Type multiplayer = Type.GetType("BongoCat.Multiplayer.SteamMultiplayer, Assembly-CSharp", true);
                 MethodInfo receive = AccessTools.Method(multiplayer, "OnLobbyChatMsg", new[] { typeof(LobbyChatMsg) });

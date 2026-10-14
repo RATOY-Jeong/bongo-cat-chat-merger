@@ -27,3 +27,15 @@ Steam에 로그인한 실제 방에서 내 메시지와 상대 메시지가 원�
 수정본 0.1.1 설치 후 Steam에서 게임을 다시 실행하여 최신 상태 신호, ready=true, 빈 error 및 현재 실행 세션의 실제 방 메시지 2개(내 메시지 1개 포함) 기록을 확인했습니다.
 
 전체 Windows 재부팅 후 자동 시작 경로 검사는 아직 수행하지 않았습니다.
+
+## 말풍선 고정 오류 수정
+
+실제 게임 로그의 `Invalid header data!!!`, `SelectedLocale is null`, `Vfx.CatSpeech.DoShowSpeech` 예외를 확인했습니다. 게임 원본의 `String.GetHashCode`는 legacy 해시를 사용하지만 추가 Mono 라이브러리는 randomized 해시를 사용하여 Addressables의 catalog marker가 달라졌습니다. 야옹 문구가 null이 되고 말풍선 종료 코루틴이 중단된 원인입니다.
+
+플러그인 시작 시 Addressables의 `kMagic`만 원본 게임의 legacy 값으로 복원합니다. 게임 원본 DLL·데이터 파일 및 전체 문자열 해시 동작은 변경하지 않습니다. 원본 catalog.bin의 marker와 버전을 먼저 검증하며, 지원되지 않는 형식은 거부합니다.
+
+- 원본 catalog.bin의 marker와 legacy 해시 계산 결과 일치 확인
+- 잘못된 버전·잘린 파일을 거부하고 marker를 변경하지 않음 확인
+- 수정본 실행 로그에서 catalog compatibility ready, 빈 error 및 최신 heartbeat 확인
+- 새 실행 로그에서 기존 catalog·localization·CatSpeech 예외가 발생하지 않음 확인
+- 사용자가 봉고챗 실행 상태에서 캐릭터 클릭, 말풍선 자동 종료, 이후 채팅 입력·전송 정상 동작 확인
