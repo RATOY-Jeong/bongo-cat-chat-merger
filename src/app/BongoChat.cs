@@ -144,7 +144,8 @@ namespace BongoChat
       </StackPanel>
       <StackPanel Grid.Column='2' VerticalAlignment='Center' Margin='14,0,0,0'>
         <CheckBox x:Name='DarkMode' Content='다크 모드' Foreground='#667682' Margin='0,0,0,10'/>
-        <CheckBox x:Name='Pin' Content='항상 위' Foreground='#667682'/>
+        <CheckBox x:Name='Pin' Content='항상 위' Foreground='#667682' Margin='0,0,0,10'/>
+        <CheckBox x:Name='ShowEmotes' Content='이모티콘 표시' Foreground='#667682' ToolTip='끄면 이모티콘을 대화 목록과 검색에서 숨깁니다. 기록은 보존됩니다.'/>
       </StackPanel>
     </Grid>
   </Border>
@@ -191,6 +192,7 @@ namespace BongoChat
             FontSize = 13;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             dark = darkOverride ?? ReadDarkPreference();
+            showEmotes = ReadEmotePreference();
             var root = (Grid)System.Windows.Markup.XamlReader.Parse(ThemedLayout());
             Content = root;
             roomTitle = (TextBlock)root.FindName("RoomTitle"); roomInfo = (TextBlock)root.FindName("RoomInfo");
@@ -335,15 +337,16 @@ namespace BongoChat
             double offset = scroll.VerticalOffset;
             messages.Children.Clear();
             string query = search.Text.Trim();
-            var visible = entries.Where(e => query.Length == 0 || (e.text ?? "").IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0
+            var visible = entries.Where(e => showEmotes || e.kind != "emote").Where(e => query.Length == 0 || (e.text ?? "").IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0
                 || (e.name ?? "").IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
             resultText.Text = (demo ? "미리보기 데이터 · " : "내 PC에 기록 · ") + visible.Count + "개 표시 / 최근 " + entries.Count + "개";
             if (visible.Count == 0)
             {
                 var empty = new StackPanel { Margin = new Thickness(20, 105, 20, 50), HorizontalAlignment = HorizontalAlignment.Center };
                 empty.Children.Add(new TextBlock { Text = query.Length == 0 ? "냥" : "…", FontSize = 38, Foreground = Brush("#718FA3"), HorizontalAlignment = HorizontalAlignment.Center });
-                empty.Children.Add(new TextBlock { Text = query.Length == 0 ? "봉고캣 대화가 여기에 모여요" : "검색 결과가 없어요", FontSize = 16, FontWeight = FontWeights.SemiBold, Foreground = Brush("#486477"), Margin = new Thickness(0, 18, 0, 8), HorizontalAlignment = HorizontalAlignment.Center });
-                empty.Children.Add(new TextBlock { Text = query.Length == 0 ? "방에 들어가 채팅을 보내보세요.\n연결 후 받은 대화부터 기록됩니다." : "다른 메시지나 닉네임을 찾아보세요.", Foreground = Brush("#718799"), FontSize = 12, TextAlignment = TextAlignment.Center, LineHeight = 22 });
+                bool hiddenOnly = query.Length == 0 && !showEmotes && entries.Count > 0;
+                empty.Children.Add(new TextBlock { Text = query.Length == 0 ? hiddenOnly ? "이모티콘을 숨기고 있어요" : "봉고캣 대화가 여기에 모여요" : "검색 결과가 없어요", FontSize = 16, FontWeight = FontWeights.SemiBold, Foreground = Brush("#486477"), Margin = new Thickness(0, 18, 0, 8), HorizontalAlignment = HorizontalAlignment.Center });
+                empty.Children.Add(new TextBlock { Text = query.Length == 0 ? hiddenOnly ? "일반 채팅은 계속 표시돼요.\n상단 이모티콘 표시를 켜면 다시 볼 수 있어요." : "방에 들어가 채팅을 보내보세요.\n연결 후 받은 대화부터 기록됩니다." : "다른 메시지나 닉네임을 찾아보세요.", Foreground = Brush("#718799"), FontSize = 12, TextAlignment = TextAlignment.Center, LineHeight = 22 });
                 messages.Children.Add(empty); return;
             }
             string previousDate = "";

@@ -16,7 +16,7 @@ namespace BongoChat
 {
     public sealed partial class ChatWindow
     {
-        private bool dark, statusConnected, canSend, imeComposing;
+        private bool dark, statusConnected, canSend, imeComposing, showEmotes;
         private Grid rootGrid;
         private TextBox composer;
         private Button sendButton;
@@ -28,6 +28,7 @@ namespace BongoChat
         private readonly Dictionary<int, BitmapSource> emoteImages = new Dictionary<int, BitmapSource>();
         private readonly string themePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appearance.txt");
         private readonly string pinPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "always-on-top.txt");
+        private readonly string emotePreferencePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "show-emotes.txt");
         private string sendNotice = "";
 
         [DllImport("dwmapi.dll")]
@@ -48,6 +49,18 @@ namespace BongoChat
         {
             try { File.WriteAllText(pinPath, enabled ? "true" : "false", new UTF8Encoding(false)); }
             catch { if (composerHint != null) composerHint.Text = "항상 위는 적용됐지만 설정 파일을 저장하지 못했어요."; }
+        }
+        private bool ReadEmotePreference()
+        {
+            try { return !File.Exists(emotePreferencePath) || File.ReadAllText(emotePreferencePath).Trim() != "false"; }
+            catch { return true; }
+        }
+        private void ChangeEmoteVisibility(bool enabled)
+        {
+            showEmotes = enabled;
+            RenderMessages(false);
+            try { File.WriteAllText(emotePreferencePath, enabled ? "true" : "false", new UTF8Encoding(false)); }
+            catch { composerHint.Text = "이모티콘 표시는 적용됐지만 설정 파일을 저장하지 못했어요."; }
         }
         private string ThemeColor(string color)
         {
@@ -86,6 +99,10 @@ namespace BongoChat
             toggle.IsChecked = dark;
             toggle.Checked += delegate { ChangeTheme(true); };
             toggle.Unchecked += delegate { ChangeTheme(false); };
+            var emoteToggle = (CheckBox)root.FindName("ShowEmotes");
+            emoteToggle.IsChecked = showEmotes;
+            emoteToggle.Checked += delegate { ChangeEmoteVisibility(true); };
+            emoteToggle.Unchecked += delegate { ChangeEmoteVisibility(false); };
             sendButton.Click += delegate { SendComposer(); };
             composer.TextChanged += delegate { if (pendingRequest == null) sendNotice = ""; RefreshComposer(); };
             TextCompositionManager.AddPreviewTextInputStartHandler(composer, delegate { imeComposing = true; });

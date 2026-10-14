@@ -9,6 +9,7 @@ runtime/
 game-path.txt
 appearance.txt
 always-on-top.txt
+show-emotes.txt
 commands/
 emotes/
 state.json
