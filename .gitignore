@@ -7,5 +7,9 @@ runtime/
 *.log
 *.jsonl
 game-path.txt
+appearance.txt
+always-on-top.txt
+commands/
+emotes/
 state.json
 BongoChat-install.json

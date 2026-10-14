@@ -24,6 +24,7 @@ namespace BongoChat
         public bool mine { get; set; }
         public string text { get; set; }
         public string utc { get; set; }
+        public int emoteId { get; set; }
     }
     public sealed class BridgeState
     {
@@ -36,6 +37,11 @@ namespace BongoChat
         public string code { get; set; }
         public int count { get; set; }
         public string error { get; set; }
+        public string version { get; set; }
+        public string session { get; set; }
+        public bool canSend { get; set; }
+        public int maxMessageLength { get; set; }
+        public int assetRevision { get; set; }
     }
 
     public static class Journal
@@ -65,7 +71,7 @@ namespace BongoChat
                         try
                         {
                             var entry = Json.Deserialize<ChatEntry>(line);
-                            if (entry != null && entry.kind == "chat" && !String.IsNullOrEmpty(entry.id)
+                            if (entry != null && (entry.kind == "chat" || (entry.kind == "emote" && entry.emoteId > 0)) && !String.IsNullOrEmpty(entry.id)
                                 && entry.text != null && seen.Add(entry.id)) list.Add(entry);
                         }
                         catch (ArgumentException) { }
@@ -82,7 +88,7 @@ namespace BongoChat
         }
     }
 
-    public sealed class ChatWindow : Window
+    public sealed partial class ChatWindow : Window
     {
         private readonly JavaScriptSerializer json = Journal.Json;
         private readonly string settingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "game-path.txt");
@@ -110,7 +116,19 @@ namespace BongoChat
       <Setter Property='Template'><Setter.Value><ControlTemplate TargetType='Button'>
         <Border Background='{TemplateBinding Background}' CornerRadius='8' BorderBrush='{TemplateBinding BorderBrush}' BorderThickness='{TemplateBinding BorderThickness}' Padding='{TemplateBinding Padding}'>
           <ContentPresenter HorizontalAlignment='Center' VerticalAlignment='Center'/>
-        </Border><ControlTemplate.Triggers><Trigger Property='IsMouseOver' Value='True'><Setter Property='Opacity' Value='0.8'/></Trigger></ControlTemplate.Triggers>
+        </Border><ControlTemplate.Triggers><Trigger Property='IsMouseOver' Value='True'><Setter Property='Opacity' Value='0.8'/></Trigger><Trigger Property='IsEnabled' Value='False'><Setter Property='Opacity' Value='0.4'/></Trigger></ControlTemplate.Triggers>
+      </ControlTemplate></Setter.Value></Setter>
+    </Style>
+    <Style TargetType='ScrollBar'>
+      <Setter Property='Width' Value='10'/><Setter Property='Background' Value='#BACDDC'/>
+      <Setter Property='Template'><Setter.Value><ControlTemplate TargetType='ScrollBar'>
+        <Grid Background='{TemplateBinding Background}'>
+          <Track x:Name='PART_Track' Orientation='{TemplateBinding Orientation}' IsDirectionReversed='True' Minimum='{TemplateBinding Minimum}' Maximum='{TemplateBinding Maximum}' Value='{TemplateBinding Value}' ViewportSize='{TemplateBinding ViewportSize}'>
+            <Track.DecreaseRepeatButton><RepeatButton Command='ScrollBar.PageUpCommand' Opacity='0' Focusable='False'/></Track.DecreaseRepeatButton>
+            <Track.Thumb><Thumb><Thumb.Template><ControlTemplate TargetType='Thumb'><Border Background='#718795' CornerRadius='4' Margin='2' Opacity='0.6'/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+            <Track.IncreaseRepeatButton><RepeatButton Command='ScrollBar.PageDownCommand' Opacity='0' Focusable='False'/></Track.IncreaseRepeatButton>
+          </Track>
+        </Grid>
       </ControlTemplate></Setter.Value></Setter>
     </Style>
   </Grid.Resources>
@@ -124,7 +142,10 @@ namespace BongoChat
         <TextBlock x:Name='RoomTitle' Text='봉고캣 채팅방' FontSize='18' FontWeight='SemiBold' Foreground='#263A46' TextTrimming='CharacterEllipsis'/>
         <TextBlock x:Name='RoomInfo' Text='같은 방의 대화를 한곳에' Foreground='#84909A' FontSize='11' Margin='0,5,0,0'/>
       </StackPanel>
-      <CheckBox x:Name='Pin' Grid.Column='2' Content='항상 위' Foreground='#667682' VerticalAlignment='Center' Margin='14,0,0,0'/>
+      <StackPanel Grid.Column='2' VerticalAlignment='Center' Margin='14,0,0,0'>
+        <CheckBox x:Name='DarkMode' Content='다크 모드' Foreground='#667682' Margin='0,0,0,10'/>
+        <CheckBox x:Name='Pin' Content='항상 위' Foreground='#667682'/>
+      </StackPanel>
     </Grid>
   </Border>
   <Border x:Name='Status' Grid.Row='1' Background='#FFF3CA' Padding='20,11'>
@@ -143,7 +164,11 @@ namespace BongoChat
   </ScrollViewer>
   <Border Grid.Row='4' Background='#FCFCF8' Padding='20,15,20,16' BorderBrush='#DAE4E9' BorderThickness='0,1,0,0'>
     <StackPanel>
-      <TextBlock Text='채팅은 봉고캣에서 입력해 주세요' FontSize='12' Foreground='#526675' Margin='0,0,0,12'/>
+      <Grid Margin='0,0,0,8'><Grid.ColumnDefinitions><ColumnDefinition Width='*'/><ColumnDefinition Width='Auto'/></Grid.ColumnDefinitions>
+        <TextBox x:Name='Composer' AcceptsReturn='True' TextWrapping='Wrap' MinHeight='46' MaxHeight='94' MaxLength='300' VerticalScrollBarVisibility='Auto' Padding='10,9' Background='#FFFFFF' Foreground='#293B46' BorderBrush='#DAE4E9' FontSize='13' ToolTip='Enter로 전송 · Shift+Enter 줄바꿈'/>
+        <Button x:Name='Send' Grid.Column='1' Content='전송' Margin='8,0,0,0' Width='62' IsEnabled='False' Background='#FFE36B' Foreground='#293B46'/>
+      </Grid>
+      <TextBlock x:Name='ComposerHint' Text='연결 후 이곳에서 채팅을 보낼 수 있어요' FontSize='10' Foreground='#526675' Margin='0,0,0,12' TextWrapping='Wrap'/>
       <Grid><Grid.ColumnDefinitions><ColumnDefinition Width='Auto'/><ColumnDefinition Width='Auto'/><ColumnDefinition Width='*'/><ColumnDefinition Width='Auto'/></Grid.ColumnDefinitions>
         <Button x:Name='Choose' Content='게임 폴더' FontSize='11' Margin='0,0,7,0'/>
         <Button x:Name='Export' Grid.Column='1' Content='대화 저장' FontSize='11'/>
@@ -157,7 +182,7 @@ namespace BongoChat
   </Border>
 </Grid>";
 
-        public ChatWindow(bool demonstration, string folderOverride = null)
+        public ChatWindow(bool demonstration, string folderOverride = null, bool? darkOverride = null)
         {
             demo = demonstration;
             Title = "Bongo Chat";
@@ -165,7 +190,8 @@ namespace BongoChat
             FontFamily = new FontFamily("Malgun Gothic");
             FontSize = 13;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            var root = (Grid)System.Windows.Markup.XamlReader.Parse(Layout);
+            dark = darkOverride ?? ReadDarkPreference();
+            var root = (Grid)System.Windows.Markup.XamlReader.Parse(ThemedLayout());
             Content = root;
             roomTitle = (TextBlock)root.FindName("RoomTitle"); roomInfo = (TextBlock)root.FindName("RoomInfo");
             status = (Border)root.FindName("Status"); statusText = (TextBlock)root.FindName("StatusText");
@@ -175,10 +201,13 @@ namespace BongoChat
             search.TextChanged += delegate { RenderMessages(false); };
             SizeChanged += delegate { if (entries.Count > 0) RenderMessages(false); };
             var pin = (CheckBox)root.FindName("Pin");
-            pin.Checked += delegate { Topmost = true; }; pin.Unchecked += delegate { Topmost = false; };
+            Topmost = ReadPinPreference(); pin.IsChecked = Topmost;
+            pin.Checked += delegate { Topmost = true; SavePinPreference(true); };
+            pin.Unchecked += delegate { Topmost = false; SavePinPreference(false); };
             ((Slider)root.FindName("OpacityControl")).ValueChanged += delegate(object sender, RoutedPropertyChangedEventArgs<double> args) { Opacity = args.NewValue; };
             ((Button)root.FindName("Choose")).Click += delegate { ChooseGame(); };
             ((Button)root.FindName("Export")).Click += delegate { Export(); };
+            InitializeComposerAndTheme(root);
             if (demo) LoadDemo();
             else
             {
@@ -192,7 +221,7 @@ namespace BongoChat
             Closed += delegate { if (timer != null) timer.Stop(); };
         }
 
-        private static SolidColorBrush Brush(string color) { return (SolidColorBrush)new BrushConverter().ConvertFromString(color); }
+        private SolidColorBrush Brush(string color) { return RawBrush(ThemeColor(color)); }
         private string BridgeFolder { get { return Path.Combine(gamePath, "BepInEx", "BongoChat"); } }
         private void FindGame()
         {
@@ -238,6 +267,7 @@ namespace BongoChat
 
         private void SetStatus(string message, bool connected)
         {
+            statusConnected = connected;
             statusText.Text = message;
             status.Background = Brush(connected ? "#E2EFEA" : "#FFF3CA");
             statusText.Foreground = Brush(connected ? "#38725A" : "#775D25");
@@ -245,12 +275,16 @@ namespace BongoChat
 
         public void Poll()
         {
+            canSend = false;
+            liveState = null;
             try
             {
                 if (String.IsNullOrEmpty(gamePath)) { SetStatus("게임 폴더에서 BongoCat.exe를 선택해 주세요", false); RenderEmptyIfNeeded(); return; }
                 string file = Path.Combine(BridgeFolder, "state.json");
                 if (!File.Exists(file)) { SetStatus("연결 플러그인 설치 후 봉고캣을 실행해 주세요", false); RenderEmptyIfNeeded(); return; }
                 BridgeState state = json.Deserialize<BridgeState>(Journal.ReadShared(file));
+                liveState = state;
+                CheckPending(state);
                 if (state == null || state.protocol != 1) { SetStatus("연결 플러그인 버전을 확인해 주세요", false); return; }
                 DateTime timestamp;
                 bool fresh = DateTime.TryParse(state.utc, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out timestamp)
@@ -264,6 +298,8 @@ namespace BongoChat
                     SetStatus("봉고캣 실행 중 · 채팅방에 들어가 주세요", false); RenderEmptyIfNeeded(); return;
                 }
                 SetStatus("● 연결됨 · 봉고캣 방의 대화를 받고 있어요", true);
+                canSend = state.canSend && !String.IsNullOrEmpty(state.session);
+                composer.MaxLength = state.maxMessageLength > 0 ? Math.Min(300, state.maxMessageLength) : 300;
                 roomTitle.Text = String.IsNullOrWhiteSpace(state.name) ? "봉고캣 채팅방" : state.name;
                 roomInfo.Text = "참여 중 " + state.count + "명 · 실시간 대화";
                 if (currentRoom != state.room)
@@ -273,10 +309,10 @@ namespace BongoChat
                     currentLength = -1; entries.Clear(); RenderMessages(true);
                 }
                 long length = File.Exists(currentFile) ? new FileInfo(currentFile).Length : 0;
-                if (length != currentLength)
+                if (length != currentLength || currentAssetRevision != state.assetRevision)
                 {
                     entries = Journal.ReadRecent(currentFile, 500).Where(e => e.room == currentRoom).ToList();
-                    currentLength = length; RenderMessages(false);
+                    currentLength = length; currentAssetRevision = state.assetRevision; RenderMessages(false);
                 }
                 lastError = "";
             }
@@ -284,6 +320,11 @@ namespace BongoChat
             catch (Exception ex)
             {
                 if (lastError != ex.Message) { SetStatus("기록을 읽지 못했어요: " + ex.Message, false); lastError = ex.Message; }
+            }
+            finally
+            {
+                if (pendingRequest != null && (DateTime.UtcNow - pendingSince).TotalSeconds > 22) CheckPending(liveState);
+                RefreshComposer();
             }
         }
 
@@ -346,7 +387,8 @@ namespace BongoChat
             double bubbleWidth = Math.Min(275, Math.Max(140, (ActualWidth > 0 ? ActualWidth : Width) - 185));
             var bubble = new Border { Background = Brush(entry.mine ? "#FFE36B" : "#FFFFFF"), CornerRadius = new CornerRadius(3, 12, 12, 12), Padding = new Thickness(12, 10, 12, 10), MaxWidth = bubbleWidth };
             if (entry.mine) bubble.CornerRadius = new CornerRadius(12, 3, 12, 12);
-            bubble.Child = new TextBlock { Text = entry.text, TextWrapping = TextWrapping.Wrap, Foreground = Brush("#293B46"), FontSize = 13, LineHeight = 21 };
+            if (entry.kind == "emote") bubble.Child = EmoteContent(entry);
+            else bubble.Child = new TextBlock { Text = entry.text, TextWrapping = TextWrapping.Wrap, Foreground = entry.mine ? RawBrush("#293B46") : Brush("#293B46"), FontSize = 13, LineHeight = 21 };
             var stamp = new TextBlock { Text = time.ToString("tt h:mm", CultureInfo.GetCultureInfo("ko-KR")), FontSize = 9, Foreground = Brush("#718795"), VerticalAlignment = VerticalAlignment.Bottom, Margin = entry.mine ? new Thickness(0, 0, 6, 2) : new Thickness(6, 0, 0, 2) };
             if (entry.mine) { line.Children.Add(stamp); line.Children.Add(bubble); }
             else { line.Children.Add(bubble); line.Children.Add(stamp); }
@@ -366,7 +408,7 @@ namespace BongoChat
                 foreach (ChatEntry entry in entries)
                 {
                     DateTime time; DateTime.TryParse(entry.utc, out time);
-                    text.AppendLine("[" + time.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") + "] " + entry.name + (entry.mine ? " (나)" : "") + ": " + entry.text);
+                    text.AppendLine("[" + time.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") + "] " + entry.name + (entry.mine ? " (나)" : "") + ": " + (entry.kind == "emote" ? "[이모티콘 #" + entry.emoteId + "] " : "") + entry.text);
                 }
                 File.WriteAllText(save.FileName, text.ToString(), new UTF8Encoding(true));
                 resultText.Text = "대화를 저장했어요";
@@ -382,6 +424,7 @@ namespace BongoChat
             string[] names = { "구름냥", "나", "치즈", "구름냥", "나", "모카" };
             string[] texts = { "다들 안녕하세요! 오늘도 같이 봉고 쳐요 🐾", "안녕하세요!\n오늘은 작업하면서 켜 두려고요.", "고양이들 모여 있으니까 너무 귀엽다 ㅋㅋ", "이제 대화가 안 사라지고 모여서 좋네요", "맞아요 😺\n아까 놓친 말도 여기서 볼 수 있어요.", "저도 왔어요. 다들 좋은 오후 보내세요!" };
             for (int i = 0; i < names.Length; i++) entries.Add(new ChatEntry { kind = "chat", id = "demo" + i, room = "123", sender = names[i], name = names[i], mine = names[i] == "나", text = texts[i], utc = start.AddMinutes(i).ToUniversalTime().ToString("o") });
+            entries.Insert(3, new ChatEntry { kind = "emote", id = "demo-emote", room = "123", sender = "치즈", name = "치즈", text = "하트", emoteId = 1, utc = start.AddMinutes(2).ToUniversalTime().ToString("o") });
             RenderMessages(true);
         }
 
@@ -407,7 +450,7 @@ namespace BongoChat
             {
                 bool preview = args.Length >= 2 && args[0] == "--preview";
                 var app = new Application();
-                var window = new ChatWindow(preview || args.Contains("--demo"));
+                var window = new ChatWindow(preview || args.Contains("--demo"), null, args.Contains("--dark") ? (bool?)true : args.Contains("--light") ? (bool?)false : null);
                 if (preview) { window.Snapshot(args[1]); return 0; }
                 app.Run(window); return 0;
             }

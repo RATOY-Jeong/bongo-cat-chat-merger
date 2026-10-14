@@ -60,8 +60,8 @@ namespace BongoChatBridge
         }
     }
 
-    [BepInPlugin("local.bongochat.bridge", "Bongo Chat Bridge", "0.1.1")]
-    public sealed class BridgePlugin : BaseUnityPlugin
+    [BepInPlugin("local.bongochat.bridge", "Bongo Chat Bridge", "0.2.0")]
+    public sealed partial class BridgePlugin : BaseUnityPlugin
     {
         [Serializable]
         private sealed class ChatEnvelope
@@ -94,7 +94,8 @@ namespace BongoChatBridge
                 if (receive == null) throw new MissingMethodException("SteamMultiplayer.OnLobbyChatMsg");
                 harmony = new Harmony("local.bongochat.bridge");
                 harmony.Patch(receive, prefix: new HarmonyMethod(typeof(BridgePlugin), "ReceivePrefix"));
-                Logger.LogInfo("Bongo Chat Bridge ready (receive only). Directory: " + directory);
+                InitializeFeatures(multiplayer);
+                Logger.LogInfo("Bongo Chat Bridge ready (chat, emotes and composer). Directory: " + directory);
             }
             catch (Exception ex)
             {
@@ -117,7 +118,9 @@ namespace BongoChatBridge
                 // Verified against game build 25723683: channel 3 contains chat text.
                 if (msg.data == null || msg.data.Length > 65536) return;
                 ChatEnvelope envelope = UnityEngine.JsonUtility.FromJson<ChatEnvelope>(msg.Message);
-                if (envelope == null || envelope.Channel != 3) return;
+                if (envelope == null) return;
+                if (envelope.Channel == 6) { CaptureEmote(msg, envelope.Message); return; }
+                if (envelope.Channel != 3) return;
                 string body = envelope.Message;
                 if (String.IsNullOrWhiteSpace(body)) return;
                 string room = msg.lobby.SteamId.m_SteamID.ToString();
@@ -142,6 +145,7 @@ namespace BongoChatBridge
 
         private void Update()
         {
+            UpdateFeatures();
             if (UnityEngine.Time.realtimeSinceStartup < nextHeartbeat) return;
             nextHeartbeat = UnityEngine.Time.realtimeSinceStartup + 1.0f;
             WriteState(false);
@@ -155,11 +159,13 @@ namespace BongoChatBridge
                 bool valid = !stopped && lobby.IsValid;
                 var state = new
                 {
-                    protocol = 1, version = "0.1.1", utc = DateTime.UtcNow.ToString("o"),
+                    protocol = 1, version = "0.2.0", utc = DateTime.UtcNow.ToString("o"),
                     session = session, stopped = stopped, ready = harmony != null && String.IsNullOrEmpty(error),
                     room = valid ? lobby.SteamId.m_SteamID.ToString() : "",
                     name = valid ? lobby.Name : "", code = valid ? lobby.LobbyCode : "",
-                    count = valid ? lobby.MemberCount : 0, error = error
+                    count = valid ? lobby.MemberCount : 0, error = error,
+                    canSend = valid && speech != null && harmony != null && String.IsNullOrEmpty(error),
+                    maxMessageLength = messageLimit, assetRevision = assetRevision
                 };
                 string temporary = Path.Combine(directory, "state.tmp");
                 string destination = Path.Combine(directory, "state.json");
