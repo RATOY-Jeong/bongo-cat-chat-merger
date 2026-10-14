@@ -6,7 +6,7 @@ Steam **Bongo Cat** 방 대화를 말풍선으로 모아 보여주는 Windows �
 
 ## 다운로드와 실행
 
-[최신 테스트 버전 다운로드](https://github.com/RATOY-Jeong/bongo-chat/releases/latest)에서 `BongoChat-0.1.zip`을 받으세요. GitHub의 `Source code` ZIP은 실행용 패키지가 아닙니다.
+[최신 테스트 버전 다운로드](https://github.com/RATOY-Jeong/bongo-chat/releases/latest)에서 `BongoChat-0.1.1.zip`을 받으세요. GitHub의 `Source code` ZIP은 실행용 패키지가 아닙니다.
 
 1. ZIP을 압축 해제하고 봉고캣을 완전히 종료합니다.
 2. `Install.cmd`를 실행합니다. 게임 폴더를 자동으로 찾으며, 필요하면 `BongoCat.exe`를 선택합니다.
@@ -14,6 +14,16 @@ Steam **Bongo Cat** 방 대화를 말풍선으로 모아 보여주는 Windows �
 4. `BongoChat.exe`를 실행합니다. 채팅은 기존 봉고캣에서 입력합니다.
 
 상대방은 설치하지 않아도 됩니다. 제거는 실행용 ZIP의 `Uninstall.cmd`를 실행합니다.
+
+## 0.1.1 업데이트
+
+부팅 후 게임이 Steam을 실행하고 다시 시작되는 과정에서 연결 플러그인이 로드되지 않던 문제를 수정했습니다. 게임의 초기화 표시가 Steam에 상속되지 않도록 처리합니다.
+
+기존 0.1 사용자는 봉고캣을 종료한 뒤 이전 패키지의 `Uninstall.cmd`를 실행하고, 새 0.1.1 패키지의 `Install.cmd`를 실행하세요. 기존 대화 기록은 보존됩니다.
+
+연결이 계속 끊긴 상태라면 봉고캣과 Steam을 완전히 종료한 뒤 Steam을 먼저 켜고 라이브러리에서 봉고캣을 실행하세요.
+
+수정본은 Bongo Cat 빌드 25902419에서 플러그인 로드와 실제 방 메시지 수신을 확인했습니다. Windows 재부팅 후 자동 시작 경로 검사는 아직 수행하지 않았습니다.
 
 ## 저장소 구조
 
@@ -45,5 +55,5 @@ licenses/       외부 구성요소의 라이선스와 출처
 - [검사 결과](docs/VALIDATION.md)
 - [포함 구성요소와 라이선스](licenses/THIRD-PARTY-NOTICES.md)
 
-초기 테스트 버전입니다. Windows x64 및 Bongo Cat 빌드 25723683에서 실제 방 메시지 기록을 확인했습니다. 기존 모드 로더가 있으면 자동 설치를 중단합니다. 설치 전 대화 복구와 이 창에서의 메시지 전송은 지원하지 않습니다. 비공식 보조 앱입니다.
+초기 테스트 버전입니다. Windows x64 및 Bongo Cat 빌드 25723683 및 25902419에서 실제 방 메시지 기록을 확인했습니다. 기존 모드 로더가 있으면 자동 설치를 중단합니다. 설치 전 대화 복구와 이 창에서의 메시지 전송은 지원하지 않습니다. 비공식 보조 앱입니다.
 

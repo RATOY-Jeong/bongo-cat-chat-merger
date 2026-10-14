@@ -35,7 +35,7 @@ foreach ($file in $files) {
     if (Test-Path -LiteralPath (Join-Path $target $file.relative)) { throw ('Existing file preserved: ' + $file.relative) }
 }
 # Save the full intended manifest first so interrupted installs are recoverable.
-$manifest = [PSCustomObject]@{ version='0.1.0'; gamePath=$target; installedUtc=[DateTime]::UtcNow.ToString('o'); files=@($files | Select-Object relative,sha256) }
+$manifest = [PSCustomObject]@{ version='0.1.1'; gamePath=$target; installedUtc=[DateTime]::UtcNow.ToString('o'); files=@($files | Select-Object relative,sha256) }
 $manifest | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
 foreach ($file in $files) {
     $destination = Join-Path $target $file.relative

@@ -9,7 +9,18 @@ using Newtonsoft.Json;
 
 namespace BongoChatBridge
 {
-    [BepInPlugin("local.bongochat.bridge", "Bongo Chat Bridge", "0.1.0")]
+    public static class StartupEnvironment
+    {
+        public static void PrepareChildProcesses()
+        {
+            // Doorstop already initialized this process. Its guard must not be
+            // inherited by Steam when the game requests a Steam-managed restart.
+            // This changes only this process, never persistent Windows settings.
+            Environment.SetEnvironmentVariable("DOORSTOP_INITIALIZED", null, EnvironmentVariableTarget.Process);
+        }
+    }
+
+    [BepInPlugin("local.bongochat.bridge", "Bongo Chat Bridge", "0.1.1")]
     public sealed class BridgePlugin : BaseUnityPlugin
     {
         [Serializable]
@@ -27,6 +38,8 @@ namespace BongoChatBridge
 
         private void Awake()
         {
+            try { StartupEnvironment.PrepareChildProcesses(); }
+            catch (Exception ex) { Logger.LogWarning("Could not clear the inherited startup guard: " + ex.Message); }
             Active = this;
             directory = Path.Combine(Paths.BepInExRootPath, "BongoChat");
             try
@@ -98,7 +111,7 @@ namespace BongoChatBridge
                 bool valid = !stopped && lobby.IsValid;
                 var state = new
                 {
-                    protocol = 1, version = "0.1.0", utc = DateTime.UtcNow.ToString("o"),
+                    protocol = 1, version = "0.1.1", utc = DateTime.UtcNow.ToString("o"),
                     session = session, stopped = stopped, ready = harmony != null && String.IsNullOrEmpty(error),
                     room = valid ? lobby.SteamId.m_SteamID.ToString() : "",
                     name = valid ? lobby.Name : "", code = valid ? lobby.LobbyCode : "",
