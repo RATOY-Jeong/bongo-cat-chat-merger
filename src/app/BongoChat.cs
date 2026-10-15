@@ -150,7 +150,10 @@ namespace BongoChat
     </Grid>
   </Border>
   <Border x:Name='Status' Grid.Row='1' Background='#FFF3CA' Padding='20,11'>
-    <TextBlock x:Name='StatusText' Text='연결 플러그인을 기다리고 있어요' FontSize='12' Foreground='#775D25' TextWrapping='Wrap'/>
+    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width='*'/><ColumnDefinition Width='Auto'/></Grid.ColumnDefinitions>
+      <TextBlock x:Name='StatusText' Text='연결 플러그인을 기다리고 있어요' FontSize='12' Foreground='#775D25' TextWrapping='Wrap' VerticalAlignment='Center' Margin='0,0,10,0'/>
+      <Button x:Name='Reconnect' Grid.Column='1' Content='재연결' Padding='10,6' FontSize='11' ToolTip='게임 폴더와 연결 상태를 다시 확인합니다.'/>
+    </Grid>
   </Border>
   <Grid Grid.Row='2' Margin='20,14,20,4'>
     <Border Background='#D3E0E9' CornerRadius='9' Padding='12,9'>
@@ -210,6 +213,7 @@ namespace BongoChat
             ((Button)root.FindName("Choose")).Click += delegate { ChooseGame(); };
             ((Button)root.FindName("Export")).Click += delegate { Export(); };
             InitializeComposerAndTheme(root);
+            InitializeReconnect(root);
             if (demo) LoadDemo();
             else
             {
@@ -220,7 +224,7 @@ namespace BongoChat
                 timer.Start();
                 Poll();
             }
-            Closed += delegate { if (timer != null) timer.Stop(); };
+            Closed += delegate { if (timer != null) timer.Stop(); if (reconnectTimer != null) reconnectTimer.Stop(); };
         }
 
         private SolidColorBrush Brush(string color) { return RawBrush(ThemeColor(color)); }
@@ -273,6 +277,7 @@ namespace BongoChat
             statusText.Text = message;
             status.Background = Brush(connected ? "#E2EFEA" : "#FFF3CA");
             statusText.Foreground = Brush(connected ? "#38725A" : "#775D25");
+            if (connected && reconnectTimer != null && reconnectTimer.IsEnabled) FinishReconnect(true);
         }
 
         public void Poll()

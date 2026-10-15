@@ -53,14 +53,17 @@ namespace BongoChatBridge
     {
         public static void PrepareChildProcesses()
         {
-            // Doorstop already initialized this process. Its guard must not be
-            // inherited by Steam when the game requests a Steam-managed restart.
-            // This changes only this process, never persistent Windows settings.
+            // Doorstop 4.5 sets DISABLE after installing its hooks and INITIALIZED
+            // before calling the managed entry point. Both guards would otherwise
+            // leak into Steam and disable a later Steam-managed game process.
+            // This runs only after this loader successfully loaded our plugin;
+            // it never overrides a user's disabled loader or persistent settings.
+            Environment.SetEnvironmentVariable("DOORSTOP_DISABLE", null, EnvironmentVariableTarget.Process);
             Environment.SetEnvironmentVariable("DOORSTOP_INITIALIZED", null, EnvironmentVariableTarget.Process);
         }
     }
 
-    [BepInPlugin("local.bongochat.bridge", "Bongo Chat Bridge", "0.2.0")]
+    [BepInPlugin("local.bongochat.bridge", "Bongo Chat Bridge", "0.2.2")]
     public sealed partial class BridgePlugin : BaseUnityPlugin
     {
         [Serializable]
@@ -159,7 +162,7 @@ namespace BongoChatBridge
                 bool valid = !stopped && lobby.IsValid;
                 var state = new
                 {
-                    protocol = 1, version = "0.2.0", utc = DateTime.UtcNow.ToString("o"),
+                    protocol = 1, version = "0.2.2", utc = DateTime.UtcNow.ToString("o"),
                     session = session, stopped = stopped, ready = harmony != null && String.IsNullOrEmpty(error),
                     room = valid ? lobby.SteamId.m_SteamID.ToString() : "",
                     name = valid ? lobby.Name : "", code = valid ? lobby.LobbyCode : "",
