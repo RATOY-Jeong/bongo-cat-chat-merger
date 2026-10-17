@@ -39,7 +39,7 @@ namespace BongoChat
             currentLength = -1; currentAssetRevision = -1; emoteImages.Clear();
             reconnectDeadline = DateTime.UtcNow.AddSeconds(12);
             reconnectButton.IsEnabled = false;
-            reconnectButton.Content = "확인 중…";
+            reconnectButton.Content = L("확인 중…");
             sendNotice = "연결을 다시 확인하고 있어요. 입력한 글과 기록은 유지돼요.";
             reconnectTimer.Start();
             Poll();
@@ -49,7 +49,7 @@ namespace BongoChat
         {
             reconnectTimer.Stop();
             reconnectButton.IsEnabled = !demo;
-            reconnectButton.Content = "재연결";
+            reconnectButton.Content = L("재연결");
             sendNotice = connected ? "다시 연결됐어요. 입력한 글을 확인한 뒤 전송하세요." :
                 "연결되지 않았어요. 봉고캣을 종료한 뒤 Steam 라이브러리에서 다시 실행해 주세요.";
             RefreshComposer();

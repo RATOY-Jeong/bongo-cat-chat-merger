@@ -48,7 +48,7 @@ namespace BongoChat
         private void SavePinPreference(bool enabled)
         {
             try { File.WriteAllText(pinPath, enabled ? "true" : "false", new UTF8Encoding(false)); }
-            catch { if (composerHint != null) composerHint.Text = "항상 위는 적용됐지만 설정 파일을 저장하지 못했어요."; }
+            catch { if (composerHint != null) { sendNotice = "항상 위는 적용됐지만 설정 파일을 저장하지 못했어요."; RefreshComposer(); } }
         }
         private bool ReadEmotePreference()
         {
@@ -60,7 +60,7 @@ namespace BongoChat
             showEmotes = enabled;
             RenderMessages(false);
             try { File.WriteAllText(emotePreferencePath, enabled ? "true" : "false", new UTF8Encoding(false)); }
-            catch { composerHint.Text = "이모티콘 표시는 적용됐지만 설정 파일을 저장하지 못했어요."; }
+            catch { sendNotice = "이모티콘 표시는 적용됐지만 설정 파일을 저장하지 못했어요."; RefreshComposer(); }
         }
         private string ThemeColor(string color)
         {
@@ -121,14 +121,14 @@ namespace BongoChat
         {
             dark = enabled; ApplyTheme(); RenderMessages(false);
             try { File.WriteAllText(themePath, dark ? "dark" : "light", new UTF8Encoding(false)); }
-            catch { composerHint.Text = "테마는 적용됐지만 설정 파일을 저장하지 못했어요."; }
+            catch { sendNotice = "테마는 적용됐지만 설정 파일을 저장하지 못했어요."; RefreshComposer(); }
         }
         private void ApplyTheme()
         {
             foreach (Match match in Regex.Matches(Layout, "#[0-9A-Fa-f]{6}"))
                 rootGrid.Resources["Color" + match.Value.Substring(1).ToUpperInvariant()] = Brush(match.Value);
             sendButton.Foreground = RawBrush("#293B46");
-            SetStatus(statusText.Text, statusConnected);
+            SetStatus(statusMessage, statusConnected);
             UpdateTitleBar();
         }
         private void UpdateTitleBar()
@@ -142,11 +142,11 @@ namespace BongoChat
             if (composer == null) return;
             composer.IsReadOnly = pendingRequest != null;
             sendButton.IsEnabled = !demo && canSend && pendingRequest == null && !String.IsNullOrWhiteSpace(composer.Text);
-            composerHint.Text = demo ? "화면 미리보기 · 실제 메시지는 전송하지 않아요" :
+            composerHint.Text = L(demo ? "화면 미리보기 · 실제 메시지는 전송하지 않아요" :
                 pendingRequest != null ? "게임에 전송 요청 중…" :
                 !String.IsNullOrEmpty(sendNotice) ? sendNotice :
                 !canSend ? "채팅방 연결과 최신 연결 플러그인이 준비되면 전송할 수 있어요" :
-                "Enter 전송 · Shift+Enter 줄바꿈 · " + composer.Text.Length + "/" + composer.MaxLength;
+                F("Enter 전송 · Shift+Enter 줄바꿈 · {0}/{1}", composer.Text.Length, composer.MaxLength));
         }
         private void SendComposer()
         {
@@ -217,7 +217,7 @@ namespace BongoChat
             }
             if (image != null) panel.Children.Add(new Image { Source = image, Width = 82, Height = 82, Stretch = Stretch.Uniform, Margin = new Thickness(0, 0, 0, 6) });
             else panel.Children.Add(new TextBlock { Text = demo ? "💛" : "✦", FontSize = 42, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(6) });
-            panel.Children.Add(new TextBlock { Text = "이모티콘 · " + entry.text, FontSize = 10, TextWrapping = TextWrapping.Wrap,
+            panel.Children.Add(new TextBlock { Text = L("이모티콘 · ") + entry.text, FontSize = 10, TextWrapping = TextWrapping.Wrap,
                 Foreground = entry.mine ? RawBrush("#293B46") : Brush("#506471") });
             return panel;
         }
