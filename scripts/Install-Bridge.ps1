@@ -6,7 +6,7 @@ $target = (Resolve-Path -LiteralPath $GamePath).Path.TrimEnd('\')
 if (-not (Test-Path -LiteralPath (Join-Path $target 'BongoCat.exe'))) { throw 'Choose the folder containing BongoCat.exe.' }
 if (Get-Process -Name BongoCat -ErrorAction SilentlyContinue) { throw 'Close Bongo Cat before installing.' }
 $manifestPath = Join-Path $target 'BongoChat-install.json'
-if (Test-Path -LiteralPath $manifestPath) { throw 'Bongo Chat is already installed. Uninstall the existing bridge first.' }
+if (Test-Path -LiteralPath $manifestPath) { throw 'Bongo Cat Chat Merger is already installed. Uninstall the existing bridge first.' }
 foreach ($name in @('winhttp.dll','version.dll','doorstop_config.ini','BepInEx\core\BepInEx.dll','MelonLoader')) {
     if (Test-Path -LiteralPath (Join-Path $target $name)) { throw "Existing mod loader detected: $name. Installation stopped to preserve it." }
 }
@@ -42,6 +42,6 @@ foreach ($file in $files) {
     New-Item -ItemType Directory -Force -Path (Split-Path -Parent $destination) | Out-Null
     Copy-Item -LiteralPath $file.source -Destination $destination
 }
-Write-Output "Bongo Chat Bridge installed: $target"
-Write-Output 'Start Bongo Cat from Steam, join a room, then run BongoChat.exe.'
+Write-Output "Bongo Cat Chat Merger bridge installed: $target"
+Write-Output 'Start Bongo Cat from Steam, join a room, then run BongoCatChatMerger.exe.'
 

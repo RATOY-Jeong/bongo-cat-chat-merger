@@ -13,6 +13,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Microsoft.Win32;
 
+[assembly: System.Reflection.AssemblyTitle("Bongo Cat Chat Merger")]
+[assembly: System.Reflection.AssemblyProduct("Bongo Cat Chat Merger")]
+[assembly: System.Reflection.AssemblyVersion("0.2.4.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.2.4.0")]
+
 namespace BongoChat
 {
     public sealed class ChatEntry
@@ -139,7 +144,7 @@ namespace BongoChat
       <Border Width='46' Height='46' Background='#FFE36B' CornerRadius='15' Margin='0,0,13,0'>
         <TextBlock Text='냥' Foreground='#41391C' FontSize='22' FontWeight='Bold' VerticalAlignment='Center' HorizontalAlignment='Center'/>
       </Border>
-      <StackPanel Grid.Column='1' VerticalAlignment='Center'><TextBlock Text='BONGO CHAT' FontSize='10' FontWeight='Bold' Foreground='#8B918D' Margin='0,0,0,4'/>
+      <StackPanel Grid.Column='1' VerticalAlignment='Center'><TextBlock Text='BONGO CAT CHAT MERGER' FontSize='9' FontWeight='Bold' Foreground='#8B918D' Margin='0,0,0,4' TextTrimming='CharacterEllipsis' ToolTip='Bongo Cat Chat Merger'/>
         <TextBlock x:Name='RoomTitle' Text='봉고캣 채팅방' FontSize='18' FontWeight='SemiBold' Foreground='#263A46' TextTrimming='CharacterEllipsis'/>
         <TextBlock x:Name='RoomInfo' Text='같은 방의 대화를 한곳에' Foreground='#84909A' FontSize='11' Margin='0,5,0,0'/>
       </StackPanel>
@@ -191,7 +196,7 @@ namespace BongoChat
         public ChatWindow(bool demonstration, string folderOverride = null, bool? darkOverride = null)
         {
             demo = demonstration;
-            Title = "Bongo Chat";
+            Title = "Bongo Cat Chat Merger";
             Width = 510; Height = 790; MinWidth = 420; MinHeight = 560;
             FontFamily = new FontFamily("Malgun Gothic");
             FontSize = 13;
@@ -238,7 +243,7 @@ namespace BongoChat
         private SolidColorBrush Brush(string color) { return RawBrush(ThemeColor(color)); }
         private void ShowContactAddress()
         {
-            MessageBox.Show(this, "메일 앱을 열지 못했어요. 아래 주소로 문의해 주세요.\n\nparabellum0208@gmail.com", "Bongo Chat 문의");
+            MessageBox.Show(this, "메일 앱을 열지 못했어요. 아래 주소로 문의해 주세요.\n\nparabellum0208@gmail.com", "Bongo Cat Chat Merger 문의");
         }
         private string BridgeFolder { get { return Path.Combine(gamePath, "BepInEx", "BongoChat"); } }
         private void FindGame()
@@ -417,12 +422,12 @@ namespace BongoChat
 
         private void Export()
         {
-            if (entries.Count == 0) { MessageBox.Show(this, "저장할 대화가 아직 없어요.", "Bongo Chat"); return; }
+            if (entries.Count == 0) { MessageBox.Show(this, "저장할 대화가 아직 없어요.", "Bongo Cat Chat Merger"); return; }
             var save = new SaveFileDialog { Title = "현재 방의 최근 대화 저장", Filter = "텍스트 파일|*.txt", FileName = "봉고캣-대화-" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".txt" };
             if (save.ShowDialog(this) != true) return;
             try
             {
-                var text = new StringBuilder("Bongo Chat · " + roomTitle.Text + "\r\n");
+                var text = new StringBuilder("Bongo Cat Chat Merger · " + roomTitle.Text + "\r\n");
                 if (demo) text.AppendLine("[미리보기 데이터]");
                 text.AppendLine("최근 " + entries.Count + "개 메시지\r\n");
                 foreach (ChatEntry entry in entries)
@@ -477,7 +482,7 @@ namespace BongoChat
             catch (Exception ex)
             {
                 File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "error.log"), ex.ToString());
-                if (!args.Contains("--preview")) MessageBox.Show(ex.ToString(), "Bongo Chat 오류");
+                if (!args.Contains("--preview")) MessageBox.Show(ex.ToString(), "Bongo Cat Chat Merger 오류");
                 return 1;
             }
         }
