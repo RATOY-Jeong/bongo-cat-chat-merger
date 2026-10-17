@@ -6,7 +6,7 @@ Steam **Bongo Cat** 방 대화를 말풍선으로 모아 보여주는 Windows �
 
 ## 다운로드와 실행
 
-[최신 테스트 버전 다운로드](https://github.com/RATOY-Jeong/bongo-chat/releases/latest)에서 `BongoChat-0.2.2.zip`을 받으세요. GitHub의 `Source code` ZIP은 실행용 패키지가 아닙니다.
+[최신 테스트 버전 다운로드](https://github.com/RATOY-Jeong/bongo-chat/releases/latest)에서 `BongoChat-0.2.3.zip`을 받으세요. GitHub의 `Source code` ZIP은 실행용 패키지가 아닙니다.
 
 1. ZIP을 압축 해제하고 봉고캣을 완전히 종료합니다.
 2. `Install.cmd`를 실행합니다. 게임 폴더를 자동으로 찾으며, 필요하면 `BongoCat.exe`를 선택합니다.
@@ -16,6 +16,10 @@ Steam **Bongo Cat** 방 대화를 말풍선으로 모아 보여주는 Windows �
 상대방은 설치하지 않아도 됩니다. 제거는 실행용 ZIP의 `Uninstall.cmd`를 실행합니다.
 
 기존 0.1·0.1.1 사용자: 봉고캣과 봉고챗을 종료하고 이전 패키지의 `Uninstall.cmd`를 실행한 다음, 새 0.2.2 패키지의 `Install.cmd`를 실행하세요. 이후 새 패키지의 `BongoChat.exe`를 사용합니다. 기존 대화 기록은 보존됩니다.
+
+## 0.2.3 문의 이메일
+
+앱 하단과 사용 안내에 문의·버그 제보 이메일을 추가했습니다. 앱에서 주소를 누르면 기본 메일 앱의 작성 창이 열립니다. 0.2.2 사용자는 봉고챗만 종료하고 새 `BongoChat.exe`를 기존 실행파일에 덮어쓰면 됩니다. 게임과 연결 플러그인은 그대로 사용합니다.
 
 ## 0.2.2 재실행 연결 수정·재연결
 
@@ -78,6 +82,8 @@ licenses/       외부 구성요소의 라이선스와 출처
 소스에서 설치하려면 빌드 후 `./scripts/Install-Bridge.ps1`을 실행합니다. 별도로 압축 해제한 실행용 패키지를 쓰는 경우에는 `-PackagePath`로 그 폴더를 지정할 수 있습니다.
 
 ## 안내
+
+문의·버그 제보: [parabellum0208@gmail.com](mailto:parabellum0208@gmail.com)
 
 - [사용 방법과 기록 위치](docs/USER-GUIDE.md)
 - [검사 결과](docs/VALIDATION.md)

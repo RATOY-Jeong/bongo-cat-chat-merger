@@ -7,6 +7,7 @@ using System.Text;
 using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -182,6 +183,7 @@ namespace BongoChat
         </StackPanel>
       </Grid>
       <TextBlock x:Name='ResultText' Text='내 PC에 기록 · 최근 500개 표시' FontSize='10' Foreground='#9AA5AC' Margin='0,12,0,0'/>
+      <TextBlock FontSize='10' Margin='0,7,0,0' Foreground='#718795' TextWrapping='Wrap'>문의 · <Hyperlink x:Name='ContactEmail' NavigateUri='mailto:parabellum0208@gmail.com' Foreground='#718795' ToolTip='기본 메일 앱에서 문의 메일 작성'>parabellum0208@gmail.com</Hyperlink></TextBlock>
     </StackPanel>
   </Border>
 </Grid>";
@@ -212,6 +214,12 @@ namespace BongoChat
             ((Slider)root.FindName("OpacityControl")).ValueChanged += delegate(object sender, RoutedPropertyChangedEventArgs<double> args) { Opacity = args.NewValue; };
             ((Button)root.FindName("Choose")).Click += delegate { ChooseGame(); };
             ((Button)root.FindName("Export")).Click += delegate { Export(); };
+            ((Hyperlink)root.FindName("ContactEmail")).Click += delegate
+            {
+                try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("mailto:parabellum0208@gmail.com") { UseShellExecute = true }); }
+                catch (System.ComponentModel.Win32Exception) { ShowContactAddress(); }
+                catch (InvalidOperationException) { ShowContactAddress(); }
+            };
             InitializeComposerAndTheme(root);
             InitializeReconnect(root);
             if (demo) LoadDemo();
@@ -228,6 +236,10 @@ namespace BongoChat
         }
 
         private SolidColorBrush Brush(string color) { return RawBrush(ThemeColor(color)); }
+        private void ShowContactAddress()
+        {
+            MessageBox.Show(this, "메일 앱을 열지 못했어요. 아래 주소로 문의해 주세요.\n\nparabellum0208@gmail.com", "Bongo Chat 문의");
+        }
         private string BridgeFolder { get { return Path.Combine(gamePath, "BepInEx", "BongoChat"); } }
         private void FindGame()
         {
