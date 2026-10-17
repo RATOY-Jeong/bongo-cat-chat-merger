@@ -1,101 +1,67 @@
 # Bongo Cat Chat Merger
 
-Steam **Bongo Cat** 방 대화를 말풍선으로 모아 보여주는 Windows 보조 앱입니다. C# / WPF 채팅창과 BepInEx 연결 플러그인으로 구성합니다.
+**English** · [한국어](README.ko.md) · [日本語](README.ja.md)
 
-![화면 미리보기](docs/assets/preview.png)
+A lightweight Windows companion that collects chat from your current **Steam Bongo Cat** room in one window. Built with C# / WPF and a BepInEx bridge. Other players do not need to install it.
 
-## 다운로드와 실행
+![English preview](docs/assets/preview.png)
 
-[최신 테스트 버전 다운로드](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/latest)에서 `BongoCatChatMerger-0.2.4.zip`을 받으세요. GitHub의 `Source code` ZIP은 실행용 패키지가 아닙니다.
+## Download and install
 
-1. ZIP을 압축 해제하고 봉고캣을 완전히 종료합니다.
-2. `Install.cmd`를 실행합니다. 게임 폴더를 자동으로 찾으며, 필요하면 `BongoCat.exe`를 선택합니다.
-3. Steam에서 봉고캣을 다시 켜고 방에 들어갑니다.
-4. `BongoCatChatMerger.exe`를 실행합니다. 채팅은 Bongo Cat Chat Merger 하단 입력창에서도 보낼 수 있습니다. Enter 전송, Shift+Enter 줄바꿈입니다.
+Download **BongoCatChatMerger-0.3.0.zip** from [Releases](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/latest). The automatically generated **Source code** archives are not ready-to-run packages. Requires Windows x64 and .NET Framework 4.x.
 
-상대방은 설치하지 않아도 됩니다. 제거는 실행용 ZIP의 `Uninstall.cmd`를 실행합니다.
+1. Extract the ZIP and fully close Bongo Cat.
+2. Run `Install.cmd`. It finds the Steam game folder, or asks you to select `BongoCat.exe`.
+3. Start Bongo Cat from your Steam library and join a room.
+4. Run `BongoCatChatMerger.exe`, choose your language, and continue to chat.
 
-기존 0.1·0.1.1 사용자: 봉고캣과 Bongo Cat Chat Merger을 종료하고 이전 패키지의 `Uninstall.cmd`를 실행한 다음, 새 0.2.4 패키지의 `Install.cmd`를 실행하세요. 이후 새 패키지의 `BongoCatChatMerger.exe`를 사용합니다. 기존 대화 기록은 보존됩니다.
+The installer stops if it detects an existing mod loader. Do not overwrite another loader. `Uninstall.cmd` removes only files listed in the installation manifest; recorded conversations are preserved.
 
-## 0.2.4 이름 변경
+## Languages — new in 0.3.0
 
-프로그램과 저장소 이름을 **Bongo Cat Chat Merger**로 통일했습니다. 창 제목·상단 로고 글자·오류 및 저장 안내·실행파일 이름을 변경했으며, 문의 이메일도 포함합니다.
+- On first launch, choose **English / 한국어 / 日本語**. Subsequent launches open the chat window directly.
+- Change language using the dropdown in the top right. Selection is saved as `language.txt` beside the EXE. A missing or invalid preference opens the language picker again.
+- Buttons, connection/error notices, date/time display, and export labels follow your selection. Chat messages, player names, room names, and emote names supplied by the game stay in their original language.
+- Switching language keeps your draft, search, history, pending send request, and reconnect attempt. It never resends a message.
+- Read these GitHub instructions in any of the three languages using the links above.
 
-0.2.2·0.2.3 사용자는 앱만 종료한 뒤 새 ZIP의 `BongoCatChatMerger.exe`를 기존 앱 폴더에 복사해 실행하세요. 기존 `BongoChat.exe` 대신 새 파일을 실행하고 바로가기도 새 파일로 바꾸세요. 같은 폴더를 사용하면 테마·항상 위·이모티콘 표시·게임 경로 설정이 유지됩니다. 게임 재시작이나 플러그인 재설치는 필요 없습니다.
+## Updating
 
-기존 기록과 연결 호환성을 위해 `BongoChatBridge.dll`, 게임 안의 `BepInEx\BongoChat` 폴더와 설치 목록 이름은 유지합니다.
+**From 0.2.2–0.2.4:** Close the companion and copy the new `BongoCatChatMerger.exe` into your existing app folder. Use this file and update any shortcut pointing to `BongoChat.exe`. Keeping the same folder preserves theme, always-on-top, emote visibility, and game-path preferences. No game restart or bridge reinstall is required.
 
-## 0.2.3 문의 이메일
+**From 0.2.1 or earlier:** Close game and companion, run the old package's `Uninstall.cmd`, then the new package's `Install.cmd`, and use the new EXE. Records are preserved. If Steam was already running with a failed connection, fully exit and restart it once.
 
-앱 하단과 사용 안내에 문의·버그 제보 이메일을 추가했습니다. 앱에서 주소를 누르면 기본 메일 앱의 작성 창이 열립니다. 0.2.3에서 문의처를 추가했으며 0.2.4에도 포함됩니다. 업데이트는 위 이름 변경 안내를 따르세요.
+The bridge remains the verified **0.2.2** binary. `BongoChatBridge.dll`, the installation manifest name, and `BepInEx\BongoChat` paths retain their names for compatibility.
 
-## 0.2.2 재실행 연결 수정·재연결
+## Features
 
-게임이 Steam을 시작할 때 로더의 두 실행 상태값을 함께 정리하도록 수정했습니다. 연결 상태 오른쪽 **재연결** 버튼은 경로·최근 기록·상태 신호를 다시 읽고 최대 12초 동안 새 연결을 확인합니다. 초안과 기록은 유지하고 전송 중이던 메시지는 자동으로 다시 보내지 않습니다.
+- Send chat from the bottom input: **Enter** to send, **Shift+Enter** for a new line. Active IME composition is completed before sending. Messages use the game's existing chat filter and send function.
+- Display emotes fired in the game with their original images. **Show emotes** hides their bubbles without deleting records or excluding them from exports.
+- Dark/light themes, always-on-top, opacity, message/name search, and text export of the current room's most recent 500 messages.
+- **Reconnect** rechecks the game folder, recent records, and connection heartbeat for up to 12 seconds. It keeps drafts and records, cancels uncertain sends, and never replays them. It cannot load a missing bridge into a running game; follow the restart instructions if needed.
+- The bridge fixes inherited loader flags when the game starts Steam and restarts. Version 0.2.2 was verified on game build **25936063** through that startup path. Future game updates work while the internal chat methods and data format remain compatible; structural changes can require an app update.
 
-**이번 버전은 플러그인도 교체해야 합니다.** 봉고캣·Bongo Cat Chat Merger 종료 → 이전 패키지의 `Uninstall.cmd` → 새 패키지의 `Install.cmd` 순서로 설치하고 새 실행파일을 사용하세요. 이미 이전 실행 상태가 남은 Steam은 한 번 완전히 종료 후 실행합니다.
+## Records and privacy
 
-## 0.2.1 이모티콘 표시 옵션
+Only messages received after installation are recorded; earlier server conversations cannot be restored. Records include room IDs, Steam IDs, names, message content, and timestamps. Review them before sharing.
 
-상단 **이모티콘 표시**로 이모티콘 말풍선을 숨기거나 다시 표시합니다. 선택은 다음 실행에도 유지됩니다. 일반 채팅과 원본 기록·대화 저장은 유지됩니다.
+- Conversations: game folder `BepInEx\BongoChat\room_<room ID>.jsonl`
+- Connection state: `BepInEx\BongoChat\state.json`
+- Emote cache: `BepInEx\BongoChat\emotes`
+- Local send requests/results: `BepInEx\BongoChat\commands`
 
-0.2 → 0.2.1 당시에는 앱만 교체했습니다. 0.2.2 업데이트는 위 안내에 따라 플러그인도 교체하세요.
+The companion reads the most recent 2 MB and displays up to 500 messages; the full local journal remains on disk. Recording continues while the game runs, even if the companion is closed. This app does not send conversations to a separate server. Release packages contain no real chat journals, personal preferences, or cached game emotes. Nickname initials are used as avatars; Steam profile photos are not included.
 
-## 0.2 기능
+## Troubleshooting and verification
 
-다크모드, 게임 이모티콘 표시, 프로그램 안에서 직접 채팅 전송을 추가했습니다. 게임에 참여 중인 같은 방으로 보내며, 기존 게임의 필터·말풍선 처리를 거칩니다. 연결이 바뀌면 남아 있던 전송 요청은 취소하고 초안은 보존합니다. 게임 창에 가려지지 않도록 항상 위를 기본으로 켜고 사용자의 선택을 다음 실행에도 유지합니다.
+If disconnected, confirm the game is running in a room and try **Reconnect**. If needed, close Bongo Cat and launch it from Steam. If the problem continues, fully exit Steam too and restart both. Technical details are in `BepInEx\LogOutput.log` and the state file above. Game updates can require a compatibility fix.
 
-상단 **이모티콘 표시**로 이모티콘 말풍선을 숨기거나 다시 표시할 수 있습니다. 선택은 다음 실행에도 유지되며, 원본 기록과 대화 저장에는 영향을 주지 않습니다.
+Version 0.3.0 passed the app build, **25 localization checks**, and **33 existing feature/reconnect checks**. Three languages were rendered in dark/light themes. Fresh user confirmation of live game sends for 0.3.0 is still pending. [Detailed validation notes (Korean)](docs/VALIDATION.md).
 
-## 0.1.1 수정 이력
+## Source and licenses
 
+`src/app` contains the WPF app, `src/bridge` the game bridge, `src/shared` the send protocol, `scripts` build/install scripts, and `docs` usage/validation notes and screenshots. Copy `runtime` from a release package into the source root, then run `./scripts/Build.ps1` in Windows PowerShell; optional `-GamePath` selects the game installation. Output is in `build/`. The compiler uses installed game assemblies; those assemblies are not redistributed.
 
-부팅 후 게임이 Steam을 실행하고 다시 시작되는 과정에서 연결 플러그인이 로드되지 않던 문제를 수정했습니다. 게임의 초기화 표시가 Steam에 상속되지 않도록 처리합니다.
+The package includes BepInEx 5.4.23.5, Doorstop, HarmonyX and Windows Mono libraries. See [third-party notices and licenses](licenses/THIRD-PARTY-NOTICES.md). This is an unofficial companion.
 
-캐릭터 클릭 시 야옹 문구를 불러오지 못해 말풍선이 사라지지 않고 채팅 입력을 막던 문제도 수정했습니다. 말풍선 종료 후 채팅 입력·전송까지 확인했습니다.
-
-이 수정은 0.2에도 포함됩니다.
-
-연결이 계속 끊긴 상태라면 봉고캣과 Steam을 완전히 종료한 뒤 Steam을 먼저 켜고 라이브러리에서 봉고캣을 실행하세요.
-
-수정본은 Bongo Cat 빌드 25902419에서 플러그인 로드와 실제 방 메시지 수신을 확인했습니다. Windows 재부팅 후 자동 시작 경로 검사는 아직 수행하지 않았습니다.
-
-## 게임 업데이트 후 사용
-
-게임 버전 번호로 연결을 제한하지 않습니다. 기존 채팅 함수와 데이터 형식이 유지되면 게임 업데이트 후에도 기존 Bongo Cat Chat Merger을 사용할 수 있습니다. 게임 내부 연결 방식이나 Unity 실행 환경이 바뀌면 Bongo Cat Chat Merger 수정이 필요할 수 있습니다. 0.2.2는 게임 빌드 25936063에서 Steam 자동 시작·게임 재실행 후 연결과 재연결 동작을 확인했습니다.
-
-## 저장소 구조
-
-```text
-src/
-  app/          Windows 채팅창
-  bridge/       채팅·이모티콘 수신과 전송 연결
-  shared/       전송 요청 형식·검증
-scripts/        빌드·설치·제거 스크립트
-docs/          사용 안내·검사 결과
-  assets/       화면 미리보기
-licenses/       외부 구성요소의 라이선스와 출처
-```
-
-## 빌드
-
-실행용 ZIP의 `runtime` 폴더를 저장소 루트에 복사하고 Windows PowerShell에서 실행합니다.
-
-```powershell
-./scripts/Build.ps1
-```
-
-설치된 게임의 어셈블리와 .NET Framework C# 컴파일러를 사용하며, 결과는 `build/`에 생성됩니다. 게임 위치를 직접 지정하려면 `-GamePath`를 사용하세요.
-
-소스에서 설치하려면 빌드 후 `./scripts/Install-Bridge.ps1`을 실행합니다. 별도로 압축 해제한 실행용 패키지를 쓰는 경우에는 `-PackagePath`로 그 폴더를 지정할 수 있습니다.
-
-## 안내
-
-문의·버그 제보: [parabellum0208@gmail.com](mailto:parabellum0208@gmail.com)
-
-- [사용 방법과 기록 위치](docs/USER-GUIDE.md)
-- [검사 결과](docs/VALIDATION.md)
-- [포함 구성요소와 라이선스](licenses/THIRD-PARTY-NOTICES.md)
-
-초기 테스트 버전입니다. Windows x64 및 Bongo Cat 빌드 25723683 및 25902419에서 실제 방 메시지 기록을 확인했습니다. 기존 모드 로더가 있으면 자동 설치를 중단합니다. 설치 전 대화 복구는 지원하지 않습니다. 비공식 보조 앱입니다.
-
+Contact / bug reports: [parabellum0208@gmail.com](mailto:parabellum0208@gmail.com)

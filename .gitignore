@@ -10,6 +10,7 @@ game-path.txt
 appearance.txt
 always-on-top.txt
 show-emotes.txt
+language.txt
 commands/
 emotes/
 state.json
