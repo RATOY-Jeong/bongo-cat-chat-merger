@@ -2,6 +2,8 @@
 
 **English** · [한국어](README.ko.md) · [日本語](README.ja.md)
 
+**Testing 0.4.2-rc1:** [prerelease EXE](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.2-rc1/BongoCatChatMerger-0.4.2-rc1.exe) and [changes / diagnostic steps](docs/RELIABILITY-0.4.2.md). Adds send-result recovery, background file communication and actual window transparency. The tablet-related whole-window freeze is still under investigation; 0.4.1 remains the latest stable release.
+
 A lightweight Windows companion for your Steam Bongo Cat room: live chat, direct sending, original emote images, local history/search, and English/Korean/Japanese UI.
 
 ![English preview](docs/assets/preview.png)

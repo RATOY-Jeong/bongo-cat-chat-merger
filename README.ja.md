@@ -2,6 +2,8 @@
 
 [English](README.md) · [한국어](README.ko.md) · **日本語**
 
+**0.4.2-rc1 検証用:** [EXEをダウンロード](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.2-rc1/BongoCatChatMerger-0.4.2-rc1.exe) · [変更点と診断手順](docs/RELIABILITY-0.4.2.md)。送信結果の復旧、バックグラウンド通信、実際の透明度を追加しました。タブレット環境のウィンドウ全体フリーズは引き続き調査中です。最新安定版は0.4.1です。
+
 Steam Bongo Catの同じルームの会話をまとめる軽量なWindows用アプリです。直接送信、ゲームの絵文字画像、ローカル記録・検索、英語・韓国語・日本語UIに対応しています。
 
 ![日本語プレビュー](docs/assets/preview-ja.png)
