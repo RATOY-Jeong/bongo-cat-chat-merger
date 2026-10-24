@@ -55,8 +55,10 @@ Steam 봉고캣의 같은 방 대화를 한곳에 모아 보여주는 Windows �
 
 전체 ZIP에는 runtime·소스·스크립트·라이선스·문서가 있습니다. Windows PowerShell에서 <code>./scripts/Build.ps1</code>로 빌드합니다. <code>-GamePath</code>는 게임 경로, <code>-BridgeBinary</code>는 이미 검증된 플러그인 파일을 지정합니다. 빌드 후 <code>./scripts/Check.ps1</code>로 검사할 수 있습니다. 게임 원본 어셈블리는 재배포하지 않습니다.
 
-자동 설치 46개·기존 기능/언어/재연결 58개, **총 104개 검사**를 통과했습니다. 게임 설치를 흉내 낸 격리 환경에서 단일 EXE만으로 설치·실행까지 확인했습니다. 실제 관리자 권한 창과 새 사용자의 실제 게임 연결은 추가 사용자 확인이 필요합니다. [검증 기록](docs/VALIDATION.md).
+자동 설치 51개·기존 기능/언어/재연결 58개, **총 109개 검사**를 통과했습니다. 게임 설치를 흉내 낸 격리 환경에서 단일 EXE만으로 설치·실행까지 확인했습니다. 실제 관리자 권한 창과 새 사용자의 실제 게임 연결은 추가 사용자 확인이 필요합니다. [검증 기록](docs/VALIDATION.md).
 
 게임 플러그인을 제거하려면 봉고캣을 닫고 전체 ZIP의 <code>Uninstall.cmd</code>를 실행합니다. 대화 기록과 외부에서 변경된 파일은 보존합니다. 앱은 시스템 서비스 대신 사용자별 폴더와 바로가기를 사용합니다.
 
 비공식 보조 앱입니다. [외부 구성요소·라이선스](licenses/THIRD-PARTY-NOTICES.md). 문의·버그 제보: [parabellum0208@gmail.com](mailto:parabellum0208@gmail.com).
+
+Windows 10 대응을 위해 x64 빌드·Windows 10/11 실행 매니페스트·.NET Framework 4.5 기준을 명시하고, Windows 11 전용 제목 표시줄 처리는 Windows 10에서 건너뜁니다. 검사는 Windows 11(빌드 26300)에서 수행했으며 실제 Windows 10 PC 실행은 아직 확인하지 못했습니다.

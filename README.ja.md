@@ -53,8 +53,10 @@ Steam Bongo Catの同じルームの会話をまとめる軽量なWindows用ア�
 
 完全版ZIPにはruntime、ソース、スクリプト、ライセンス、文書を含みます。Windows PowerShellの <code>./scripts/Build.ps1</code> でビルドし、<code>-GamePath</code> でゲームを指定できます。検証済みプラグインの再利用は <code>-BridgeBinary</code>、検査はビルド後の <code>./scripts/Check.ps1</code> です。ゲーム本体のアセンブリは再配布しません。
 
-自動設定46項目と既存機能・言語・再接続58項目、**合計104項目**の検査を通過しました。隔離されたゲーム模擬環境で単一EXEだけの設定・起動を確認しています。実際の管理者許可画面と新規ユーザーのゲーム接続は追加の確認が必要です。[検証記録（韓国語）](docs/VALIDATION.md)。
+自動設定51項目と既存機能・言語・再接続58項目、**合計109項目**の検査を通過しました。隔離されたゲーム模擬環境で単一EXEだけの設定・起動を確認しています。実際の管理者許可画面と新規ユーザーのゲーム接続は追加の確認が必要です。[検証記録（韓国語）](docs/VALIDATION.md)。
 
 ゲームの接続プラグインを削除する場合は、Bongo Catを終了して完全版ZIPの <code>Uninstall.cmd</code> を実行してください。記録と外部で変更されたファイルは保持します。アプリ本体はシステムサービスではなくユーザー別フォルダーとショートカットを使用します。
 
 非公式の補助アプリです。[外部コンポーネントとライセンス](licenses/THIRD-PARTY-NOTICES.md)。お問い合わせ: [parabellum0208@gmail.com](mailto:parabellum0208@gmail.com)。
+
+Windows 10向けにx64ビルド、Windows 10/11アプリケーションマニフェスト、.NET Framework 4.5基準を明示し、Windows 11専用のタイトルバー処理はWindows 10では呼び出しません。検証環境はWindows 11（ビルド26300）です。Windows 10実機での動作確認は未実施です。

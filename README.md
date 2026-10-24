@@ -53,8 +53,10 @@ Future game updates work only while the relevant internal APIs remain compatible
 
 The full ZIP includes <code>runtime</code>, source, scripts, licenses and docs. Build with <code>./scripts/Build.ps1</code> in Windows PowerShell; optional <code>-GamePath</code> selects a game installation. For release reproduction, <code>-BridgeBinary</code> reuses an already verified bridge. Run <code>./scripts/Check.ps1</code> after building. Original game assemblies are not redistributed.
 
-0.4.0 passed **46 automatic setup checks + 58 feature/language/reconnect checks**. Tests use isolated game fixtures, including a single-EXE-only setup and a game-launch simulator. Actual administrator prompts and a fresh user's live-game setup still need user confirmation. [Detailed validation notes (Korean)](docs/VALIDATION.md).
+0.4.0 passed **51 automatic setup checks + 58 feature/language/reconnect checks**. Tests use isolated game fixtures, including a single-EXE-only setup and a game-launch simulator. Actual administrator prompts and a fresh user's live-game setup still need user confirmation. [Detailed validation notes (Korean)](docs/VALIDATION.md).
 
 To remove the game bridge, close Bongo Cat and run <code>Uninstall.cmd</code> from the full ZIP. It preserves journals and modified files. The companion itself uses a per-user app folder and shortcuts rather than a system service.
 
 This is an unofficial companion. See [third-party notices and licenses](licenses/THIRD-PARTY-NOTICES.md). Contact: [parabellum0208@gmail.com](mailto:parabellum0208@gmail.com).
+
+Windows 10 compatibility is targeted through an explicit x64 build, Windows 10/11 application manifest and .NET Framework 4.5 baseline. Windows 11-only title-bar styling is skipped on Windows 10. Checks ran on Windows 11 (build 26300); execution on an actual Windows 10 PC has not yet been verified.
