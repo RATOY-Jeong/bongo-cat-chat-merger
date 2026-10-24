@@ -6,9 +6,9 @@ Steam 봉고캣의 같은 방 대화를 한곳에 모아 보여주는 Windows �
 
 ![한국어 미리보기](assets/preview-ko.png)
 
-## 다운로드와 실행 — 0.4.0
+## 다운로드와 실행 — 0.4.1
 
-**[BongoCatChatMerger-0.4.0.exe 받기](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.0/BongoCatChatMerger-0.4.0.exe)** → **실행**하면 됩니다.
+**[BongoCatChatMerger-0.4.1.exe 받기](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.1/BongoCatChatMerger-0.4.1.exe)** → **실행**하면 됩니다.
 
 이 실행파일 하나에 연결에 필요한 파일이 모두 들어 있습니다. **압축 해제·게임 폴더 찾기·Install.cmd 실행은 필요 없습니다.**
 
@@ -43,6 +43,12 @@ Steam 봉고캣의 같은 방 대화를 한곳에 모아 보여주는 Windows �
 - 상단 드롭다운에서 English / 한국어 / 日本語를 바꿉니다. 실제 메시지·닉네임·방 이름·게임의 이모티콘 이름은 원문을 유지합니다.
 - 언어를 바꿔도 초안과 전송 대기는 유지합니다. 재연결은 불확실한 요청을 취소하며 자동 재전송하지 않습니다.
 
+## 펜 타블렛 호환성 — 0.4.1
+
+다른 창에서 타블렛을 사용하는 중 봉고챗이 멈춘다는 보고에 대응해, 첫 창을 만들기 전에 봉고챗 안의 WPF 펜·터치 전용 처리를 끄도록 했습니다. 봉고챗은 일반 마우스·문자 입력을 사용하며 필압·잉크·터치 제스처 기능은 사용하지 않습니다. 다른 앱이나 타블렛 드라이버의 Windows Ink 설정은 바꾸지 않습니다.
+
+WPF의 알려진 펜 처리 멈춤 경로를 완화하는 수정이며, 모든 휴이온 증상의 원인이 확정된 것은 아닙니다. 이 처리는 .NET Framework 4.7 이상에서 지원합니다. 더 오래된 환경에서도 앱은 실행하지만 완화 처리가 적용되지 않을 수 있습니다. 기존 봉고챗을 완전히 닫고 새 EXE를 실행한 뒤, 평소 그림 앱에서 펜을 사용해 보세요. **휴이온 실물 장비에서의 증상 해소는 아직 확인 전입니다.** [설명과 확인 순서](TABLET-COMPATIBILITY.md).
+
 ## 기록과 개인정보
 
 상대방은 설치하지 않아도 됩니다. 설치 후 실제 수신한 대화만 기록하며 과거 서버 대화는 복원하지 않습니다. 앱을 닫아도 게임이 켜져 있으면 플러그인이 계속 기록합니다.
@@ -55,10 +61,10 @@ Steam 봉고캣의 같은 방 대화를 한곳에 모아 보여주는 Windows �
 
 전체 ZIP에는 runtime·소스·스크립트·라이선스·문서가 있습니다. Windows PowerShell에서 <code>./scripts/Build.ps1</code>로 빌드합니다. <code>-GamePath</code>는 게임 경로, <code>-BridgeBinary</code>는 이미 검증된 플러그인 파일을 지정합니다. 빌드 후 <code>./scripts/Check.ps1</code>로 검사할 수 있습니다. 게임 원본 어셈블리는 재배포하지 않습니다.
 
-자동 설치 51개·기존 기능/언어/재연결 58개, **총 109개 검사**를 통과했습니다. 게임 설치를 흉내 낸 격리 환경에서 단일 EXE만으로 설치·실행까지 확인했습니다. 실제 관리자 권한 창과 새 사용자의 실제 게임 연결은 추가 사용자 확인이 필요합니다. [검증 기록](VALIDATION.md).
+자동 설치 51개·기존 기능/언어/재연결 58개·펜 호환 11개, **총 120개 검사**를 통과했습니다. 게임 설치를 흉내 낸 격리 환경에서 단일 EXE만으로 설치·실행까지 확인했습니다. 실제 관리자 권한 창과 새 사용자의 실제 게임 연결은 추가 사용자 확인이 필요합니다. [검증 기록](VALIDATION.md).
 
 게임 플러그인을 제거하려면 봉고캣을 닫고 전체 ZIP의 <code>Uninstall.cmd</code>를 실행합니다. 대화 기록과 외부에서 변경된 파일은 보존합니다. 앱은 시스템 서비스 대신 사용자별 폴더와 바로가기를 사용합니다.
 
 비공식 보조 앱입니다. [외부 구성요소·라이선스](../licenses/THIRD-PARTY-NOTICES.md). 문의·버그 제보: [parabellum0208@gmail.com](mailto:parabellum0208@gmail.com).
 
-Windows 10 대응을 위해 x64 빌드·Windows 10/11 매니페스트·.NET Framework 4.5 기준을 명시했습니다. Windows 11 전용 제목 표시줄 처리는 Windows 10에서 건너뜁니다. 검사는 Windows 11(빌드 26300)에서 수행했으며 실제 Windows 10 PC 실행은 아직 확인하지 못했습니다.
+Windows 10 대응을 위해 x64 빌드·Windows 10/11 실행 매니페스트·.NET Framework 4.5 기준을 명시하고, Windows 11 전용 제목 표시줄 처리는 Windows 10에서 건너뜁니다. 검사는 Windows 11(빌드 26300)에서 수행했으며 실제 Windows 10 PC 실행은 아직 확인하지 못했습니다.

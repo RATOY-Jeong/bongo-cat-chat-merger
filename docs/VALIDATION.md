@@ -110,3 +110,10 @@ Doorstop 4.5.0은 `DOORSTOP_DISABLE`과 `DOORSTOP_INITIALIZED`를 모두 설정�
 - 위 5개를 포함해 자동 설치 51개 + 기존 58개 = 총 109개가 통과했습니다. tests/SetupTests.cs 및 scripts/Check.ps1에 재현 절차가 있습니다.
 - 실행 검증 환경: Windows 11 10.0.26300.0. Windows 10 실제 PC/VM 실행 검증은 하지 않았습니다.
 - Microsoft 기준: https://learn.microsoft.com/en-us/dotnet/framework/install/versions-and-dependencies 및 https://learn.microsoft.com/en-us/windows/win32/sbscs/application-manifests
+## 0.4.1 펜 타블렛 호환 완화
+- WPF 창/언어 선택창 생성 전에 앱 내부 stylus/touch opt-out을 요청합니다. 초기화 메서드를 별도로 나누어 WPF가 먼저 초기화되지 않도록 했습니다.
+- 실제 Program.Main 진입점의 미리보기 렌더링, WPF의 IsStylusAndTouchSupportEnabled=false와 CurrentStylusLogic=null, 장치 조회 후 미생성 상태, 세 언어 창·문자 입력 및 별도 프로세스 상태 보존을 검사했습니다.
+- 기존 109개 + 새 펜 호환 11개 = 총 120개 검사 통과. tests/TabletCompatibilityTests.cs와 scripts/Check.ps1로 재현합니다.
+- 연결 도우미의 진단 복사에 입력 호환 설정 상태를 추가했습니다. 드라이버·시스템 설정을 변경하지 않으며 검증된 브리지 0.2.2 바이너리를 유지합니다.
+- .NET Framework 4.7 이상에서 지원하는 Microsoft WPF 스위치입니다. 구형 런타임에서는 시작을 막지 않지만 완화 효과가 없을 수 있습니다.
+- Windows 11 빌드 26300에서 검사했습니다. 휴이온 실물 장비 및 실제 보고 PC의 멈춤 해소는 아직 확인되지 않았습니다. 자세한 절차는 TABLET-COMPATIBILITY.md를 참고하세요.
