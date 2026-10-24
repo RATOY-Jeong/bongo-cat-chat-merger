@@ -2,15 +2,14 @@
 
 **English** · [한국어](README.ko.md) · [日本語](README.ja.md)
 
-**Testing 0.4.2-rc1:** [prerelease EXE](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.2-rc1/BongoCatChatMerger-0.4.2-rc1.exe) and [changes / diagnostic steps](docs/RELIABILITY-0.4.2.md). Adds send-result recovery, background file communication and actual window transparency. The tablet-related whole-window freeze is still under investigation; 0.4.1 remains the latest stable release.
 
 A lightweight Windows companion for your Steam Bongo Cat room: live chat, direct sending, original emote images, local history/search, and English/Korean/Japanese UI.
 
 ![English preview](docs/assets/preview.png)
 
-## Download and start — 0.4.1
+## Download and start — 0.4.2
 
-**[Download BongoCatChatMerger-0.4.1.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.1/BongoCatChatMerger-0.4.1.exe)** and run it. This single file includes everything required for connection setup. You do not need to extract a ZIP, find a game folder, or run Install.cmd.
+**[Download BongoCatChatMerger-0.4.2.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.2/BongoCatChatMerger-0.4.2.exe)** and run it. This single file includes everything required for connection setup. You do not need to extract a ZIP, find a game folder, or run Install.cmd.
 
 1. Run the EXE and choose your language on first launch.
 2. The app finds Bongo Cat and prepares the connection automatically. If the game must restart, click **Set up & restart game**. If Windows requests permission, approve the prompt to allow the required game-folder files to be installed.
@@ -32,6 +31,8 @@ A shortcut named **Bongo Cat Chat Merger** is created on the desktop and in the 
 
 Close your old companion, then run the new EXE. Updates are **manual**. The app does not download or execute updates from a server.
 
+The app checks public GitHub full-release metadata **once when it starts** and when you click **Check updates**. It does not run periodic update checks. A ready newer EXE shows **A new update is available!** and a **Download page** button. The button opens that release in your browser; the app never downloads or installs the file itself. Drafts and prereleases are excluded. Offline and rate-limit errors do not interrupt chat. [Update check details](docs/UPDATES.md).
+
 The app stores its managed copy, settings, and diagnostic logs under <code>%LOCALAPPDATA%\BongoCatChatMerger</code>. Existing preferences beside the downloaded EXE are imported once without replacing choices already stored there. If your old EXE is in another folder, language/theme may need to be selected again; game conversation records stay in the game folder.
 
 The verified bridge **0.2.2** binary and its protocol are unchanged. An installed compatible bridge does not need to be reinstalled. If an older owned installation needs repair, the helper checks its ownership manifest and keeps backups of replaced files.
@@ -43,7 +44,7 @@ The verified bridge **0.2.2** binary and its protocol are unchanged. An installe
 - Select English / 한국어 / 日本語 from the dropdown. Messages, player/room names and game emote names keep their original text.
 - Changing language keeps drafts and pending requests. Reconnecting cancels uncertain requests without replaying them.
 
-## Pen tablet compatibility — 0.4.1
+## Pen tablet compatibility — 0.4.2
 
 For reports of the chat window freezing while a pen tablet is used elsewhere, the app now requests WPF's process-local stylus/touch opt-out before the first window is created. Chat uses ordinary mouse/text input; raw pressure, ink and touch gestures are not used in this window. Other applications and the tablet driver's Windows Ink settings are not changed.
 
@@ -61,7 +62,7 @@ Future game updates work only while the relevant internal APIs remain compatible
 
 The full ZIP includes <code>runtime</code>, source, scripts, licenses and docs. Build with <code>./scripts/Build.ps1</code> in Windows PowerShell; optional <code>-GamePath</code> selects a game installation. For release reproduction, <code>-BridgeBinary</code> reuses an already verified bridge. Run <code>./scripts/Check.ps1</code> after building. Original game assemblies are not redistributed.
 
-0.4.1 passed **51 automatic setup checks + 58 feature/language/reconnect checks + 11 pen compatibility checks (120 total)**. Tests use isolated game fixtures, including a single-EXE-only setup and a game-launch simulator. Actual administrator prompts and a fresh user's live-game setup still need user confirmation. [Detailed validation notes (Korean)](docs/VALIDATION.md).
+0.4.2 passed **51 setup + 58 feature/language/reconnect + 11 tablet compatibility + 28 reliability + 31 update checks (179 total)**. Tests use isolated game fixtures, including a single-EXE-only setup and a game-launch simulator. Actual administrator prompts and a fresh user's live-game setup still need user confirmation. [Detailed validation notes (Korean)](docs/VALIDATION.md).
 
 To remove the game bridge, close Bongo Cat and run <code>Uninstall.cmd</code> from the full ZIP. It preserves journals and modified files. The companion itself uses a per-user app folder and shortcuts rather than a system service.
 
