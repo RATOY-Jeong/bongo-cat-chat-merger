@@ -1,0 +1,2 @@
+using System;using System.IO;
+class Fixture { [STAThread] static void Main(){File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"launch.txt"),Directory.GetCurrentDirectory()+"\n"+Environment.GetEnvironmentVariable("DOORSTOP_DISABLE")+"\n"+Environment.GetEnvironmentVariable("DOORSTOP_INITIALIZED"));} }
