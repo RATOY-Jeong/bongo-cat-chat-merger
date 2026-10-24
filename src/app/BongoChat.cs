@@ -18,7 +18,7 @@ using Microsoft.Win32;
 [assembly: System.Reflection.AssemblyProduct("Bongo Cat Chat Merger")]
 [assembly: System.Reflection.AssemblyVersion("0.4.2.0")]
 [assembly: System.Reflection.AssemblyFileVersion("0.4.2.0")]
-[assembly: System.Reflection.AssemblyInformationalVersion("0.4.2-rc1")]
+[assembly: System.Reflection.AssemblyInformationalVersion("0.4.2")]
 
 namespace BongoChat
 {
@@ -214,7 +214,16 @@ namespace BongoChat
         </StackPanel>
       </Grid>
       <TextBlock x:Name='ResultText' Text='내 PC에 기록 · 최근 500개 표시' FontSize='10' Foreground='#9AA5AC' Margin='0,12,0,0'/>
-      <TextBlock FontSize='10' Margin='0,7,0,0' Foreground='#718795' TextWrapping='Wrap'><Run x:Name='ContactLabel' Text='문의 · '/><Hyperlink x:Name='ContactEmail' NavigateUri='mailto:parabellum0208@gmail.com' Foreground='#718795' ToolTip='기본 메일 앱에서 문의 메일 작성'>parabellum0208@gmail.com</Hyperlink></TextBlock>
+      <Grid Margin='0,7,0,0'><Grid.ColumnDefinitions><ColumnDefinition Width='*'/><ColumnDefinition Width='Auto'/></Grid.ColumnDefinitions>
+        <TextBlock FontSize='10' Foreground='#718795' TextWrapping='Wrap' VerticalAlignment='Center'><Run x:Name='ContactLabel' Text='문의 · '/><Hyperlink x:Name='ContactEmail' NavigateUri='mailto:parabellum0208@gmail.com' Foreground='#718795' ToolTip='기본 메일 앱에서 문의 메일 작성'>parabellum0208@gmail.com</Hyperlink></TextBlock>
+        <Button x:Name='CheckUpdate' Grid.Column='1' Content='업데이트 확인' FontSize='10' Padding='8,4' Margin='8,0,0,0'/>
+      </Grid>
+      <Border x:Name='UpdateOffer' Background='#D3E0E9' CornerRadius='6' Padding='8' Margin='0,6,0,0' Visibility='Collapsed'>
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width='*'/><ColumnDefinition Width='Auto'/></Grid.ColumnDefinitions>
+          <TextBlock x:Name='UpdateText' FontSize='10' Foreground='#506471' TextWrapping='Wrap' VerticalAlignment='Center' Margin='0,0,8,0'/>
+          <Button x:Name='OpenRelease' Grid.Column='1' Content='다운로드 페이지' FontSize='10' Padding='8,5'/>
+        </Grid>
+      </Border>
     </StackPanel>
   </Border>
 </Grid>";
@@ -257,6 +266,7 @@ namespace BongoChat
             InitializeReconnect(root);
             InitializeSetup(root);
             InitializeTransparentFrame(root);
+            InitializeUpdates(root);
             InitializeLanguage(root);
             if (demo) LoadDemo();
             else
@@ -502,7 +512,7 @@ namespace BongoChat
 
     public static class Program
     {
-        public const string DisplayVersion = "0.4.2-rc1";
+        public const string DisplayVersion = "0.4.2";
         private static System.Threading.Mutex instanceMutex;
         private static System.Threading.EventWaitHandle activateEvent;
         private static bool ownsInstance;
@@ -549,7 +559,7 @@ namespace BongoChat
                 }
                 var window = new ChatWindow(demonstration, null, args.Contains("--dark") ? (bool?)true : args.Contains("--light") ? (bool?)false : null, selected);
                 if (preview) { window.Snapshot(args[1]); return 0; }
-                if (!demonstration) { window.EnableBackgroundCommunication(); window.EnableAutomaticSetup(); }
+                if (!demonstration) { window.EnableBackgroundCommunication(); window.EnableAutomaticSetup(); window.EnableUpdateNotifications(); }
                 app.MainWindow = window; app.ShutdownMode = ShutdownMode.OnMainWindowClose;
                 app.Run(window); return 0;
             }

@@ -158,11 +158,23 @@ namespace BongoChat
             new[] { "방으로 전송되지 않았어요. 게임의 문자 필터·채팅 설정을 확인해 주세요. 내 고양이 말풍선만 보일 수 있어요.", "Not sent to the room. Check the game's text filter/chat settings. A bubble on your own cat does not confirm a room broadcast.", "ルームへ送信されませんでした。ゲームの文字フィルター・チャット設定を確認してください。自分の猫の吹き出しだけに表示される場合があります。" },
             new[] { "투명도를 적용하지 못했어요: ", "Could not apply window transparency: ", "ウィンドウの透明度を適用できませんでした: " }
         };
+        private static readonly string[][] UpdateRows = {
+            new[] { "업데이트 확인", "Check updates", "更新を確認" },
+            new[] { "다운로드 페이지", "Download page", "ダウンロード" },
+            new[] { "GitHub의 새 정식 버전을 확인합니다. 파일은 자동으로 설치하지 않습니다.", "Check GitHub for a new full release. Files are not installed automatically.", "GitHubの新しい正式版を確認します。ファイルの自動インストールは行いません。" },
+            new[] { "최신 업데이트가 있습니다! {0}", "A new update is available! {0}", "新しいアップデートがあります！ {0}" },
+            new[] { "최신 버전을 사용 중입니다. {0}", "You are up to date. {0}", "最新バージョンを使用中です。 {0}" },
+            new[] { "공개된 정식 업데이트 파일이 아직 없어요.", "No published full-release installer is available yet.", "公開された正式版の実行ファイルはまだありません。" },
+            new[] { "GitHub 조회 제한에 도달했어요. 잠시 후 다시 확인해 주세요.", "GitHub's request limit was reached. Please check again later.", "GitHubの取得回数制限に達しました。しばらくしてから再確認してください。" },
+            new[] { "업데이트를 확인하지 못했어요. 인터넷 연결을 확인하거나 다운로드 페이지를 열어 주세요.", "Could not check updates. Check your connection or open the download page.", "更新を確認できませんでした。接続を確認するかダウンロードページを開いてください。" },
+            new[] { " · 재확인 실패", " · Recheck failed", " · 再確認失敗" },
+            new[] { "브라우저를 열지 못했어요. 아래 주소를 확인해 주세요.", "Could not open your browser. Use the address below.", "ブラウザーを開けませんでした。以下のURLを確認してください。" }
+        };
         private static readonly Dictionary<string, string[]> Catalog = CreateCatalog();
         private static Dictionary<string, string[]> CreateCatalog()
         {
             var result = new Dictionary<string, string[]>();
-            foreach (string[] row in Rows.Concat(SetupRows).Concat(ReliabilityRows)) result.Add(row[0], row);
+            foreach (string[] row in Rows.Concat(SetupRows).Concat(ReliabilityRows).Concat(UpdateRows)) result.Add(row[0], row);
             return result;
         }
         public static string Get(string code, string text)
@@ -259,7 +271,7 @@ namespace BongoChat
                 roomTitle.Text = liveState != null && Journal.RoomIdValid(currentRoom) && !String.IsNullOrWhiteSpace(liveState.name) ? liveState.name : L("봉고캣 채팅방");
                 roomInfo.Text = Journal.RoomIdValid(currentRoom) && liveState != null ? F("참여 중 {0}명 · 실시간 대화", liveState.count) : L("같은 방의 대화를 한곳에");
             }
-            RefreshSetupLabels(); RefreshFrameLabels(); RenderMessages(false); RefreshComposer();
+            RefreshSetupLabels(); RefreshFrameLabels(); RefreshUpdateLabels(); RenderMessages(false); RefreshComposer();
         }
     }
 }
