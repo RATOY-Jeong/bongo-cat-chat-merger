@@ -1,6 +1,6 @@
-# 0.4.2-rc1 확인용 버전: 전송·응답 지연·투명도
+# 0.4.2 전송·응답 지연·투명도
 
-이 버전은 타블렛 사용자의 전체 창 멈춤을 추가로 진단하기 위한 사전 공개본입니다. **그 PC에서 멈춤이 해결됐다는 확인은 아직 없습니다.** 정식 최신 버전은 0.4.1로 유지합니다.
+0.4.2 정식판에 포함된 전송·투명도·진단 변경을 설명합니다. **타블렛 환경의 전체 창 멈춤은 실제 장비에서 해결 확인 전입니다.**
 
 ## 세 현상을 구분합니다
 
@@ -23,8 +23,8 @@
 기존의 불투명 창에서 Opacity만 바꾸는 대신, Windows가 픽셀 단위 알파로 합성하는 WPF 투명 창을 사용합니다. 이를 위해 창 상단에 버전·이동 영역과 최소화/최대화/닫기 버튼을 제공합니다. 오른쪽 아래로 크기를 조절할 수 있습니다. 뒤 창이 비쳐야 정상입니다. 100%로 올리면 원래의 불투명한 화면으로 돌아옵니다.
 
 ## 문제 PC에서 확인할 순서
-1. 기존 봉고챗을 완전히 닫고 0.4.2-rc1 EXE를 실행합니다. 멈춘 앱은 작업 관리자에서 BongoCatChatMerger.exe만 종료합니다.
-2. 창 상단에 0.4.2-rc1이 보이는지 확인합니다. 연결 플러그인은 검증된 0.2.2 그대로라 새로 설치하지 않아도 됩니다.
+1. 기존 봉고챗을 완전히 닫고 0.4.2 EXE를 실행합니다. 멈춘 앱은 작업 관리자에서 BongoCatChatMerger.exe만 종료합니다.
+2. 창 상단에 0.4.2이 보이는지 확인합니다. 연결 플러그인은 검증된 0.2.2 그대로라 새로 설치하지 않아도 됩니다.
 3. 평소 그림 앱에서 타블렛을 사용하면서 일반 짧은 문장을 6회 이상 보내 봅니다.
 4. 별도로 .... / ,,,, 등의 필터 안내와 투명도 조절을 확인합니다. 게임 필터 거절은 전체 창 멈춤과 구분합니다.
 5. 다시 전체 창이 멈추면 최소 10초 기다렸다가 종료하고 새 EXE를 재실행합니다. ‘연결 도우미’ 우클릭 → ‘진단 내용 복사’로 내용을 확인할 수 있습니다.
@@ -32,10 +32,10 @@
 응답 지연 파일은 앱의 사용자 폴더인 %LOCALAPPDATA%\BongoCatChatMerger\ui-health.log에 생성됩니다. 시각·버전·처리 단계·환경 정보만 기록하며 채팅 본문은 넣지 않습니다. 자동 업로드·업데이트 서버·메모리 덤프 수집은 없습니다. 기록이 없으면 지연 기준에 도달하지 않은 경우나 다른 형태의 종료일 수 있습니다.
 
 ## 검증
-기존 120개 + 신뢰성 28개 = 총 148개 검사입니다. 전송 반복은 모의 게임 응답을 이용한 검사이며, 실제 휴이온 PC에서의 반복 전송 성공으로 간주하지 않습니다. 실제 UI 알파 픽셀, 네이티브 투명 창, 창 조작, 비동기 파일 응답, 잘못된 응답 복구, 채팅 본문 없는 지연 로그를 검사했습니다. Windows 11 빌드 26300에서 수행했으며 Windows 10 실기 검증은 아직 하지 않았습니다.
+기존 120개 + 신뢰성 28개 = 148개 검사이며, 업데이트 확인 31개를 더해 정식판 전체 검사는 179개입니다. 전송 반복은 모의 게임 응답을 이용한 검사이며, 실제 휴이온 PC에서의 반복 전송 성공으로 간주하지 않습니다. 실제 UI 알파 픽셀, 네이티브 투명 창, 창 조작, 비동기 파일 응답, 잘못된 응답 복구, 채팅 본문 없는 지연 로그를 검사했습니다. Windows 11 빌드 26300에서 수행했으며 Windows 10 실기 검증은 아직 하지 않았습니다.
 
 ## English
-This is a prerelease for diagnosing a whole-window freeze reported with a pen tablet. It adds background file communication, bounded send-result recovery, editable drafts while sending, reused chat bubbles, real per-pixel window transparency and a local UI-delay log without message text. The Huion hardware issue is still unconfirmed. The game independently filters repeated punctuation by default, and a local cat bubble does not prove room broadcast. No game filter bypass is added. Close the old companion before running this EXE. If it freezes again, wait at least 10 seconds, restart the companion, and use Connection helper → right-click → Copy diagnostics.
+These reliability changes are included in full release 0.4.2. The tablet-related whole-window freeze is still under investigation. It adds background file communication, bounded send-result recovery, editable drafts while sending, reused chat bubbles, real per-pixel window transparency and a local UI-delay log without message text. The Huion hardware issue is still unconfirmed. The game independently filters repeated punctuation by default, and a local cat bubble does not prove room broadcast. No game filter bypass is added. Close the old companion before running this EXE. If it freezes again, wait at least 10 seconds, restart the companion, and use Connection helper → right-click → Copy diagnostics.
 
 ## 日本語
-ペンタブレット環境でのウィンドウ全体フリーズを追加診断する事前公開版です。ファイル通信のバックグラウンド処理、送信結果の期限付き復旧、送信待ち中の下書き編集、吹き出しの再利用、実際のピクセル透明度、会話本文を含まないローカル遅延ログを追加しました。Huion実機での改善は未確認です。連続句読点はゲーム側のフィルターで拒否され、自分の猫の吹き出しだけに表示される場合があります。ゲームのフィルターは迂回しません。旧アプリを終了してから実行してください。再度固まったら10秒以上待ってから再起動し、接続サポートの右クリックから診断情報をコピーできます。
+ペンタブレット環境でのウィンドウ全体フリーズを追加診断する機能を正式版0.4.2に含めています。ファイル通信のバックグラウンド処理、送信結果の期限付き復旧、送信待ち中の下書き編集、吹き出しの再利用、実際のピクセル透明度、会話本文を含まないローカル遅延ログを追加しました。Huion実機での改善は未確認です。連続句読点はゲーム側のフィルターで拒否され、自分の猫の吹き出しだけに表示される場合があります。ゲームのフィルターは迂回しません。旧アプリを終了してから実行してください。再度固まったら10秒以上待ってから再起動し、接続サポートの右クリックから診断情報をコピーできます。
