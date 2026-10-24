@@ -73,6 +73,11 @@ public static class ReliabilityTests {
   Check(w.WindowState==WindowState.Maximized,"custom frame maximizes the actual window");w.WindowState=WindowState.Normal;
   Check((GetWindowStyle(hwnd,-20)&0x80000)!=0&&(GetWindowStyle(hwnd,-20)&0x20)==0&&((Grid)w.Content).FindName("WindowClose")!=null,"transparent window retains close/resize controls and normal click handling");
   slider.Value=1;Check(w.Opacity==1&&HwndSource.FromHwnd(hwnd).UsesPerPixelOpacity,"opacity restores the transparent window to fully opaque content");
+  Type snapshotType=typeof(ChatWindow).Assembly.GetType("BongoChat.PollSnapshot");object delayed=Activator.CreateInstance(snapshotType);
+  snapshotType.GetField("StateExists").SetValue(delayed,true);snapshotType.GetField("State").SetValue(delayed,state);
+  Set(w,"setupBusy",true);Set(w,"canSend",false);
+  typeof(ChatWindow).GetMethod("ApplyPollSnapshot",flags).Invoke(w,new object[]{delayed});
+  Check(!(bool)Get(w,"canSend"),"a late poll cannot re-enable chat while setup is restarting the game");Set(w,"setupBusy",false);
   w.EnableBackgroundCommunication();
   state.utc=DateTime.UtcNow.ToString("o");File.WriteAllText(statePath,Journal.Json.Serialize(state));w.Poll();Pump(w,()=>!(bool)Get(w,"pollReading"));
   var asyncRequest=Send(w,"비동기 전송");Check(asyncRequest!=null&&!input.IsReadOnly,"background send reserves one request without toggling editor read-only state");
