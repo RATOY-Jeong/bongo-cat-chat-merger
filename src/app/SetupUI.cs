@@ -29,7 +29,7 @@ namespace BongoChat
             var diagnostic = new MenuItem();
             diagnostic.Click += delegate
             {
-                try { Clipboard.SetText("Bongo Cat Chat Merger " + typeof(ChatWindow).Assembly.GetName().Version + "\r\n" + statusText.Text + "\r\n" + (lastSetupError ?? "") + "\r\nUI health: " + UiHealthMonitor.LastReport() + "\r\nInput mode: " + (TabletCompatibility.Status ?? "Not configured") + "\r\nGame found: " + GameLocator.IsGame(gamePath) + "\r\nGame running: " + GameLocator.IsRunning(gamePath)); }
+                try { Clipboard.SetText("Bongo Cat Chat Merger " + typeof(ChatWindow).Assembly.GetName().Version + "\r\n" + statusText.Text + "\r\n" + (lastSetupError ?? "") + "\r\nUI health: " + UiHealthMonitor.LastReport() + "\r\nBackground IO: " + backgroundIo + ", read pending: " + pollReading + ", send pending: " + (pendingRequest != null) + "\r\nInput mode: " + (TabletCompatibility.Status ?? "Not configured") + "\r\nGame found: " + GameLocator.IsGame(gamePath) + "\r\nGame running: " + GameLocator.IsRunning(gamePath)); }
                 catch { }
             };
             menu.Items.Add(choose); menu.Items.Add(diagnostic); setupButton.ContextMenu = menu;

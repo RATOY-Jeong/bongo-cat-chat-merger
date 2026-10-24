@@ -320,6 +320,7 @@ namespace BongoChat
 
         private void ApplyPollSnapshot(PollSnapshot snapshot)
         {
+            if (setupBusy) { RefreshComposer(); return; }
             UiPhase("apply-state");
             canSend = false;
             liveState = null;
