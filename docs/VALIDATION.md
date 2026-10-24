@@ -93,3 +93,20 @@ Doorstop 4.5.0은 `DOORSTOP_DISABLE`과 `DOORSTOP_INITIALIZED`를 모두 설정�
 - 언어 검사 25개, 기존 기능 21개, 재연결 12개를 모두 통과했습니다. 다크·라이트 3개 언어 화면을 렌더링했습니다.
 - 연결 플러그인은 0.2.2와 동일합니다. 실제 게임의 채팅을 자동 번역하지 않습니다. 이번 변경에 대한 실제 게임 수신/전송의 새 사용자 확인은 아직 받지 않았습니다.
 - README.md / README.ko.md / README.ja.md에서 각 언어의 사용·업데이트 안내를 제공합니다.
+## 0.4.0 자동 설치·연결 준비
+
+- 연결 파일을 EXE 내부 ZIP 리소스로 포함했습니다. 외부 runtime·scripts 없이 단일 EXE만 격리 폴더에 복사한 뒤 설치 도우미를 실행해 전체 파일 해시와 플러그인 0.2.2 일치를 확인했습니다.
+- Steam 라이브러리와 appmanifest의 사용자 지정 한글 설치 폴더 탐색, 잘못된 경로 거부를 확인했습니다.
+- 새 설치·중복 설치·누락 복구·설치 중단 복구·교체 백업·호환 설정 보존·다른 모드 보존·원본 게임 EXE/어셈블리 및 기록 보존을 확인했습니다.
+- 설정 이관·관리형 EXE 배치·Windows 바로가기 대상, UI 자동 준비부터 모의 게임 실행과 상태 신호 수신까지 확인했습니다.
+- 게임 자식 프로세스만 두 Doorstop 실행 플래그를 제거하고 호출자 환경을 보존하는 것을 실행 대조했습니다.
+- 자동 설치 51개, 언어 25개, 기존 기능 21개, 재연결 12개로 총 109개 검사를 통과했습니다. scripts/Check.ps1로 격리 환경에서 재현할 수 있습니다.
+- 실제 Windows 보호 폴더에서의 관리자 권한 승인·취소, 실제 게임의 정상 종료 요청 성공 여부, 새로운 사용자 PC에서의 설치와 채팅은 아직 별도 확인이 필요합니다. 게임을 강제 종료하거나 백신 예외를 추가하지 않습니다.
+- 자동 준비는 일반 실행에서만 활성화합니다. 미리보기와 테스트용 창은 실제 게임 설치를 시작하지 않습니다.
+- 단일 실행파일은 사용자별 앱 폴더에 자체 배치하고 바탕화면·시작 메뉴 바로가기를 만듭니다. 자동 다운로드/업데이트 서버는 추가하지 않았습니다.
+### Windows 10 호환 처리
+- EXE의 PE machine=x64, Windows 10/11 supportedOS 매니페스트, .NETFramework v4.5 대상 특성을 검사했습니다.
+- Windows 11 전용 제목 표시줄 DWM 속성을 Windows 10에서 호출하지 않는 분기와 단일 EXE의 서드파티 라이선스 포함을 검사했습니다.
+- 위 5개를 포함해 자동 설치 51개 + 기존 58개 = 총 109개가 통과했습니다. tests/SetupTests.cs 및 scripts/Check.ps1에 재현 절차가 있습니다.
+- 실행 검증 환경: Windows 11 10.0.26300.0. Windows 10 실제 PC/VM 실행 검증은 하지 않았습니다.
+- Microsoft 기준: https://learn.microsoft.com/en-us/dotnet/framework/install/versions-and-dependencies 및 https://learn.microsoft.com/en-us/windows/win32/sbscs/application-manifests
