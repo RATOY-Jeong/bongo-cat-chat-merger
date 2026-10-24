@@ -32,7 +32,7 @@
 응답 지연 파일은 앱의 사용자 폴더인 %LOCALAPPDATA%\BongoCatChatMerger\ui-health.log에 생성됩니다. 시각·버전·처리 단계·환경 정보만 기록하며 채팅 본문은 넣지 않습니다. 자동 업로드·업데이트 서버·메모리 덤프 수집은 없습니다. 기록이 없으면 지연 기준에 도달하지 않은 경우나 다른 형태의 종료일 수 있습니다.
 
 ## 검증
-기존 120개 + 신뢰성 27개 = 총 147개 검사입니다. 전송 반복은 모의 게임 응답을 이용한 검사이며, 실제 휴이온 PC에서의 반복 전송 성공으로 간주하지 않습니다. 실제 UI 알파 픽셀, 네이티브 투명 창, 창 조작, 비동기 파일 응답, 잘못된 응답 복구, 채팅 본문 없는 지연 로그를 검사했습니다. Windows 11 빌드 26300에서 수행했으며 Windows 10 실기 검증은 아직 하지 않았습니다.
+기존 120개 + 신뢰성 28개 = 총 148개 검사입니다. 전송 반복은 모의 게임 응답을 이용한 검사이며, 실제 휴이온 PC에서의 반복 전송 성공으로 간주하지 않습니다. 실제 UI 알파 픽셀, 네이티브 투명 창, 창 조작, 비동기 파일 응답, 잘못된 응답 복구, 채팅 본문 없는 지연 로그를 검사했습니다. Windows 11 빌드 26300에서 수행했으며 Windows 10 실기 검증은 아직 하지 않았습니다.
 
 ## English
 This is a prerelease for diagnosing a whole-window freeze reported with a pen tablet. It adds background file communication, bounded send-result recovery, editable drafts while sending, reused chat bubbles, real per-pixel window transparency and a local UI-delay log without message text. The Huion hardware issue is still unconfirmed. The game independently filters repeated punctuation by default, and a local cat bubble does not prove room broadcast. No game filter bypass is added. Close the old companion before running this EXE. If it freezes again, wait at least 10 seconds, restart the companion, and use Connection helper → right-click → Copy diagnostics.
