@@ -16,8 +16,9 @@ using Microsoft.Win32;
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.5")]
 [assembly: System.Reflection.AssemblyTitle("Bongo Cat Chat Merger")]
 [assembly: System.Reflection.AssemblyProduct("Bongo Cat Chat Merger")]
-[assembly: System.Reflection.AssemblyVersion("0.4.1.0")]
-[assembly: System.Reflection.AssemblyFileVersion("0.4.1.0")]
+[assembly: System.Reflection.AssemblyVersion("0.4.2.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.4.2.0")]
+[assembly: System.Reflection.AssemblyInformationalVersion("0.4.2-rc1")]
 
 namespace BongoChat
 {
@@ -54,14 +55,25 @@ namespace BongoChat
     public static class Journal
     {
         public static readonly JavaScriptSerializer Json = new JavaScriptSerializer { MaxJsonLength = 1048576 };
-        public static string ReadShared(string path)
+        public static string ReadShared(string path, int maxBytes = 1048576)
         {
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
-            using (var reader = new StreamReader(stream, Encoding.UTF8)) return reader.ReadToEnd();
+            {
+                if (stream.Length > maxBytes) throw new InvalidDataException("Bridge file exceeds its size limit.");
+                using (var reader = new StreamReader(stream, Encoding.UTF8))
+                {
+                    char[] buffer = new char[maxBytes + 1];
+                    int count = 0, read;
+                    while (count < buffer.Length && (read = reader.Read(buffer, count, buffer.Length - count)) > 0) count += read;
+                    if (count > maxBytes) throw new InvalidDataException("Bridge file exceeds its size limit.");
+                    return new string(buffer, 0, count);
+                }
+            }
         }
         public static List<ChatEntry> ReadRecent(string path, int limit)
         {
             var list = new List<ChatEntry>();
+            var readerJson = new JavaScriptSerializer { MaxJsonLength = 1048576 };
             if (!File.Exists(path)) return list;
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
             {
@@ -77,7 +89,7 @@ namespace BongoChat
                     {
                         try
                         {
-                            var entry = Json.Deserialize<ChatEntry>(line);
+                            var entry = readerJson.Deserialize<ChatEntry>(line);
                             if (entry != null && (entry.kind == "chat" || (entry.kind == "emote" && entry.emoteId > 0)) && !String.IsNullOrEmpty(entry.id)
                                 && entry.text != null && seen.Add(entry.id)) list.Add(entry);
                         }
@@ -211,7 +223,8 @@ namespace BongoChat
         {
             demo = demonstration;
             language = UiText.IsLanguage(languageOverride) ? languageOverride : UiText.ReadPreference() ?? "en";
-            Title = "Bongo Cat Chat Merger";
+            Title = "Bongo Cat Chat Merger " + Program.DisplayVersion;
+            WindowStyle = WindowStyle.None; AllowsTransparency = true; Background = Brushes.Transparent; ResizeMode = ResizeMode.CanResizeWithGrip;
             Width = 510; Height = 790; MinWidth = 420; MinHeight = 560;
             FontFamily = new FontFamily("Malgun Gothic");
             FontSize = 13;
@@ -231,7 +244,7 @@ namespace BongoChat
             Topmost = ReadPinPreference(); pin.IsChecked = Topmost;
             pin.Checked += delegate { Topmost = true; SavePinPreference(true); };
             pin.Unchecked += delegate { Topmost = false; SavePinPreference(false); };
-            ((Slider)root.FindName("OpacityControl")).ValueChanged += delegate(object sender, RoutedPropertyChangedEventArgs<double> args) { Opacity = args.NewValue; };
+            ((Slider)root.FindName("OpacityControl")).ValueChanged += delegate(object sender, RoutedPropertyChangedEventArgs<double> args) { SetWindowOpacity(args.NewValue); };
 
             ((Button)root.FindName("Export")).Click += delegate { Export(); };
             ((Hyperlink)root.FindName("ContactEmail")).Click += delegate
@@ -243,6 +256,7 @@ namespace BongoChat
             InitializeComposerAndTheme(root);
             InitializeReconnect(root);
             InitializeSetup(root);
+            InitializeTransparentFrame(root);
             InitializeLanguage(root);
             if (demo) LoadDemo();
             else
@@ -294,18 +308,30 @@ namespace BongoChat
         public void Poll()
         {
             if (setupBusy) { RefreshComposer(); return; }
-            if (setupLaunchDeadline != default(DateTime) && DateTime.UtcNow > setupLaunchDeadline) { setupLaunchDeadline = default(DateTime); if (!HasLiveBridge()) SetupMessage("게임에서 연결 파일을 불러오지 못했어요. 연결 도우미에서 다시 확인할 수 있어요.", "retry"); }
+            ExpirePendingRequest();
+            if (setupLaunchDeadline != default(DateTime) && DateTime.UtcNow > setupLaunchDeadline)
+            {
+                setupLaunchDeadline = default(DateTime);
+                SetupMessage("게임에서 연결 파일을 불러오지 못했어요. 연결 도우미에서 다시 확인할 수 있어요.", "retry");
+            }
+            if (backgroundIo) ReadPollInBackground();
+            else ApplyPollSnapshot(ReadPollSnapshot(CapturePollRead()));
+        }
+
+        private void ApplyPollSnapshot(PollSnapshot snapshot)
+        {
+            UiPhase("apply-state");
             canSend = false;
             liveState = null;
             try
             {
                 if (String.IsNullOrEmpty(gamePath)) { SetStatus(setupNotice ?? "게임 폴더에서 BongoCat.exe를 선택해 주세요", false); RenderEmptyIfNeeded(); return; }
-                string file = Path.Combine(BridgeFolder, "state.json");
-                if (!File.Exists(file)) { SetStatus(setupNotice ?? "연결 플러그인 설치 후 봉고캣을 실행해 주세요", false); RenderEmptyIfNeeded(); return; }
-                BridgeState state = json.Deserialize<BridgeState>(Journal.ReadShared(file));
+                if (snapshot.ReadError != null) { SetStatus("기록을 읽지 못했어요: " + snapshot.ReadError, false); return; }
+                if (!snapshot.StateExists) { SetStatus(setupNotice ?? "연결 플러그인 설치 후 봉고캣을 실행해 주세요", false); RenderEmptyIfNeeded(); return; }
+                BridgeState state = snapshot.State;
                 liveState = state;
-                CheckPending(state);
                 if (state == null || state.protocol != 1) { SetStatus("연결 플러그인 버전을 확인해 주세요", false); return; }
+                CheckPending(state, snapshot.Result);
                 DateTime timestamp;
                 bool fresh = DateTime.TryParse(state.utc, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out timestamp)
                     && Math.Abs((DateTime.UtcNow - timestamp.ToUniversalTime()).TotalSeconds) < 6;
@@ -327,37 +353,45 @@ namespace BongoChat
                 {
                     currentRoom = state.room;
                     currentFile = Path.Combine(BridgeFolder, "room_" + currentRoom + ".jsonl");
-                    currentLength = -1; entries.Clear(); RenderMessages(true);
+                    currentLength = -1; entries.Clear();
                 }
-                long length = File.Exists(currentFile) ? new FileInfo(currentFile).Length : 0;
-                if (length != currentLength || currentAssetRevision != state.assetRevision)
+                if (snapshot.Entries != null)
                 {
-                    entries = Journal.ReadRecent(currentFile, 500).Where(e => e.room == currentRoom).ToList();
-                    currentLength = length; currentAssetRevision = state.assetRevision; RenderMessages(false);
+                    entries = snapshot.Entries.Where(e => e.room == currentRoom).ToList();
+                    currentLength = snapshot.Length; currentAssetRevision = state.assetRevision;
+                    UiPhase("render-messages"); RenderMessages(false);
                 }
                 lastError = "";
             }
-            catch (IOException) { }
             catch (Exception ex)
             {
-                if (lastError != ex.Message) { SetStatus("기록을 읽지 못했어요: " + ex.Message, false); lastError = ex.Message; }
+                if (lastError != ex.GetType().Name) { SetStatus("기록을 읽지 못했어요: " + ex.GetType().Name, false); lastError = ex.GetType().Name; }
             }
-            finally
-            {
-                if (pendingRequest != null && (DateTime.UtcNow - pendingSince).TotalSeconds > 22) CheckPending(liveState);
-                RefreshComposer();
-            }
+            finally { ExpirePendingRequest(); RefreshComposer(); UiPhase("idle"); }
         }
 
+        private List<ChatEntry> renderedVisible = new List<ChatEntry>();
+        private string renderedContext = "", renderedDate = "";
+        private static bool SameRenderedEntry(ChatEntry a, ChatEntry b)
+        {
+            return a.id == b.id && a.kind == b.kind && a.utc == b.utc && a.text == b.text
+                && a.name == b.name && a.mine == b.mine && a.emoteId == b.emoteId;
+        }
         private void RenderEmptyIfNeeded() { if (messages.Children.Count == 0) RenderMessages(true); }
         public void RenderMessages(bool forceScroll)
         {
             bool atBottom = forceScroll || scroll.ScrollableHeight - scroll.VerticalOffset < 35;
             double offset = scroll.VerticalOffset;
-            messages.Children.Clear();
             string query = search.Text.Trim();
             var visible = entries.Where(e => showEmotes || e.kind != "emote").Where(e => query.Length == 0 || (e.text ?? "").IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0
                 || (e.name ?? "").IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+            string context = language + "|" + dark + "|" + showEmotes + "|" + (ActualWidth > 0 ? ActualWidth : Width).ToString("R", CultureInfo.InvariantCulture) + "|" + currentAssetRevision + "|" + query;
+            bool append = renderedContext == context && renderedVisible.Count > 0 && renderedVisible.Count <= visible.Count;
+            if (append) for (int i = 0; i < renderedVisible.Count; i++)
+                if (!SameRenderedEntry(renderedVisible[i], visible[i])) { append = false; break; }
+            int first = append ? renderedVisible.Count : 0;
+            if (!append) messages.Children.Clear();
+            renderedVisible = visible; renderedContext = context;
             resultText.Text = F(demo ? "미리보기 데이터 · {0}개 표시 / 최근 {1}개" : "내 PC에 기록 · {0}개 표시 / 최근 {1}개", visible.Count, entries.Count);
             if (visible.Count == 0)
             {
@@ -368,8 +402,8 @@ namespace BongoChat
                 empty.Children.Add(new TextBlock { Text = L(query.Length == 0 ? hiddenOnly ? "일반 채팅은 계속 표시돼요.\n상단 이모티콘 표시를 켜면 다시 볼 수 있어요." : "방에 들어가 채팅을 보내보세요.\n연결 후 받은 대화부터 기록됩니다." : "다른 메시지나 닉네임을 찾아보세요."), Foreground = Brush("#718799"), FontSize = 12, TextAlignment = TextAlignment.Center, LineHeight = 22, MaxWidth = Math.Max(200, Width - 100), TextWrapping = TextWrapping.Wrap });
                 messages.Children.Add(empty); return;
             }
-            string previousDate = "";
-            foreach (ChatEntry entry in visible)
+            string previousDate = append ? renderedDate : "";
+            foreach (ChatEntry entry in visible.Skip(first))
             {
                 DateTime time;
                 if (!DateTime.TryParse(entry.utc, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out time)) time = DateTime.Now;
@@ -383,6 +417,7 @@ namespace BongoChat
                 }
                 messages.Children.Add(MessageBubble(entry, time));
             }
+            renderedDate = previousDate;
             scroll.UpdateLayout();
             if (atBottom) scroll.ScrollToEnd(); else scroll.ScrollToVerticalOffset(offset);
         }
@@ -466,6 +501,7 @@ namespace BongoChat
 
     public static class Program
     {
+        public const string DisplayVersion = "0.4.2-rc1";
         private static System.Threading.Mutex instanceMutex;
         private static System.Threading.EventWaitHandle activateEvent;
         private static bool ownsInstance;
@@ -512,7 +548,7 @@ namespace BongoChat
                 }
                 var window = new ChatWindow(demonstration, null, args.Contains("--dark") ? (bool?)true : args.Contains("--light") ? (bool?)false : null, selected);
                 if (preview) { window.Snapshot(args[1]); return 0; }
-                if (!demonstration) window.EnableAutomaticSetup();
+                if (!demonstration) { window.EnableBackgroundCommunication(); window.EnableAutomaticSetup(); }
                 app.MainWindow = window; app.ShutdownMode = ShutdownMode.OnMainWindowClose;
                 app.Run(window); return 0;
             }

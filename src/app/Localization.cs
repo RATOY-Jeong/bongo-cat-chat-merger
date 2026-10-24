@@ -151,11 +151,18 @@ namespace BongoChat
             new[] { "권한 창의 연결 설치가 아직 진행 중이에요. 잠시 후 다시 눌러 주세요.", "The permission/setup window is still active. Try again after it finishes.", "許可画面またはインストールが進行中です。完了後に再試行してください。" },
             new[] { "게임에서 연결 파일을 불러오지 못했어요. 연결 도우미에서 다시 확인할 수 있어요.", "The game has not loaded the connection files. Use Connection helper to check again.", "ゲームが接続ファイルを読み込めませんでした。接続サポートで再確認できます。" }
         };
+        private static readonly string[][] ReliabilityRows = {
+            new[] { "최소화", "Minimize", "最小化" },
+            new[] { "최대화 / 복원", "Maximize / restore", "最大化 / 元に戻す" },
+            new[] { "닫기", "Close", "閉じる" },
+            new[] { "방으로 전송되지 않았어요. 게임의 문자 필터·채팅 설정을 확인해 주세요. 내 고양이 말풍선만 보일 수 있어요.", "Not sent to the room. Check the game's text filter/chat settings. A bubble on your own cat does not confirm a room broadcast.", "ルームへ送信されませんでした。ゲームの文字フィルター・チャット設定を確認してください。自分の猫の吹き出しだけに表示される場合があります。" },
+            new[] { "투명도를 적용하지 못했어요: ", "Could not apply window transparency: ", "ウィンドウの透明度を適用できませんでした: " }
+        };
         private static readonly Dictionary<string, string[]> Catalog = CreateCatalog();
         private static Dictionary<string, string[]> CreateCatalog()
         {
             var result = new Dictionary<string, string[]>();
-            foreach (string[] row in Rows.Concat(SetupRows)) result.Add(row[0], row);
+            foreach (string[] row in Rows.Concat(SetupRows).Concat(ReliabilityRows)) result.Add(row[0], row);
             return result;
         }
         public static string Get(string code, string text)
@@ -252,7 +259,7 @@ namespace BongoChat
                 roomTitle.Text = liveState != null && Journal.RoomIdValid(currentRoom) && !String.IsNullOrWhiteSpace(liveState.name) ? liveState.name : L("봉고캣 채팅방");
                 roomInfo.Text = Journal.RoomIdValid(currentRoom) && liveState != null ? F("참여 중 {0}명 · 실시간 대화", liveState.count) : L("같은 방의 대화를 한곳에");
             }
-            RefreshSetupLabels(); RenderMessages(false); RefreshComposer();
+            RefreshSetupLabels(); RefreshFrameLabels(); RenderMessages(false); RefreshComposer();
         }
     }
 }

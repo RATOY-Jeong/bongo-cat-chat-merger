@@ -113,7 +113,7 @@ namespace BongoChat
                 if (args.Key == Key.Return && (Keyboard.Modifiers & ModifierKeys.Shift) == 0 && !imeComposing)
                 { args.Handled = true; SendComposer(); }
             };
-            SourceInitialized += delegate { UpdateTitleBar(); };
+            SourceInitialized += delegate { UpdateTitleBar(); SetWindowOpacity(windowAlpha); };
             ApplyTheme();
             RefreshComposer();
         }
@@ -142,7 +142,7 @@ namespace BongoChat
         private void RefreshComposer()
         {
             if (composer == null) return;
-            composer.IsReadOnly = pendingRequest != null;
+            // Keep the IME/editing context stable while a send is pending.
             sendButton.IsEnabled = !demo && canSend && pendingRequest == null && !String.IsNullOrWhiteSpace(composer.Text);
             composerHint.Text = L(demo ? "화면 미리보기 · 실제 메시지는 전송하지 않아요" :
                 pendingRequest != null ? "게임에 전송 요청 중…" :
@@ -157,42 +157,59 @@ namespace BongoChat
                 createdUtc = DateTime.UtcNow.ToString("o"), kind = "send_chat", text = composer.Text.Trim() };
             string problem = RequestPolicy.Validate(request, liveState.session, liveState.room, DateTime.UtcNow, composer.MaxLength);
             if (problem != null) { sendNotice = problem; RefreshComposer(); return; }
-            try
-            {
-                string folder = Path.Combine(BridgeFolder, "commands"); Directory.CreateDirectory(folder);
-                string destination = Path.Combine(folder, request.id + ".request.json");
-                File.WriteAllText(destination + ".tmp", json.Serialize(request), new UTF8Encoding(false));
-                File.Move(destination + ".tmp", destination);
-                pendingRequest = request; pendingSince = DateTime.UtcNow; sendNotice = "";
-            }
-            catch (Exception ex) { sendNotice = "전송 요청을 만들지 못했어요: " + ex.Message; }
+            UiPhase("queue-send");
+            pendingRequest = request; pendingSince = DateTime.UtcNow; sendNotice = "";
+            WriteSendRequest(request);
             RefreshComposer();
+            UiPhase("idle");
+        }
+        private void CancelPendingRequest(string notice)
+        {
+            if (pendingRequest == null) return;
+            string id = pendingRequest.id;
+            if (sendCancellation != null) sendCancellation.Cancel();
+            pendingRequest = null;
+            sendNotice = notice;
+            string folder = Path.Combine(BridgeFolder, "commands");
+            RemoveCommandFile(Path.Combine(folder, id + ".request.json"));
+            RemoveCommandFile(Path.Combine(folder, "results", id + ".json"));
+        }
+        private void ExpirePendingRequest()
+        {
+            if (pendingRequest != null && (DateTime.UtcNow - pendingSince).TotalSeconds > 22)
+                CancelPendingRequest("전송 결과를 확인하지 못했어요. 대화에 표시됐는지 확인한 뒤 다시 보내 주세요.");
         }
         private void CheckPending(BridgeState state)
         {
+            // Explicit reconnect/setup cancels uncertain requests and never resends.
+            CheckPending(state, null);
+        }
+        private void CheckPending(BridgeState state, SendResult result)
+        {
             if (pendingRequest == null) return;
             bool changed = state == null || state.session != pendingRequest.session || state.room != pendingRequest.room || state.stopped;
-            string resultPath = Path.Combine(BridgeFolder, "commands", "results", pendingRequest.id + ".json");
-            if (!changed && File.Exists(resultPath))
+            if (changed)
             {
-                SendResult result = json.Deserialize<SendResult>(Journal.ReadShared(resultPath));
-                if (result == null || result.id != pendingRequest.id || result.session != pendingRequest.session || result.room != pendingRequest.room) return;
+                CancelPendingRequest("게임 또는 방이 바뀌어 전송을 취소했어요. 입력한 글은 남겨 뒀어요.");
+                return;
+            }
+            if (result != null && result.id == pendingRequest.id && result.session == pendingRequest.session && result.room == pendingRequest.room)
+            {
+                var completed = pendingRequest;
+                pendingRequest = null; // Clear pending state before any text/IME events can run.
+                if (sendCancellation != null) sendCancellation.Cancel();
                 if (result.accepted)
                 {
-                    if (composer.Text.Trim() == pendingRequest.text) composer.Clear();
+                    if (composer.Text.Trim() == completed.text) composer.Clear();
                     sendNotice = "게임에 전달했어요 · 수신한 메시지가 대화에 표시돼요";
                 }
+                else if (result.error == "게임의 채팅 필터가 전송을 허용하지 않았어요.")
+                    sendNotice = "방으로 전송되지 않았어요. 게임의 문자 필터·채팅 설정을 확인해 주세요. 내 고양이 말풍선만 보일 수 있어요.";
                 else sendNotice = result.error ?? "게임에서 전송 요청을 처리하지 못했어요.";
-                pendingRequest = null;
-                try { File.Delete(resultPath); } catch { }
+                RemoveCommandFile(Path.Combine(BridgeFolder, "commands", "results", completed.id + ".json"));
             }
-            else if (changed || (DateTime.UtcNow - pendingSince).TotalSeconds > 22)
-            {
-                sendNotice = changed ? "게임 또는 방이 바뀌어 전송을 취소했어요. 입력한 글은 남겨 뒀어요." :
-                    "전송 결과를 확인하지 못했어요. 대화에 표시됐는지 확인한 뒤 다시 보내 주세요.";
-                try { File.Delete(Path.Combine(BridgeFolder, "commands", pendingRequest.id + ".request.json")); } catch { }
-                pendingRequest = null;
-            }
+            // Even malformed/mismatched/unreadable replies must obey the deadline.
+            ExpirePendingRequest();
         }
         private UIElement EmoteContent(ChatEntry entry)
         {
