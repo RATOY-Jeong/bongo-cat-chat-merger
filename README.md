@@ -2,66 +2,59 @@
 
 **English** · [한국어](README.ko.md) · [日本語](README.ja.md)
 
-A lightweight Windows companion that collects chat from your current **Steam Bongo Cat** room in one window. Built with C# / WPF and a BepInEx bridge. Other players do not need to install it.
+A lightweight Windows companion for your Steam Bongo Cat room: live chat, direct sending, original emote images, local history/search, and English/Korean/Japanese UI.
 
 ![English preview](docs/assets/preview.png)
 
-## Download and install
+## Download and start — 0.4.0
 
-Download **BongoCatChatMerger-0.3.0.zip** from [Releases](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/latest). The automatically generated **Source code** archives are not ready-to-run packages. Requires Windows x64 and .NET Framework 4.x.
+**[Download BongoCatChatMerger-0.4.0.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.0/BongoCatChatMerger-0.4.0.exe)** and run it. This single file includes everything required for connection setup. You do not need to extract a ZIP, find a game folder, or run Install.cmd.
 
-1. Extract the ZIP and fully close Bongo Cat.
-2. Run `Install.cmd`. It finds the Steam game folder, or asks you to select `BongoCat.exe`.
-3. Start Bongo Cat from your Steam library and join a room.
-4. Run `BongoCatChatMerger.exe`, choose your language, and continue to chat.
+1. Run the EXE and choose your language on first launch.
+2. The app finds Bongo Cat and prepares the connection automatically. If the game must restart, click **Set up & restart game**. If Windows requests permission, approve the prompt to allow the required game-folder files to be installed.
+3. Bongo Cat opens automatically. **Join your preferred room**; the companion connects automatically.
 
-The installer stops if it detects an existing mod loader. Do not overwrite another loader. `Uninstall.cmd` removes only files listed in the installation manifest; recorded conversations are preserved.
+A shortcut named **Bongo Cat Chat Merger** is created on the desktop and in the Start menu. Windows 10/11 x64 with .NET Framework 4.5+ is required. Steam and Bongo Cat must already be installed. The ZIP in [Releases](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/latest) is an optional full/developer package; the generated Source code archives are not the standalone app.
 
-## Languages — new in 0.3.0
+## Automatic connection setup
 
-- On first launch, choose **English / 한국어 / 日本語**. Subsequent launches open the chat window directly.
-- Change language using the dropdown in the top right. Selection is saved as `language.txt` beside the EXE. A missing or invalid preference opens the language picker again.
-- Buttons, connection/error notices, date/time display, and export labels follow your selection. Chat messages, player names, room names, and emote names supplied by the game stay in their original language.
-- Switching language keeps your draft, search, history, pending send request, and reconnect attempt. It never resends a message.
-- Read these GitHub instructions in any of the three languages using the links above.
+- Detects Steam libraries and custom game install folder names, and checks the connection files.
+- Installs missing files and repairs an incomplete installation. Existing compatible installations are reused.
+- The restart button requests a normal game exit and opens it again after setup. The app never forcibly kills the game. If normal exit fails, it explains how to exit from the game tray menu.
+- Requests administrator permission only if the game folder denies ordinary writes. Windows permission prompts and choosing a game room remain user actions.
+- Preserves original game EXE/managed assemblies, conversations, and compatible user configuration. Unknown mod loaders or externally modified installation files are preserved and reported.
+- **Connection helper** retries detection/setup. Right-click it for manual game selection or diagnostics.
+- A successful file installation is distinguished from an actual connection: the app waits for the game's fresh heartbeat before showing Connected.
 
-## Updating
+## Updating and settings
 
-**From 0.2.2–0.2.4:** Close the companion and copy the new `BongoCatChatMerger.exe` into your existing app folder. Use this file and update any shortcut pointing to `BongoChat.exe`. Keeping the same folder preserves theme, always-on-top, emote visibility, and game-path preferences. No game restart or bridge reinstall is required.
+Close your old companion, then run the new EXE. Updates are **manual**. The app does not download or execute updates from a server.
 
-**From 0.2.1 or earlier:** Close game and companion, run the old package's `Uninstall.cmd`, then the new package's `Install.cmd`, and use the new EXE. Records are preserved. If Steam was already running with a failed connection, fully exit and restart it once.
+The app stores its managed copy, settings, and diagnostic logs under <code>%LOCALAPPDATA%\BongoCatChatMerger</code>. Existing preferences beside the downloaded EXE are imported once without replacing choices already stored there. If your old EXE is in another folder, language/theme may need to be selected again; game conversation records stay in the game folder.
 
-The bridge remains the verified **0.2.2** binary. `BongoChatBridge.dll`, the installation manifest name, and `BepInEx\BongoChat` paths retain their names for compatibility.
+The verified bridge **0.2.2** binary and its protocol are unchanged. An installed compatible bridge does not need to be reinstalled. If an older owned installation needs repair, the helper checks its ownership manifest and keeps backups of replaced files.
 
-## Features
+## Chat features
 
-- Send chat from the bottom input: **Enter** to send, **Shift+Enter** for a new line. Active IME composition is completed before sending. Messages use the game's existing chat filter and send function.
-- Display emotes fired in the game with their original images. **Show emotes** hides their bubbles without deleting records or excluding them from exports.
-- Dark/light themes, always-on-top, opacity, message/name search, and text export of the current room's most recent 500 messages.
-- **Reconnect** rechecks the game folder, recent records, and connection heartbeat for up to 12 seconds. It keeps drafts and records, cancels uncertain sends, and never replays them. It cannot load a missing bridge into a running game; follow the restart instructions if needed.
-- The bridge fixes inherited loader flags when the game starts Steam and restarts. Version 0.2.2 was verified on game build **25936063** through that startup path. Future game updates work while the internal chat methods and data format remain compatible; structural changes can require an app update.
+- Send from the bottom input: Enter sends; Shift+Enter adds a line. IME composition is completed before sending. The game's existing chat filter and send function are used.
+- Show/hide original emote images, dark/light mode, always-on-top, opacity, name/message search, and export of the current room's most recent 500 messages.
+- Select English / 한국어 / 日本語 from the dropdown. Messages, player/room names and game emote names keep their original text.
+- Changing language keeps drafts and pending requests. Reconnecting cancels uncertain requests without replaying them.
 
 ## Records and privacy
 
-Only messages received after installation are recorded; earlier server conversations cannot be restored. Records include room IDs, Steam IDs, names, message content, and timestamps. Review them before sharing.
+Other players do not need this app. Only messages received after installation are recorded; earlier server history cannot be restored. The game bridge continues recording while the game runs, even if the companion is closed.
 
-- Conversations: game folder `BepInEx\BongoChat\room_<room ID>.jsonl`
-- Connection state: `BepInEx\BongoChat\state.json`
-- Emote cache: `BepInEx\BongoChat\emotes`
-- Local send requests/results: `BepInEx\BongoChat\commands`
+Records remain in <code>BepInEx\BongoChat\room_&lt;room ID&gt;.jsonl</code> under the game folder. The app reads the latest 2 MB and displays up to 500 messages; the full journal remains on disk. Records include room IDs, Steam IDs, names, content and timestamps. Emote caches and local send requests are in that same BongoChat folder. This app does not upload conversations to a separate server, add antivirus exclusions, or change Windows security settings.
 
-The companion reads the most recent 2 MB and displays up to 500 messages; the full local journal remains on disk. Recording continues while the game runs, even if the companion is closed. This app does not send conversations to a separate server. Release packages contain no real chat journals, personal preferences, or cached game emotes. Nickname initials are used as avatars; Steam profile photos are not included.
+Future game updates work only while the relevant internal APIs remain compatible. Structural changes can require a new app/bridge release.
 
-## Troubleshooting and verification
+## Source, verification and removal
 
-If disconnected, confirm the game is running in a room and try **Reconnect**. If needed, close Bongo Cat and launch it from Steam. If the problem continues, fully exit Steam too and restart both. Technical details are in `BepInEx\LogOutput.log` and the state file above. Game updates can require a compatibility fix.
+The full ZIP includes <code>runtime</code>, source, scripts, licenses and docs. Build with <code>./scripts/Build.ps1</code> in Windows PowerShell; optional <code>-GamePath</code> selects a game installation. For release reproduction, <code>-BridgeBinary</code> reuses an already verified bridge. Run <code>./scripts/Check.ps1</code> after building. Original game assemblies are not redistributed.
 
-Version 0.3.0 passed the app build, **25 localization checks**, and **33 existing feature/reconnect checks**. Three languages were rendered in dark/light themes. Fresh user confirmation of live game sends for 0.3.0 is still pending. [Detailed validation notes (Korean)](docs/VALIDATION.md).
+0.4.0 passed **46 automatic setup checks + 58 feature/language/reconnect checks**. Tests use isolated game fixtures, including a single-EXE-only setup and a game-launch simulator. Actual administrator prompts and a fresh user's live-game setup still need user confirmation. [Detailed validation notes (Korean)](docs/VALIDATION.md).
 
-## Source and licenses
+To remove the game bridge, close Bongo Cat and run <code>Uninstall.cmd</code> from the full ZIP. It preserves journals and modified files. The companion itself uses a per-user app folder and shortcuts rather than a system service.
 
-`src/app` contains the WPF app, `src/bridge` the game bridge, `src/shared` the send protocol, `scripts` build/install scripts, and `docs` usage/validation notes and screenshots. Copy `runtime` from a release package into the source root, then run `./scripts/Build.ps1` in Windows PowerShell; optional `-GamePath` selects the game installation. Output is in `build/`. The compiler uses installed game assemblies; those assemblies are not redistributed.
-
-The package includes BepInEx 5.4.23.5, Doorstop, HarmonyX and Windows Mono libraries. See [third-party notices and licenses](licenses/THIRD-PARTY-NOTICES.md). This is an unofficial companion.
-
-Contact / bug reports: [parabellum0208@gmail.com](mailto:parabellum0208@gmail.com)
+This is an unofficial companion. See [third-party notices and licenses](licenses/THIRD-PARTY-NOTICES.md). Contact: [parabellum0208@gmail.com](mailto:parabellum0208@gmail.com).
