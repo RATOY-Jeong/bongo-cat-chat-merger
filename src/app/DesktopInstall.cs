@@ -47,6 +47,9 @@ namespace BongoChat
             AppStorage.Root = root;
             string destination = StageExecutable(source, root);
             bool same = String.Equals(Path.GetFullPath(source), Path.GetFullPath(destination), StringComparison.OrdinalIgnoreCase);
+            using (var notices = Assembly.GetExecutingAssembly().GetManifestResourceStream("BongoChat.ThirdPartyNotices"))
+                if (notices != null) using (var reader = new StreamReader(notices, Encoding.UTF8))
+                    File.WriteAllText(Path.Combine(root, "THIRD-PARTY-NOTICES.txt"), reader.ReadToEnd(), new UTF8Encoding(false));
             foreach (string folder in new[] { Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), Environment.GetFolderPath(Environment.SpecialFolder.Programs) })
                 try { CreateShortcut(folder, destination); } catch { /* A locked desktop does not prevent chat. */ }
             File.WriteAllText(Path.Combine(root, "current-app.txt"), destination, new UTF8Encoding(false));

@@ -131,8 +131,10 @@ namespace BongoChat
             SetStatus(statusMessage, statusConnected);
             UpdateTitleBar();
         }
+        public static bool CanStyleTitleBar(Version version) { return version.Major >= 10 && version.Build >= 22000; }
         private void UpdateTitleBar()
         {
+            if (!CanStyleTitleBar(Environment.OSVersion.Version)) return; // Windows 10 keeps its native title bar.
             try { int flag = dark ? 1 : 0; IntPtr hwnd = new WindowInteropHelper(this).Handle; if (hwnd != IntPtr.Zero) DwmSetWindowAttribute(hwnd, 20, ref flag, 4); }
             catch (DllNotFoundException) { }
             catch (EntryPointNotFoundException) { }
