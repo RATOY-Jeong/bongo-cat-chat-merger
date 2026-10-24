@@ -28,7 +28,8 @@ namespace BongoChat
 
         private void Reconnect()
         {
-            if (demo || reconnectTimer.IsEnabled) return;
+            if (demo || setupBusy || reconnectTimer.IsEnabled) return;
+            if (automaticSetupEnabled && !HasLiveBridge()) { BeginSetup(false); return; }
             // A reconnect never replays an uncertain chat request. Keep the draft
             // and invalidate the old request even if an acknowledgement is late.
             if (pendingRequest != null) CheckPending(null);

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,7 +12,7 @@ namespace BongoChat
 {
     public static class UiText
     {
-        public static readonly string PreferencePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "language.txt");
+        public static readonly string PreferencePath = AppStorage.PathFor("language.txt");
         public static bool IsLanguage(string code) { return code == "en" || code == "ko" || code == "ja"; }
         public static string ReadPreference()
         {
@@ -117,11 +118,44 @@ namespace BongoChat
             new[] { "게임의 채팅 필터가 전송을 허용하지 않았어요.", "The game's chat filter did not allow this message.", "ゲームのチャットフィルターが送信を許可しませんでした。" },
             new[] { "게임에 전송하지 못했어요: ", "Could not send to the game: ", "ゲームに送信できませんでした: " }
         };
+        private static readonly string[][] SetupRows = {
+            new[] { "준비 중…", "Preparing…", "準備中…" },
+            new[] { "설치하고 게임 재시작", "Set up & restart game", "設定して再起動" },
+            new[] { "Steam에서 봉고캣 열기", "Open Bongo Cat in Steam", "SteamでBongo Catを開く" },
+            new[] { "연결 도우미", "Connection helper", "接続サポート" },
+            new[] { "게임 위치 직접 선택", "Select game location manually", "ゲームの場所を手動で選択" },
+            new[] { "진단 내용 복사", "Copy diagnostics", "診断情報をコピー" },
+            new[] { "게임 위치와 연결 파일을 자동으로 확인하고 복구합니다.", "Find the game and automatically check or repair its connection files.", "ゲームの場所と接続ファイルを自動で確認・修復します。" },
+            new[] { "봉고캣 위치와 연결 파일을 자동으로 확인하고 있어요.", "Finding Bongo Cat and checking its connection files…", "Bongo Catの場所と接続ファイルを確認しています…" },
+            new[] { "봉고캣을 찾지 못했어요. Steam에서 설치한 뒤 연결 도우미를 눌러 주세요.", "Bongo Cat was not found. Install it in Steam, then click Connection helper.", "Bongo Catが見つかりません。Steamでインストールした後、接続サポートを押してください。" },
+            new[] { "처음 연결을 준비하려면 봉고캣을 다시 시작해야 해요. 아래 버튼을 누르면 자동으로 진행해요.", "Bongo Cat needs a restart to finish setup. Click the button below to do this automatically.", "初回の接続準備にはBongo Catの再起動が必要です。下のボタンで自動的に進めます。" },
+            new[] { "봉고캣을 종료하고 연결을 준비하고 있어요. 게임은 다시 실행해 드려요.", "Closing Bongo Cat to prepare the connection. The game will reopen automatically.", "Bongo Catを終了して接続を準備しています。ゲームは自動で再起動します。" },
+            new[] { "봉고캣이 종료되지 않았어요. 게임 트레이 메뉴에서 종료한 뒤 연결 도우미를 눌러 주세요.", "Bongo Cat did not close. Exit it from its tray menu, then click Connection helper.", "Bongo Catが終了しませんでした。トレイメニューから終了し、接続サポートを押してください。" },
+            new[] { "필요한 연결 파일을 설치하고 있어요.", "Installing the required connection files…", "必要な接続ファイルをインストールしています…" },
+            new[] { "Windows 권한 창이 뜨면 예를 눌러 주세요. 연결에 필요한 파일만 설치해요.", "Choose Yes in the Windows permission prompt to install the required connection files.", "Windowsの許可画面で「はい」を選択してください。必要な接続ファイルをインストールします。" },
+            new[] { "설치 권한을 받지 못했어요. 연결 도우미를 눌러 다시 시도할 수 있어요.", "Setup permission was not granted. Click Connection helper to try again.", "インストールの許可を取得できませんでした。接続サポートから再試行できます。" },
+            new[] { "연결 준비가 끝났어요. 봉고캣이 열리면 원하는 방에 들어가 주세요.", "Setup is complete. Join a room when Bongo Cat opens.", "接続の準備ができました。Bongo Catが開いたらルームに参加してください。" },
+            new[] { "자동 연결을 완료하지 못했어요: ", "Could not finish automatic setup: ", "自動設定を完了できませんでした: " },
+            new[] { "다른 모드가 설치되어 있어요. 기존 파일을 보존하고 설치를 멈췄어요.", "Another mod loader is installed. Setup stopped to preserve its files.", "別のMODローダーがあります。既存ファイルを保護するため設定を停止しました。" },
+            new[] { "설치 파일이 다른 프로그램에서 변경됐어요. 기존 파일을 보존했어요: ", "An installed file was changed by another program and has been preserved: ", "インストール済みファイルが変更されています。元のファイルを保持しました: " },
+            new[] { "연결 파일이 누락됐어요. 전체 실행파일을 다시 받아 주세요.", "The embedded connection files are missing. Download the complete EXE again.", "内蔵の接続ファイルがありません。完全なEXEを再ダウンロードしてください。" },
+            new[] { "연결 파일의 구성이 올바르지 않아요.", "The embedded connection package is invalid.", "内蔵の接続ファイルの構成が無効です。" },
+            new[] { "설치 경로를 확인할 수 없어요.", "The installation path could not be verified.", "インストール先を確認できません。" },
+            new[] { "연결된 폴더에는 자동 설치할 수 없어요.", "Automatic setup cannot write through a linked folder.", "リンク先のフォルダーには自動インストールできません。" },
+            new[] { "연결된 파일에는 자동 설치할 수 없어요.", "Automatic setup cannot overwrite a linked file.", "リンクされたファイルは自動で上書きできません。" },
+            new[] { "봉고캣 설치 위치를 찾지 못했어요.", "The Bongo Cat installation was not found.", "Bongo Catのインストール先が見つかりません。" },
+            new[] { "기존 설치 정보를 확인할 수 없어요.", "The existing installation record could not be verified.", "既存のインストール情報を確認できません。" },
+            new[] { "다른 창에서 연결을 준비하고 있어요. 잠시 후 다시 눌러 주세요.", "Another window is preparing the connection. Please try again shortly.", "別のウィンドウで接続を準備しています。少し待ってから再試行してください。" },
+            new[] { "연결 준비를 위해 봉고캣을 먼저 종료해 주세요.", "Bongo Cat must close before its connection files can be prepared.", "接続の準備にはBongo Catの終了が必要です。" },
+            new[] { "연결 파일 검증에 실패했어요.", "Connection file verification failed.", "接続ファイルの検証に失敗しました。" },
+            new[] { "권한 창의 연결 설치가 아직 진행 중이에요. 잠시 후 다시 눌러 주세요.", "The permission/setup window is still active. Try again after it finishes.", "許可画面またはインストールが進行中です。完了後に再試行してください。" },
+            new[] { "게임에서 연결 파일을 불러오지 못했어요. 연결 도우미에서 다시 확인할 수 있어요.", "The game has not loaded the connection files. Use Connection helper to check again.", "ゲームが接続ファイルを読み込めませんでした。接続サポートで再確認できます。" }
+        };
         private static readonly Dictionary<string, string[]> Catalog = CreateCatalog();
         private static Dictionary<string, string[]> CreateCatalog()
         {
             var result = new Dictionary<string, string[]>();
-            foreach (string[] row in Rows) result.Add(row[0], row);
+            foreach (string[] row in Rows.Concat(SetupRows)) result.Add(row[0], row);
             return result;
         }
         public static string Get(string code, string text)
@@ -131,7 +165,7 @@ namespace BongoChat
             string[] row; int index = code == "ja" ? 2 : 1;
             if (Catalog.TryGetValue(text, out row)) return row[index];
             // Only known UI prefixes are translated; user messages and room names never pass here.
-            foreach (string[] prefix in Rows)
+            foreach (string[] prefix in Catalog.Values)
                 if ((prefix[0].EndsWith(": ") || prefix[0] == "이모티콘 #") && text.StartsWith(prefix[0], StringComparison.Ordinal))
                     return prefix[index] + Get(code, text.Substring(prefix[0].Length));
             return text;
@@ -218,7 +252,7 @@ namespace BongoChat
                 roomTitle.Text = liveState != null && Journal.RoomIdValid(currentRoom) && !String.IsNullOrWhiteSpace(liveState.name) ? liveState.name : L("봉고캣 채팅방");
                 roomInfo.Text = Journal.RoomIdValid(currentRoom) && liveState != null ? F("참여 중 {0}명 · 실시간 대화", liveState.count) : L("같은 방의 대화를 한곳에");
             }
-            RenderMessages(false); RefreshComposer();
+            RefreshSetupLabels(); RenderMessages(false); RefreshComposer();
         }
     }
 }

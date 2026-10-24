@@ -26,9 +26,9 @@ namespace BongoChat
         private DateTime pendingSince;
         private int currentAssetRevision = -1;
         private readonly Dictionary<int, BitmapSource> emoteImages = new Dictionary<int, BitmapSource>();
-        private readonly string themePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appearance.txt");
-        private readonly string pinPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "always-on-top.txt");
-        private readonly string emotePreferencePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "show-emotes.txt");
+        private readonly string themePath = AppStorage.PathFor("appearance.txt");
+        private readonly string pinPath = AppStorage.PathFor("always-on-top.txt");
+        private readonly string emotePreferencePath = AppStorage.PathFor("show-emotes.txt");
         private string sendNotice = "";
 
         [DllImport("dwmapi.dll")]

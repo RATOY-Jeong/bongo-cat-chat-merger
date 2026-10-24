@@ -15,8 +15,8 @@ using Microsoft.Win32;
 
 [assembly: System.Reflection.AssemblyTitle("Bongo Cat Chat Merger")]
 [assembly: System.Reflection.AssemblyProduct("Bongo Cat Chat Merger")]
-[assembly: System.Reflection.AssemblyVersion("0.3.0.0")]
-[assembly: System.Reflection.AssemblyFileVersion("0.3.0.0")]
+[assembly: System.Reflection.AssemblyVersion("0.4.0.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.4.0.0")]
 
 namespace BongoChat
 {
@@ -97,7 +97,7 @@ namespace BongoChat
     public sealed partial class ChatWindow : Window
     {
         private readonly JavaScriptSerializer json = Journal.Json;
-        private readonly string settingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "game-path.txt");
+        private readonly string settingsPath = AppStorage.PathFor("game-path.txt");
         private readonly bool demo;
         private string gamePath = "";
         private string currentRoom = "";
@@ -231,7 +231,7 @@ namespace BongoChat
             pin.Checked += delegate { Topmost = true; SavePinPreference(true); };
             pin.Unchecked += delegate { Topmost = false; SavePinPreference(false); };
             ((Slider)root.FindName("OpacityControl")).ValueChanged += delegate(object sender, RoutedPropertyChangedEventArgs<double> args) { Opacity = args.NewValue; };
-            ((Button)root.FindName("Choose")).Click += delegate { ChooseGame(); };
+
             ((Button)root.FindName("Export")).Click += delegate { Export(); };
             ((Hyperlink)root.FindName("ContactEmail")).Click += delegate
             {
@@ -241,6 +241,7 @@ namespace BongoChat
             };
             InitializeComposerAndTheme(root);
             InitializeReconnect(root);
+            InitializeSetup(root);
             InitializeLanguage(root);
             if (demo) LoadDemo();
             else
@@ -263,34 +264,10 @@ namespace BongoChat
         private string BridgeFolder { get { return Path.Combine(gamePath, "BepInEx", "BongoChat"); } }
         private void FindGame()
         {
-            try { if (File.Exists(settingsPath)) gamePath = File.ReadAllText(settingsPath, Encoding.UTF8).Trim(); } catch { }
-            if (File.Exists(Path.Combine(gamePath, "BongoCat.exe"))) return;
-            var roots = new List<string>();
-            string steam = Registry.GetValue(@"HKEY_CURRENT_USER\Software\Valve\Steam", "SteamPath", "") as string;
-            if (!String.IsNullOrEmpty(steam)) roots.Add(steam);
-            roots.Add(@"C:\Program Files (x86)\Steam");
-            foreach (string root in roots.ToArray())
-            {
-                try
-                {
-                    string file = Path.Combine(root, "steamapps", "libraryfolders.vdf");
-                    if (!File.Exists(file)) continue;
-                    foreach (string line in File.ReadAllLines(file))
-                    {
-                        var match = System.Text.RegularExpressions.Regex.Match(line, "\\\"path\\\"\\s+\\\"([^\\\"]+)\\\"");
-                        if (match.Success) roots.Add(match.Groups[1].Value.Replace(@"\\", @"\"));
-                    }
-                }
-                catch { }
-            }
-            foreach (string root in roots)
-            {
-                string candidate = Path.Combine(root, "steamapps", "common", "BongoCat");
-                if (File.Exists(Path.Combine(candidate, "BongoCat.exe"))) { gamePath = candidate; return; }
-            }
-            gamePath = "";
+            string preferred = gamePath;
+            try { if (File.Exists(settingsPath)) preferred = File.ReadAllText(settingsPath).Trim(); } catch { }
+            gamePath = GameLocator.Find(preferred);
         }
-
         private void ChooseGame()
         {
             var picker = new OpenFileDialog { Title = L("봉고캣 설치 폴더의 BongoCat.exe를 선택하세요"), Filter = "Bongo Cat|BongoCat.exe" };
@@ -315,13 +292,15 @@ namespace BongoChat
 
         public void Poll()
         {
+            if (setupBusy) { RefreshComposer(); return; }
+            if (setupLaunchDeadline != default(DateTime) && DateTime.UtcNow > setupLaunchDeadline) { setupLaunchDeadline = default(DateTime); if (!HasLiveBridge()) SetupMessage("게임에서 연결 파일을 불러오지 못했어요. 연결 도우미에서 다시 확인할 수 있어요.", "retry"); }
             canSend = false;
             liveState = null;
             try
             {
-                if (String.IsNullOrEmpty(gamePath)) { SetStatus("게임 폴더에서 BongoCat.exe를 선택해 주세요", false); RenderEmptyIfNeeded(); return; }
+                if (String.IsNullOrEmpty(gamePath)) { SetStatus(setupNotice ?? "게임 폴더에서 BongoCat.exe를 선택해 주세요", false); RenderEmptyIfNeeded(); return; }
                 string file = Path.Combine(BridgeFolder, "state.json");
-                if (!File.Exists(file)) { SetStatus("연결 플러그인 설치 후 봉고캣을 실행해 주세요", false); RenderEmptyIfNeeded(); return; }
+                if (!File.Exists(file)) { SetStatus(setupNotice ?? "연결 플러그인 설치 후 봉고캣을 실행해 주세요", false); RenderEmptyIfNeeded(); return; }
                 BridgeState state = json.Deserialize<BridgeState>(Journal.ReadShared(file));
                 liveState = state;
                 CheckPending(state);
@@ -329,8 +308,9 @@ namespace BongoChat
                 DateTime timestamp;
                 bool fresh = DateTime.TryParse(state.utc, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out timestamp)
                     && Math.Abs((DateTime.UtcNow - timestamp.ToUniversalTime()).TotalSeconds) < 6;
-                if (!fresh || state.stopped) { SetStatus("봉고캣 연결이 끊겼어요 · 기록은 남아 있어요", false); return; }
+                if (!fresh || state.stopped) { SetStatus(setupNotice ?? "봉고캣 연결이 끊겼어요 · 기록은 남아 있어요", false); return; }
                 if (!state.ready) { SetStatus("연결 오류: " + (state.error ?? "플러그인을 확인해 주세요"), false); return; }
+                if (setupNotice != null) { setupNotice = null; setupLaunchDeadline = default(DateTime); setupAction = "retry"; RefreshSetupLabels(); }
                 if (!Journal.RoomIdValid(state.room))
                 {
                     if (currentRoom != "") { currentRoom = ""; entries.Clear(); currentFile = ""; currentLength = -1; RenderMessages(true); }
@@ -485,14 +465,35 @@ namespace BongoChat
 
     public static class Program
     {
+        private static System.Threading.Mutex instanceMutex;
+        private static System.Threading.EventWaitHandle activateEvent;
+        private static bool ownsInstance;
         [STAThread]
         public static int Main(string[] args)
         {
             try
             {
                 bool preview = args.Length >= 2 && args[0] == "--preview";
+                if (args.Length == 2 && args[0] == "--prepare-game") return DesktopInstall.RunSetupHelper(args[1]);
+                if (!preview && !args.Contains("--demo") && DesktopInstall.Prepare()) return 0;
                 var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
                 bool demonstration = preview || args.Contains("--demo");
+                if (!demonstration)
+                {
+                    string id = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value;
+                    instanceMutex = new System.Threading.Mutex(false, "Local\\BongoChat.Window." + id);
+                    activateEvent = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.AutoReset, "Local\\BongoChat.Activate." + id);
+                    try { ownsInstance = instanceMutex.WaitOne(0); } catch (System.Threading.AbandonedMutexException) { ownsInstance = true; }
+                    if (!ownsInstance) { activateEvent.Set(); return 0; }
+                    var activationTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
+                    activationTimer.Tick += delegate
+                    {
+                        if (activateEvent != null && activateEvent.WaitOne(0) && app.MainWindow != null)
+                        { app.MainWindow.Show(); app.MainWindow.WindowState = WindowState.Normal; app.MainWindow.Activate(); }
+                    };
+                    activationTimer.Start();
+                    app.Exit += delegate { activationTimer.Stop(); };
+                }
                 string selected = demonstration ? args.FirstOrDefault(a => a.StartsWith("--lang=")) : null;
                 selected = selected == null ? UiText.ReadPreference() : selected.Substring(7);
                 if (!demonstration && !UiText.IsLanguage(selected))
@@ -503,14 +504,20 @@ namespace BongoChat
                 }
                 var window = new ChatWindow(demonstration, null, args.Contains("--dark") ? (bool?)true : args.Contains("--light") ? (bool?)false : null, selected);
                 if (preview) { window.Snapshot(args[1]); return 0; }
+                if (!demonstration) window.EnableAutomaticSetup();
                 app.MainWindow = window; app.ShutdownMode = ShutdownMode.OnMainWindowClose;
                 app.Run(window); return 0;
             }
             catch (Exception ex)
             {
-                File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "error.log"), ex.ToString());
+                try { File.WriteAllText(AppStorage.PathFor("error.log"), ex.ToString()); } catch { }
                 if (!args.Contains("--preview")) MessageBox.Show(ex.ToString(), UiText.Get(UiText.ReadPreference() ?? "en", "Bongo Cat Chat Merger 오류"));
                 return 1;
+            }
+            finally
+            {
+                if (instanceMutex != null) { if (ownsInstance) instanceMutex.ReleaseMutex(); instanceMutex.Dispose(); }
+                if (activateEvent != null) { activateEvent.Dispose(); activateEvent = null; }
             }
         }
     }
