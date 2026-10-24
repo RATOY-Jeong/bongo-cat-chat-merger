@@ -56,12 +56,12 @@ public static class LocalizationTests
             var windowAgain = new ChatWindow(true); Check((string)Field(windowAgain, "language") == "ja", "dropdown language survives a new window"); windowAgain.Close();
             Call(w, "SendComposer"); var pending = (SendRequest)Field(w, "pendingRequest"); string requestPath = Path.Combine(folder, "commands", pending.id + ".request.json"); string requestBefore = File.ReadAllText(requestPath);
             Select(w, "en");
-            Check(Field(w, "pendingRequest") == pending && File.ReadAllText(requestPath) == requestBefore && composer.IsReadOnly, "language switch keeps one pending request without replay or cancellation");
+            Check(Field(w, "pendingRequest") == pending && File.ReadAllText(requestPath) == requestBefore && !composer.IsReadOnly, "language switch keeps one pending request without replay or cancellation");
             Check(((TextBlock)Field(w, "composerHint")).Text == "Sending request to the game…", "pending-send hint changes language immediately");
             Directory.CreateDirectory(Path.Combine(folder, "commands", "results"));
             File.WriteAllText(Path.Combine(folder, "commands", "results", pending.id + ".json"), Journal.Json.Serialize(new SendResult { id = pending.id, session = pending.session, room = pending.room, accepted = false, error = "게임의 채팅 필터가 전송을 허용하지 않았어요." }));
-            w.Poll(); Check(((TextBlock)Field(w, "composerHint")).Text.Contains("chat filter") && composer.Text == "보존할 日本語 draft", "bridge rejection is localized and keeps the draft");
-            Select(w, "ko"); Check(((TextBlock)Field(w, "composerHint")).Text == "게임의 채팅 필터가 전송을 허용하지 않았어요.", "an existing notice switches back to Korean without being lost");
+            w.Poll(); Check(((TextBlock)Field(w, "composerHint")).Text.Contains("text filter") && composer.Text == "보존할 日本語 draft", "bridge rejection is localized and keeps the draft");
+            Select(w, "ko"); Check(((TextBlock)Field(w, "composerHint")).Text == "방으로 전송되지 않았어요. 게임의 문자 필터·채팅 설정을 확인해 주세요. 내 고양이 말풍선만 보일 수 있어요.", "an existing notice switches back to Korean without being lost");
             state.utc = DateTime.UtcNow.AddMinutes(-1).ToString("o"); File.WriteAllText(stateFile, Journal.Json.Serialize(state));
             Call(w, "Reconnect"); Select(w, "ja");
             Check((string)((Button)Field(w, "reconnectButton")).Content == "確認中…" && !((Button)Field(w, "reconnectButton")).IsEnabled, "language switch retains an active reconnect attempt");

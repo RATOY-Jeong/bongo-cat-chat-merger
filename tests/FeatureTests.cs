@@ -70,7 +70,7 @@ public static class FeatureTests
             string queued=Path.Combine(bridge,"commands",pending.id+".request.json");
             var queuedRequest=Journal.Json.Deserialize<SendRequest>(File.ReadAllText(queued));
             Check(queuedRequest.text==composer.Text && queuedRequest.room=="123" && queuedRequest.session==session,"atomic queue carries exact text and current session");
-            Check(composer.IsReadOnly && !send.IsEnabled,"duplicate sends blocked while pending");
+            Check(!composer.IsReadOnly && !send.IsEnabled,"pending sends block duplicates without locking the input method");
             File.WriteAllText(Path.Combine(bridge,"commands","results",pending.id+".json"),Journal.Json.Serialize(new SendResult {id=pending.id,session=session,room="123",accepted=true}));
             w.Poll(); Check(composer.Text=="" && Field(w,"pendingRequest")==null,"accepted acknowledgement clears draft");
             composer.Text="방 바꾸기 전 초안"; Invoke(w,"SendComposer"); pending=(SendRequest)Field(w,"pendingRequest");
