@@ -2,6 +2,8 @@
 
 [English](../README.md) · **한국어** · [日本語](../README.ja.md)
 
+**0.4.2-rc1 확인용 버전:** [EXE 받기](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.2-rc1/BongoCatChatMerger-0.4.2-rc1.exe) · [변경 사항과 진단 순서](RELIABILITY-0.4.2.md). 전송 응답 복구·파일 통신 분리·실제 투명도를 추가했습니다. 타블렛 환경의 전체 창 멈춤은 아직 원인 확인 중이며 정식 최신판은 0.4.1입니다.
+
 Steam 봉고캣의 같은 방 대화를 한곳에 모아 보여주는 Windows 보조 앱입니다. 직접 채팅, 게임 이모티콘 그림, 로컬 기록·검색, 한·영·일 UI를 지원합니다.
 
 ![한국어 미리보기](assets/preview-ko.png)
