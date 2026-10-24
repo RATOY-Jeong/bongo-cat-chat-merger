@@ -6,9 +6,9 @@ A lightweight Windows companion for your Steam Bongo Cat room: live chat, direct
 
 ![English preview](docs/assets/preview.png)
 
-## Download and start — 0.4.0
+## Download and start — 0.4.1
 
-**[Download BongoCatChatMerger-0.4.0.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.0/BongoCatChatMerger-0.4.0.exe)** and run it. This single file includes everything required for connection setup. You do not need to extract a ZIP, find a game folder, or run Install.cmd.
+**[Download BongoCatChatMerger-0.4.1.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.1/BongoCatChatMerger-0.4.1.exe)** and run it. This single file includes everything required for connection setup. You do not need to extract a ZIP, find a game folder, or run Install.cmd.
 
 1. Run the EXE and choose your language on first launch.
 2. The app finds Bongo Cat and prepares the connection automatically. If the game must restart, click **Set up & restart game**. If Windows requests permission, approve the prompt to allow the required game-folder files to be installed.
@@ -41,6 +41,12 @@ The verified bridge **0.2.2** binary and its protocol are unchanged. An installe
 - Select English / 한국어 / 日本語 from the dropdown. Messages, player/room names and game emote names keep their original text.
 - Changing language keeps drafts and pending requests. Reconnecting cancels uncertain requests without replaying them.
 
+## Pen tablet compatibility — 0.4.1
+
+For reports of the chat window freezing while a pen tablet is used elsewhere, the app now requests WPF's process-local stylus/touch opt-out before the first window is created. Chat uses ordinary mouse/text input; raw pressure, ink and touch gestures are not used in this window. Other applications and the tablet driver's Windows Ink settings are not changed.
+
+This mitigates a known class of WPF tablet-processing freezes; it does not establish the cause of every Huion report. The opt-out is supported by .NET Framework 4.7+. On an older runtime the app still starts, but the mitigation may be unavailable. Close the old companion before running the new EXE, then test normal pen use in your drawing app. **Huion hardware reproduction is still pending.** [Details and test steps](docs/TABLET-COMPATIBILITY.md).
+
 ## Records and privacy
 
 Other players do not need this app. Only messages received after installation are recorded; earlier server history cannot be restored. The game bridge continues recording while the game runs, even if the companion is closed.
@@ -53,7 +59,7 @@ Future game updates work only while the relevant internal APIs remain compatible
 
 The full ZIP includes <code>runtime</code>, source, scripts, licenses and docs. Build with <code>./scripts/Build.ps1</code> in Windows PowerShell; optional <code>-GamePath</code> selects a game installation. For release reproduction, <code>-BridgeBinary</code> reuses an already verified bridge. Run <code>./scripts/Check.ps1</code> after building. Original game assemblies are not redistributed.
 
-0.4.0 passed **51 automatic setup checks + 58 feature/language/reconnect checks**. Tests use isolated game fixtures, including a single-EXE-only setup and a game-launch simulator. Actual administrator prompts and a fresh user's live-game setup still need user confirmation. [Detailed validation notes (Korean)](docs/VALIDATION.md).
+0.4.1 passed **51 automatic setup checks + 58 feature/language/reconnect checks + 11 pen compatibility checks (120 total)**. Tests use isolated game fixtures, including a single-EXE-only setup and a game-launch simulator. Actual administrator prompts and a fresh user's live-game setup still need user confirmation. [Detailed validation notes (Korean)](docs/VALIDATION.md).
 
 To remove the game bridge, close Bongo Cat and run <code>Uninstall.cmd</code> from the full ZIP. It preserves journals and modified files. The companion itself uses a per-user app folder and shortcuts rather than a system service.
 
