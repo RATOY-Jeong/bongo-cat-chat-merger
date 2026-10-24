@@ -16,8 +16,8 @@ using Microsoft.Win32;
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.5")]
 [assembly: System.Reflection.AssemblyTitle("Bongo Cat Chat Merger")]
 [assembly: System.Reflection.AssemblyProduct("Bongo Cat Chat Merger")]
-[assembly: System.Reflection.AssemblyVersion("0.4.0.0")]
-[assembly: System.Reflection.AssemblyFileVersion("0.4.0.0")]
+[assembly: System.Reflection.AssemblyVersion("0.4.1.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.4.1.0")]
 
 namespace BongoChat
 {
@@ -471,6 +471,13 @@ namespace BongoChat
         private static bool ownsInstance;
         [STAThread]
         public static int Main(string[] args)
+        {
+            TabletCompatibility.Configure();
+            return Run(args);
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        private static int Run(string[] args)
         {
             try
             {
