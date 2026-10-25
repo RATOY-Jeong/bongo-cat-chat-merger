@@ -152,6 +152,15 @@ namespace BongoChat
             new[] { "게임에서 연결 파일을 불러오지 못했어요. 연결 도우미에서 다시 확인할 수 있어요.", "The game has not loaded the connection files. Use Connection helper to check again.", "ゲームが接続ファイルを読み込めませんでした。接続サポートで再確認できます。" }
         };
         private static readonly string[][] ReliabilityRows = {
+            new[] { "연결 기능 끄고 게임 재시작", "Disable connection and restart game", "接続機能を無効にしてゲームを再起動" },
+            new[] { "연결 복원하고 게임 재시작", "Restore connection and restart game", "接続機能を復元してゲームを再起動" },
+            new[] { "게임을 종료하고 채팅 연결 기능을 끈 상태로 다시 실행합니다. 게임 데이터와 대화 기록은 보존됩니다. 진행할까요?", "Close and restart the game with the chat connection disabled. Game data and chat records are kept. Continue?", "ゲームを終了し、チャット接続を無効にして再起動します。ゲームデータと会話の記録は保持されます。続行しますか？" },
+            new[] { "게임을 종료하고 채팅 연결 기능을 복원한 뒤 다시 실행합니다. 진행할까요?", "Close the game, restore the chat connection and restart it. Continue?", "ゲームを終了し、チャット接続を復元して再起動します。続行しますか？" },
+            new[] { "연결 기능을 껐어요. 봉고캣만 실행해 증상을 확인해 주세요. 연결 도우미를 누르면 복원해요.", "Connection disabled. Check the issue in Bongo Cat. Use Connection helper to restore it.", "接続機能は無効です。Bongo Catで症状を確認してください。接続サポートから復元できます。" },
+            new[] { "연결 기능을 꺼 둔 상태예요. 연결 도우미에서 복원할 수 있어요.", "The connection is disabled. Restore it with Connection helper.", "接続機能は無効になっています。接続サポートから復元できます。" },
+            new[] { "연결 파일이 충돌해요. 기존 파일은 그대로 보존했어요.", "Connection files conflict. Existing files have been preserved.", "接続ファイルが競合しています。既存のファイルは保持されています。" },
+            new[] { "이전 전송문 복원", "Restore previous message", "前の送信文を復元" },
+            new[] { "입력창을 비우면 보관한 전송문을 복원할 수 있어요. 대화에 이미 표시됐는지 먼저 확인해 주세요.", "Clear the editor to restore a saved outgoing message. Check the chat before sending it again.", "入力欄を空にすると保存した送信文を復元できます。再送する前に会話を確認してください。" },
             new[] { "최소화", "Minimize", "最小化" },
             new[] { "최대화 / 복원", "Maximize / restore", "最大化 / 元に戻す" },
             new[] { "닫기", "Close", "閉じる" },

@@ -109,7 +109,7 @@ namespace BongoChat
     }
     public sealed class SetupInspection { public bool NeedsInstall; public string Problem; }
     internal sealed class PayloadFile { public string Entry, Relative, Hash; }
-    public static class BridgeSetup
+    public static partial class BridgeSetup
     {
         public const string ResourceName = "BongoChat.SetupPayload";
         private static readonly JavaScriptSerializer Json = new JavaScriptSerializer { MaxJsonLength = 1048576 };
@@ -163,6 +163,7 @@ namespace BongoChat
         }
         private static SetupInspection Inspect(string game, List<PayloadFile> plan, InstallManifest manifest)
         {
+            if (IsConnectionPaused(game)) return new SetupInspection { Problem = "연결 기능을 꺼 둔 상태예요. 연결 도우미에서 복원할 수 있어요." };
             foreach (string foreign in new[] { "version.dll", "MelonLoader" })
                 if (File.Exists(Destination(game, foreign)) || Directory.Exists(Destination(game, foreign))) return new SetupInspection { Problem = "다른 모드가 설치되어 있어요. 기존 파일을 보존하고 설치를 멈췄어요." };
             if (manifest == null)

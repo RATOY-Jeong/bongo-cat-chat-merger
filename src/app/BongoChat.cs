@@ -16,9 +16,9 @@ using Microsoft.Win32;
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.5")]
 [assembly: System.Reflection.AssemblyTitle("Bongo Cat Chat Merger")]
 [assembly: System.Reflection.AssemblyProduct("Bongo Cat Chat Merger")]
-[assembly: System.Reflection.AssemblyVersion("0.4.2.0")]
-[assembly: System.Reflection.AssemblyFileVersion("0.4.2.0")]
-[assembly: System.Reflection.AssemblyInformationalVersion("0.4.2")]
+[assembly: System.Reflection.AssemblyVersion("0.4.3.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.4.3.0")]
+[assembly: System.Reflection.AssemblyInformationalVersion("0.4.3")]
 
 namespace BongoChat
 {
@@ -204,6 +204,7 @@ namespace BongoChat
         <TextBox x:Name='Composer' AcceptsReturn='True' TextWrapping='Wrap' MinHeight='46' MaxHeight='94' MaxLength='300' VerticalScrollBarVisibility='Auto' Padding='10,9' Background='#FFFFFF' Foreground='#293B46' BorderBrush='#DAE4E9' FontSize='13' ToolTip='Enter로 전송 · Shift+Enter 줄바꿈'/>
         <Button x:Name='Send' Grid.Column='1' Content='전송' Margin='8,0,0,0' Width='62' IsEnabled='False' Background='#FFE36B' Foreground='#293B46'/>
       </Grid>
+      <Button x:Name='RecoverSend' Content='이전 전송문 복원' Visibility='Collapsed' HorizontalAlignment='Left' FontSize='10' Padding='8,4' Margin='0,0,0,6'/>
       <TextBlock x:Name='ComposerHint' Text='연결 후 이곳에서 채팅을 보낼 수 있어요' FontSize='10' Foreground='#526675' Margin='0,0,0,12' TextWrapping='Wrap'/>
       <Grid><Grid.ColumnDefinitions><ColumnDefinition Width='Auto'/><ColumnDefinition Width='Auto'/><ColumnDefinition Width='*'/><ColumnDefinition Width='Auto'/></Grid.ColumnDefinitions>
         <Button x:Name='Choose' Content='게임 폴더' FontSize='11' Margin='0,0,7,0'/>
@@ -273,6 +274,7 @@ namespace BongoChat
             {
                 if (folderOverride != null) gamePath = folderOverride;
                 else FindGame();
+                connectionPaused = BridgeSetup.IsConnectionPaused(gamePath);
                 timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(750) };
                 timer.Tick += delegate { Poll(); };
                 timer.Start();
@@ -317,6 +319,7 @@ namespace BongoChat
 
         public void Poll()
         {
+            if (connectionPaused) { canSend = false; SetStatus(PausedNotice,false); RefreshComposer(); return; }
             if (setupBusy) { RefreshComposer(); return; }
             ExpirePendingRequest();
             if (setupLaunchDeadline != default(DateTime) && DateTime.UtcNow > setupLaunchDeadline)
@@ -330,6 +333,7 @@ namespace BongoChat
 
         private void ApplyPollSnapshot(PollSnapshot snapshot)
         {
+            if (connectionPaused) { canSend = false; SetStatus(PausedNotice,false); RefreshComposer(); return; }
             if (setupBusy) { RefreshComposer(); return; }
             UiPhase("apply-state");
             canSend = false;
@@ -512,7 +516,7 @@ namespace BongoChat
 
     public static class Program
     {
-        public const string DisplayVersion = "0.4.2";
+        public const string DisplayVersion = "0.4.3";
         private static System.Threading.Mutex instanceMutex;
         private static System.Threading.EventWaitHandle activateEvent;
         private static bool ownsInstance;
@@ -529,6 +533,7 @@ namespace BongoChat
             try
             {
                 bool preview = args.Length >= 2 && args[0] == "--preview";
+                if (args.Length == 2 && (args[0] == "--pause-connection" || args[0] == "--resume-connection")) return DesktopInstall.RunConnectionRecoveryHelper(args[1],args[0] == "--pause-connection");
                 if (args.Length == 2 && args[0] == "--prepare-game") return DesktopInstall.RunSetupHelper(args[1]);
                 if (!preview && !args.Contains("--demo") && DesktopInstall.Prepare()) return 0;
                 var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };

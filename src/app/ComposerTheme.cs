@@ -19,7 +19,10 @@ namespace BongoChat
         private bool dark, statusConnected, canSend, imeComposing, showEmotes;
         private Grid rootGrid;
         private TextBox composer;
-        private Button sendButton;
+        private Button sendButton, recoverSendButton;
+        private string pendingDraft;
+        private readonly Queue<string> recoverableDrafts = new Queue<string>();
+        private long draftRevision, pendingClearRevision;
         private TextBlock composerHint;
         private BridgeState liveState;
         private SendRequest pendingRequest;
@@ -94,6 +97,8 @@ namespace BongoChat
             rootGrid = root;
             composer = (TextBox)root.FindName("Composer");
             sendButton = (Button)root.FindName("Send");
+            recoverSendButton = (Button)root.FindName("RecoverSend");
+            recoverSendButton.Click += delegate { RecoverSendDraft(); };
             composerHint = (TextBlock)root.FindName("ComposerHint");
             var toggle = (CheckBox)root.FindName("DarkMode");
             toggle.IsChecked = dark;
@@ -104,7 +109,7 @@ namespace BongoChat
             emoteToggle.Checked += delegate { ChangeEmoteVisibility(true); };
             emoteToggle.Unchecked += delegate { ChangeEmoteVisibility(false); };
             sendButton.Click += delegate { SendComposer(); };
-            composer.TextChanged += delegate { if (pendingRequest == null) sendNotice = ""; RefreshComposer(); };
+            composer.TextChanged += delegate { draftRevision++; if (pendingRequest == null) sendNotice = ""; RefreshComposer(); };
             TextCompositionManager.AddPreviewTextInputStartHandler(composer, delegate { imeComposing = true; });
             TextCompositionManager.AddPreviewTextInputHandler(composer, delegate { imeComposing = false; });
             composer.LostKeyboardFocus += delegate { imeComposing = false; };
@@ -142,6 +147,11 @@ namespace BongoChat
         private void RefreshComposer()
         {
             if (composer == null) return;
+            RefreshMinimumHeight();
+            recoverSendButton.Content = L("이전 전송문 복원");
+            recoverSendButton.Visibility = recoverableDrafts.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            recoverSendButton.IsEnabled = pendingRequest == null && composer.Text.Length == 0;
+            recoverSendButton.ToolTip = L("입력창을 비우면 보관한 전송문을 복원할 수 있어요. 대화에 이미 표시됐는지 먼저 확인해 주세요.");
             // Keep the IME/editing context stable while a send is pending.
             sendButton.IsEnabled = !demo && canSend && pendingRequest == null && !String.IsNullOrWhiteSpace(composer.Text);
             composerHint.Text = L(demo ? "화면 미리보기 · 실제 메시지는 전송하지 않아요" :
@@ -158,17 +168,20 @@ namespace BongoChat
             string problem = RequestPolicy.Validate(request, liveState.session, liveState.room, DateTime.UtcNow, composer.MaxLength);
             if (problem != null) { sendNotice = problem; RefreshComposer(); return; }
             UiPhase("queue-send");
+            pendingDraft = composer.Text;
             pendingRequest = request; pendingSince = DateTime.UtcNow; sendNotice = "";
+            composer.Clear(); pendingClearRevision = draftRevision;
             WriteSendRequest(request);
             RefreshComposer();
             UiPhase("idle");
         }
-        private void CancelPendingRequest(string notice)
+        private void CancelPendingRequest(string notice, bool restore = true)
         {
             if (pendingRequest == null) return;
             string id = pendingRequest.id;
             if (sendCancellation != null) sendCancellation.Cancel();
             pendingRequest = null;
+            PreservePendingDraft(restore);
             sendNotice = notice;
             string folder = Path.Combine(BridgeFolder, "commands");
             RemoveCommandFile(Path.Combine(folder, id + ".request.json"));
@@ -177,7 +190,7 @@ namespace BongoChat
         private void ExpirePendingRequest()
         {
             if (pendingRequest != null && (DateTime.UtcNow - pendingSince).TotalSeconds > 22)
-                CancelPendingRequest("전송 결과를 확인하지 못했어요. 대화에 표시됐는지 확인한 뒤 다시 보내 주세요.");
+                CancelPendingRequest("전송 결과를 확인하지 못했어요. 대화에 표시됐는지 확인한 뒤 다시 보내 주세요.", false);
         }
         private void CheckPending(BridgeState state)
         {
@@ -200,16 +213,37 @@ namespace BongoChat
                 if (sendCancellation != null) sendCancellation.Cancel();
                 if (result.accepted)
                 {
-                    if (composer.Text.Trim() == completed.text) composer.Clear();
+                    pendingDraft = null; // Never erase the next draft on a delayed acknowledgement.
                     sendNotice = "게임에 전달했어요 · 수신한 메시지가 대화에 표시돼요";
                 }
-                else if (result.error == "게임의 채팅 필터가 전송을 허용하지 않았어요.")
-                    sendNotice = "방으로 전송되지 않았어요. 게임의 문자 필터·채팅 설정을 확인해 주세요. 내 고양이 말풍선만 보일 수 있어요.";
-                else sendNotice = result.error ?? "게임에서 전송 요청을 처리하지 못했어요.";
+                else
+                {
+                    PreservePendingDraft();
+                    if (result.error == "게임의 채팅 필터가 전송을 허용하지 않았어요.")
+                        sendNotice = "방으로 전송되지 않았어요. 게임의 문자 필터·채팅 설정을 확인해 주세요. 내 고양이 말풍선만 보일 수 있어요.";
+                    else sendNotice = result.error ?? "게임에서 전송 요청을 처리하지 못했어요.";
+                }
                 RemoveCommandFile(Path.Combine(BridgeFolder, "commands", "results", completed.id + ".json"));
             }
             // Even malformed/mismatched/unreadable replies must obey the deadline.
             ExpirePendingRequest();
+        }
+        private void PreservePendingDraft(bool restore = true)
+        {
+            string text = pendingDraft; pendingDraft = null;
+            if (text == null) return;
+            // Restore only an untouched editor. Later edits, even type-and-delete,
+            // belong to the next draft and must not be overwritten.
+            if (restore && draftRevision == pendingClearRevision && composer.Text.Length == 0) composer.Text = text;
+            else recoverableDrafts.Enqueue(text);
+        }
+        private void RefreshMinimumHeight() { MinHeight = (updateShowNotice ? 600 : 560) + (recoverableDrafts.Count > 0 ? 36 : 0); }
+        private void RecoverSendDraft()
+        {
+            if (pendingRequest != null || composer.Text.Length != 0 || recoverableDrafts.Count == 0) return;
+            composer.Text = recoverableDrafts.Dequeue();
+            composer.CaretIndex = composer.Text.Length;
+            RefreshComposer();
         }
         private UIElement EmoteContent(ChatEntry entry)
         {

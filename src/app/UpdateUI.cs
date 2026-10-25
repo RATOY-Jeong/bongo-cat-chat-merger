@@ -81,7 +81,7 @@ namespace BongoChat
             updateOpenButton.Content = L("다운로드 페이지");
             updateOpenButton.ToolTip = updateResult == null ? UpdateService.LatestPage : updateResult.PageUrl;
             updateOffer.Visibility = updateShowNotice ? Visibility.Visible : Visibility.Collapsed;
-            MinHeight = updateShowNotice ? 600 : 560;
+            RefreshMinimumHeight();
             bool available = updateResult != null && updateResult.Kind == UpdateKind.Available;
             updateOffer.Background = Brush(available ? "#FFF3CA" : "#D3E0E9");
             updateText.Foreground = Brush(available ? "#775D25" : "#506471");

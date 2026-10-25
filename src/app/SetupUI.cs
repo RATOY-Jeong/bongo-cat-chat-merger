@@ -25,14 +25,14 @@ namespace BongoChat
             setupButton.Click += delegate { BeginSetup(setupAction == "restart"); };
             var menu = new ContextMenu();
             var choose = new MenuItem();
-            choose.Click += delegate { setupNotice = null; ChooseGame(); if (!demo) BeginSetup(false); };
+            choose.Click += delegate { setupNotice = null; setupAction = "retry"; ChooseGame(); if (!demo) BeginSetup(false); };
             var diagnostic = new MenuItem();
             diagnostic.Click += delegate
             {
                 try { Clipboard.SetText("Bongo Cat Chat Merger " + typeof(ChatWindow).Assembly.GetName().Version + "\r\n" + statusText.Text + "\r\n" + (lastSetupError ?? "") + "\r\nUI health: " + UiHealthMonitor.LastReport() + "\r\nBackground IO: " + backgroundIo + ", read pending: " + pollReading + ", send pending: " + (pendingRequest != null) + "\r\nInput mode: " + (TabletCompatibility.Status ?? "Not configured") + "\r\nGame found: " + GameLocator.IsGame(gamePath) + "\r\nGame running: " + GameLocator.IsRunning(gamePath)); }
                 catch { }
             };
-            menu.Items.Add(choose); menu.Items.Add(diagnostic); setupButton.ContextMenu = menu;
+            menu.Items.Add(choose); menu.Items.Add(diagnostic); setupButton.ContextMenu = menu; InitializeConnectionRecovery(menu);
             Closed += delegate { setupClosed = true; };
             RefreshSetupLabels();
         }
@@ -40,7 +40,8 @@ namespace BongoChat
         private void RefreshSetupLabels()
         {
             if (setupButton == null) return;
-            string label = setupBusy ? "준비 중…" : setupAction == "restart" ? "설치하고 게임 재시작" : setupAction == "steam" ? "Steam에서 봉고캣 열기" : "연결 도우미";
+            RefreshConnectionRecovery();
+            string label = setupBusy ? "준비 중…" : setupAction == "resume" ? "연결 복원하고 게임 재시작" : setupAction == "restart" ? "설치하고 게임 재시작" : setupAction == "steam" ? "Steam에서 봉고캣 열기" : "연결 도우미";
             setupButton.Content = L(label);
             setupButton.IsEnabled = !demo && !setupBusy;
             setupButton.ToolTip = L("게임 위치와 연결 파일을 자동으로 확인하고 복구합니다.");
@@ -71,6 +72,7 @@ namespace BongoChat
         private void BeginSetup(bool restartConfirmed)
         {
             if (demo || setupBusy) return;
+            if (setupAction == "resume") { BeginConnectionRecovery(false); return; }
             setupLaunchDeadline = default(DateTime);
             if (setupAction == "steam" && !GameLocator.IsGame(gamePath))
             {
@@ -94,6 +96,12 @@ namespace BongoChat
                     }
                     gamePath = found;
                     try { File.WriteAllText(settingsPath, found); } catch { }
+                    if (BridgeSetup.IsConnectionPaused(found))
+                    {
+                        OnSetupUI(delegate { connectionPaused = true; FinishSetupTask(); SetupMessage(PausedNotice,"resume"); });
+                        return;
+                    }
+                    connectionPaused = false;
                     if (GameLocator.IsRunning(found) && HasLiveBridge())
                     {
                         OnSetupUI(delegate { setupNotice = null; setupAction = "retry"; FinishSetupTask(); Poll(); });

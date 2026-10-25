@@ -121,6 +121,7 @@ namespace BongoChat
                     {
                         if (pendingRequest == null || pendingRequest.id != request.id) return;
                         pendingRequest = null;
+                        PreservePendingDraft();
                         sendNotice = "전송 요청을 만들지 못했어요: " + ex.GetType().Name;
                         RefreshComposer();
                     };

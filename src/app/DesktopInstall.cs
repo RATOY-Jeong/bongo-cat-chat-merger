@@ -91,6 +91,21 @@ namespace BongoChat
             catch (UnauthorizedAccessException) { return 5; }
             catch (Exception ex) { try { File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "setup-helper-error.log"), ex.ToString()); } catch { } return 1; }
         }
+        public static int RunConnectionRecoveryHelper(string game, bool pause)
+        {
+            try { BridgeSetup.SetConnectionPaused(game,pause); if (!pause) BridgeSetup.Install(game,null); return 0; }
+            catch (UnauthorizedAccessException) { return 5; } catch { return 1; }
+        }
+        public static bool ConnectionRecoveryElevated(string game,bool pause)
+        {
+            var info = new ProcessStartInfo(Assembly.GetExecutingAssembly().Location)
+            {
+                UseShellExecute = true, Verb = "runas", WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = (pause ? "--pause-connection " : "--resume-connection ") + QuoteArgument(game)
+            };
+            using (var process = Process.Start(info))
+            { if (!process.WaitForExit(120000)) throw new IOException("권한 창의 연결 설치가 아직 진행 중이에요. 잠시 후 다시 눌러 주세요."); return process.ExitCode == 0; }
+        }
         public static bool InstallElevated(string game)
         {
             var info = new ProcessStartInfo(Assembly.GetExecutingAssembly().Location)
