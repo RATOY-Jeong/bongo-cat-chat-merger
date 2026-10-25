@@ -1,5 +1,7 @@
 # Bongo Cat Chat Merger
 
+**0.4.3:** Sent text is separated from the next draft immediately. Failed/uncertain originals can be restored without automatic resend. For empty cats in the game, right-click **Connection helper → Disable connection and restart game** to compare with our loader disabled; **Restore connection and restart game** reverses it. The empty-cat cause and Huion hardware fix are still unconfirmed. [Steps and limits](docs/RELIABILITY-0.4.3.md).
+
 **English** · [한국어](README.ko.md) · [日本語](README.ja.md)
 
 
@@ -7,9 +9,9 @@ A lightweight Windows companion for your Steam Bongo Cat room: live chat, direct
 
 ![English preview](docs/assets/preview.png)
 
-## Download and start — 0.4.2
+## Download and start — 0.4.3
 
-**[Download BongoCatChatMerger-0.4.2.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.2/BongoCatChatMerger-0.4.2.exe)** and run it. This single file includes everything required for connection setup. You do not need to extract a ZIP, find a game folder, or run Install.cmd.
+**[Download BongoCatChatMerger-0.4.3.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.3/BongoCatChatMerger-0.4.3.exe)** and run it. This single file includes everything required for connection setup. You do not need to extract a ZIP, find a game folder, or run Install.cmd.
 
 1. Run the EXE and choose your language on first launch.
 2. The app finds Bongo Cat and prepares the connection automatically. If the game must restart, click **Set up & restart game**. If Windows requests permission, approve the prompt to allow the required game-folder files to be installed.
@@ -44,7 +46,7 @@ The verified bridge **0.2.2** binary and its protocol are unchanged. An installe
 - Select English / 한국어 / 日本語 from the dropdown. Messages, player/room names and game emote names keep their original text.
 - Changing language keeps drafts and pending requests. Reconnecting cancels uncertain requests without replaying them.
 
-## Pen tablet compatibility — 0.4.2
+## Pen tablet compatibility — 0.4.3
 
 For reports of the chat window freezing while a pen tablet is used elsewhere, the app now requests WPF's process-local stylus/touch opt-out before the first window is created. Chat uses ordinary mouse/text input; raw pressure, ink and touch gestures are not used in this window. Other applications and the tablet driver's Windows Ink settings are not changed.
 
@@ -62,7 +64,7 @@ Future game updates work only while the relevant internal APIs remain compatible
 
 The full ZIP includes <code>runtime</code>, source, scripts, licenses and docs. Build with <code>./scripts/Build.ps1</code> in Windows PowerShell; optional <code>-GamePath</code> selects a game installation. For release reproduction, <code>-BridgeBinary</code> reuses an already verified bridge. Run <code>./scripts/Check.ps1</code> after building. Original game assemblies are not redistributed.
 
-0.4.2 passed **51 setup + 58 feature/language/reconnect + 11 tablet compatibility + 28 reliability + 31 update checks (179 total)**. Tests use isolated game fixtures, including a single-EXE-only setup and a game-launch simulator. Actual administrator prompts and a fresh user's live-game setup still need user confirmation. [Detailed validation notes (Korean)](docs/VALIDATION.md).
+0.4.3 passed **63 setup + 58 feature/language/reconnect + 11 tablet compatibility + 37 reliability + 31 update checks (200 total)**.
 
 To remove the game bridge, close Bongo Cat and run <code>Uninstall.cmd</code> from the full ZIP. It preserves journals and modified files. The companion itself uses a per-user app folder and shortcuts rather than a system service.
 
