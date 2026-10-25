@@ -107,6 +107,23 @@ public static class SetupTests
             string standaloneGame=Game("standalone-helper");
             using(var helper=Process.Start(new ProcessStartInfo(staged,"--prepare-game "+DesktopInstall.QuoteArgument(standaloneGame)){UseShellExecute=false,CreateNoWindow=true})){Check(helper.WaitForExit(20000) && helper.ExitCode==0,"embedded installer works with only the EXE and no adjacent runtime or scripts");}
             Check(!BridgeSetup.Inspect(standaloneGame).NeedsInstall,"headless setup helper leaves a fully verified installation");
+            string recoveryGame=Game("connection recovery");BridgeSetup.Install(recoveryGame,null);
+            string proxy=Path.Combine(recoveryGame,"winhttp.dll"),pausedProxy=proxy+".bongochat-paused",proxyHash=BridgeSetup.FileHash(proxy);
+            string recordFile=Path.Combine(recoveryGame,"BepInEx","BongoChat","room_123.jsonl");Directory.CreateDirectory(Path.GetDirectoryName(recordFile));File.WriteAllText(recordFile,"private journal sentinel");
+            BridgeSetup.SetConnectionPaused(recoveryGame,true);
+            Check(!File.Exists(proxy)&&File.Exists(pausedProxy)&&BridgeSetup.IsConnectionPaused(recoveryGame),"pause removes the owned DLL from the game's loader search path without deleting it");
+            Check(File.ReadAllText(recordFile)=="private journal sentinel"&&File.ReadAllText(Path.Combine(recoveryGame,"BongoCat.exe"))=="original game","connection pause preserves chat history and original game files");
+            Check(BridgeSetup.Inspect(recoveryGame).Problem!=null,"paused setup is recognized instead of silently reinstalled");
+            Reject(()=>BridgeSetup.Install(recoveryGame,null),"automatic setup cannot undo an intentional connection pause");
+            BridgeSetup.SetConnectionPaused(recoveryGame,true);
+            Check(BridgeSetup.FileHash(pausedProxy)==proxyHash,"repeating pause is idempotent and retains the exact loader");
+            File.WriteAllText(proxy,"foreign loader");Reject(()=>BridgeSetup.SetConnectionPaused(recoveryGame,false),"recovery never overwrites a loader installed while paused");File.Delete(proxy);
+            File.WriteAllText(pausedProxy,"modified backup");Reject(()=>BridgeSetup.SetConnectionPaused(recoveryGame,false),"recovery refuses a changed backup");
+            File.Copy(Path.Combine(standaloneGame,"winhttp.dll"),pausedProxy,true);
+            BridgeSetup.SetConnectionPaused(recoveryGame,false);BridgeSetup.SetConnectionPaused(recoveryGame,false);
+            Check(File.Exists(proxy)&&!File.Exists(pausedProxy)&&BridgeSetup.FileHash(proxy)==proxyHash&&!BridgeSetup.Inspect(recoveryGame).NeedsInstall,"restoration is idempotent and reinstates the exact verified installation");
+            string unownedGame=Game("unowned recovery");File.WriteAllText(Path.Combine(unownedGame,"winhttp.dll"),"foreign");
+            Reject(()=>BridgeSetup.SetConnectionPaused(unownedGame,true),"pause requires an ownership record and cannot rename a foreign loader");
             string fixtureExe=args[2];File.Copy(fixtureExe,Path.Combine(standaloneGame,"BongoCat.exe"),true);
             Environment.SetEnvironmentVariable("DOORSTOP_DISABLE","1");Environment.SetEnvironmentVariable("DOORSTOP_INITIALIZED","1");
             try
@@ -126,7 +143,18 @@ public static class SetupTests
             string target=(string)link.GetType().InvokeMember("TargetPath",BindingFlags.GetProperty,null,link,null);
             Check(String.Equals(target,staged,StringComparison.OrdinalIgnoreCase),"created shortcut points to the managed executable");
             System.Runtime.InteropServices.Marshal.FinalReleaseComObject(link);System.Runtime.InteropServices.Marshal.FinalReleaseComObject(shell);
-            new Application();
+            new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+            BridgeSetup.SetConnectionPaused(recoveryGame,true);
+            string recoveryState=Path.Combine(recoveryGame,"BepInEx","BongoChat","state.json");
+            File.WriteAllText(recoveryState,json.Serialize(new BridgeState{protocol=1,ready=true,canSend=true,room="123",session=Guid.NewGuid().ToString("N"),utc=DateTime.UtcNow.ToString("o")}));
+            var pausedWindow=new ChatWindow(false,recoveryGame,true,"ko");var pausedType=typeof(ChatWindow);var privateFlags=BindingFlags.NonPublic|BindingFlags.Instance;
+            Check(!(bool)pausedType.GetField("canSend",privateFlags).GetValue(pausedWindow),"reopened paused app ignores even a fresh leftover heartbeat");
+            pausedType.GetMethod("BeginSetup",privateFlags).Invoke(pausedWindow,new object[]{false});DateTime pauseDeadline=DateTime.UtcNow.AddSeconds(5);
+            while((bool)pausedType.GetField("setupBusy",privateFlags).GetValue(pausedWindow)&&DateTime.UtcNow<pauseDeadline){pausedWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.ApplicationIdle,new Action(delegate{}));System.Threading.Thread.Sleep(10);}
+            Check(BridgeSetup.IsConnectionPaused(recoveryGame)&&!File.Exists(proxy)&&(string)pausedType.GetField("setupAction",privateFlags).GetValue(pausedWindow)=="resume","automatic startup preserves pause and exposes explicit restoration");
+            pausedWindow.Poll();Check(!((Button)pausedType.GetField("sendButton",privateFlags).GetValue(pausedWindow)).IsEnabled,"paused app cannot send through stale bridge state");
+            pausedWindow.Snapshot(Path.Combine(root,"connection-paused-ko.png"));
+            pausedWindow.Close();BridgeSetup.SetConnectionPaused(recoveryGame,false);
             string flowGame=Game("automatic UI flow");File.Copy(fixtureExe,Path.Combine(flowGame,"BongoCat.exe"),true);
             var flow=new ChatWindow(false,flowGame,true,"ko");var flowType=typeof(ChatWindow);
             flowType.GetMethod("BeginSetup",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(flow,new object[]{false});

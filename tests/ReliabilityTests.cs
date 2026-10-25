@@ -36,7 +36,7 @@ public static class ReliabilityTests {
   var invalid=Send(w,"응답 확인");File.WriteAllText(Reply(bridge,invalid),Journal.Json.Serialize(new SendResult{id="wrong-id",session=state.session,room="123",accepted=true}));Set(w,"pendingSince",DateTime.UtcNow.AddSeconds(-30));w.Poll();
   Check(Get(w,"pendingRequest")==null&&!input.IsReadOnly,"mismatched acknowledgement cannot bypass the send deadline");
   var broken=Send(w,"잘못된 응답");File.WriteAllText(Reply(bridge,broken),"{broken");Set(w,"pendingSince",DateTime.UtcNow.AddSeconds(-30));w.Poll();
-  Check(Get(w,"pendingRequest")==null&&input.Text=="잘못된 응답","malformed acknowledgement recovers without losing the draft or throwing on the UI");
+  Check(Get(w,"pendingRequest")==null&&input.Text==""&&((Button)Get(w,"recoverSendButton")).Visibility==Visibility.Visible,"malformed acknowledgement recovers without losing the draft or throwing on the UI");
   var locked=Send(w,"잠긴 파일");File.WriteAllText(Reply(bridge,locked),"{}");
   using(var hold=new FileStream(Reply(bridge,locked),FileMode.Open,FileAccess.ReadWrite,FileShare.None)){
    Set(w,"pendingSince",DateTime.UtcNow.AddSeconds(-30));w.Poll();Check(Get(w,"pendingRequest")==null&&!input.IsReadOnly,"locked response files cannot leave the editor permanently locked");
@@ -45,6 +45,33 @@ public static class ReliabilityTests {
   Check(Get(w,"pendingRequest")==null,"oversized responses cannot bypass the deadline");
   var draft=Send(w,"첫 문장");input.Text="전송 중 작성한 다음 문장";Ack(bridge,draft,true,null);w.Poll();
   Check(input.Text=="전송 중 작성한 다음 문장"&&!input.IsReadOnly,"an acknowledgement cannot erase a new draft written during sending");
+  var immediate=Send(w,"보낸 문장");
+  Check(input.Text=="","submitting separates the outgoing message from the next editable draft immediately");
+  input.AppendText("다음 문장");Ack(bridge,immediate,true,null);w.Poll();
+  Check(input.Text=="다음 문장","typing before acknowledgement cannot retain the already submitted prefix");
+  input.Clear();
+  while(((Button)Get(w,"recoverSendButton")).Visibility==Visibility.Visible){((Button)Get(w,"recoverSendButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));input.Clear();}
+  var failNew=Send(w,"실패한 원문");input.Text="새 초안";Ack(bridge,failNew,false,"게임의 채팅 필터가 전송을 허용하지 않았어요.");w.Poll();
+  var recover=(Button)Get(w,"recoverSendButton");
+  Check(input.Text=="새 초안"&&recover.Visibility==Visibility.Visible&&!recover.IsEnabled,"rejection preserves the new draft and offers the failed message separately");
+  input.Clear();recover.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+  Check(input.Text=="실패한 원문"&&recover.Visibility==Visibility.Collapsed,"explicit recovery restores the exact failed draft without sending it");
+  var edited=Send(w,"보류 원문");input.Text="수정";input.Clear();Ack(bridge,edited,false,"fixture error");w.Poll();
+  Check(input.Text==""&&recover.IsEnabled,"editing then clearing prevents late failure from replacing the user's editor");
+  recover.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+  var repeatedText=Send(w,"같은 문장");input.Text="같은 문장";Ack(bridge,repeatedText,true,null);w.Poll();
+  Check(input.Text=="같은 문장","delayed success never clears a deliberately retyped identical next draft");
+  var missingAck=Send(w,"응답 없는 전송");input.Text="다음 글";Set(w,"pendingSince",DateTime.UtcNow.AddSeconds(-30));w.Poll();
+  Check(input.Text=="다음 글"&&Get(w,"pendingRequest")==null&&recover.Visibility==Visibility.Visible,"missing acknowledgement preserves the next draft and keeps the uncertain original recoverable without resending");
+  input.Clear();recover.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+  Send(w,"이미 전송됐을 수 있는 글");Set(w,"pendingSince",DateTime.UtcNow.AddSeconds(-30));w.Poll();
+  Check(input.Text==""&&recover.IsEnabled,"an unknown send result never puts a possibly sent message back into an untouched input");
+  w.Snapshot(Path.Combine(root,"draft-recovery-ko.png"));
+  recover.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+  string writeFailure=Path.Combine(bridge,"commands");string commandBackup=writeFailure+"-saved";Directory.Move(writeFailure,commandBackup);File.WriteAllText(writeFailure,"fixture blocks directory");
+  Send(w,"쓰기 실패 원문");
+  Check(input.Text=="쓰기 실패 원문"&&Get(w,"pendingRequest")==null,"queue write failure restores the original text immediately");
+  File.Delete(writeFailure);Directory.Move(commandBackup,writeFailure);
   bool repeated=true;
   for(int i=0;i<30;i++){state.utc=DateTime.UtcNow.ToString("o");File.WriteAllText(statePath,Journal.Json.Serialize(state));var r=Send(w,"cycle "+i);Ack(bridge,r,i%3!=0,i%3==0?"게임의 채팅 필터가 전송을 허용하지 않았어요.":null);w.Poll();repeated&=Get(w,"pendingRequest")==null&&!input.IsReadOnly;}
   Check(repeated,"30 simulated reply cycles alternate success/rejection without a six-message UI limit");
