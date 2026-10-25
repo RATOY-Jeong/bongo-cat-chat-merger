@@ -12,6 +12,9 @@ $modified = @()
 foreach ($file in $manifest.files) {
     $destination = [IO.Path]::GetFullPath((Join-Path $target $file.relative))
     if (-not $destination.StartsWith($target + '\', [StringComparison]::OrdinalIgnoreCase)) { throw 'Unsafe uninstall path.' }
+    if ($file.relative -eq 'winhttp.dll' -and -not (Test-Path -LiteralPath $destination) -and (Test-Path -LiteralPath ($destination + '.bongochat-paused') -PathType Leaf)) {
+        $destination += '.bongochat-paused'
+    }
     if (Test-Path -LiteralPath $destination -PathType Leaf) {
         if ((Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash -ne $file.sha256) { $modified += $file.relative; continue }
         Remove-Item -LiteralPath $destination
