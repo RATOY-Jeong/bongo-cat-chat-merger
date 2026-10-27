@@ -28,6 +28,8 @@ namespace BongoChat
         public static CultureInfo Culture(string code) { return CultureInfo.GetCultureInfo(code == "ja" ? "ja-JP" : code == "ko" ? "ko-KR" : "en-US"); }
         // Korean keys are also the bridge's existing error messages; its protocol stays unchanged.
         private static readonly string[][] Rows = {
+            new[] { "현재 {0} · 확인 {1}", "Installed {0} · Checked {1}", "現在 {0} · 確認 {1}" },
+            new[] { "GitHub에서 릴리스 정보를 찾지 못했어요. 다운로드 페이지를 확인해 주세요.", "GitHub release information is unavailable. Please check the download page.", "GitHubのリリース情報が見つかりません。ダウンロードページをご確認ください。" },
             new[] { "다크 모드", "Dark mode", "ダークモード" },
             new[] { "항상 위", "Always on top", "最前面に表示" },
             new[] { "이모티콘 표시", "Show emotes", "絵文字を表示" },
@@ -152,6 +154,15 @@ namespace BongoChat
             new[] { "게임에서 연결 파일을 불러오지 못했어요. 연결 도우미에서 다시 확인할 수 있어요.", "The game has not loaded the connection files. Use Connection helper to check again.", "ゲームが接続ファイルを読み込めませんでした。接続サポートで再確認できます。" }
         };
         private static readonly string[][] ReliabilityRows = {
+            new[] { "최근 대화 {0}개 · 야옹 별도 묶음", "{0} recent conversation events · Meows grouped separately", "最近の会話{0}件 · 鳴き声は別枠のまとめ" },
+            new[] { "야옹 {0:N0}회 · {1}명", "Meows ×{0:N0} · {1} people", "鳴き声 {0:N0}回 · {1}人" },
+            new[] { "야옹 {0:N0}회 · {1}명 이상", "Meows ×{0:N0} · {1}+ people", "鳴き声 {0:N0}回 · {1}人以上" },
+            new[] { " · {0:N0}회", " · {0:N0} times", " · {0:N0}回" },
+            new[] { "그 밖의 참여자도 포함돼요", "Other participants are also included", "ほかの参加者も含まれます" },
+            new[] { "연속된 야옹을 묶었어요. 최근 대화 500개 한도에는 포함하지 않아요.", "Consecutive meows are grouped. They do not count toward the 500 recent conversation events.", "連続する鳴き声をまとめています。最近の会話500件の上限には含まれません。" },
+            new[] { "내 PC에 기록 · 대화 {0}개 표시 · 야옹 숨김", "Saved locally · {0} conversation events shown · Meows hidden", "PCに記録 · 会話{0}件を表示 · 鳴き声は非表示" },
+            new[] { "내 PC에 기록 · 대화 {0}개 표시 · 야옹 {1:N0}회", "Saved locally · {0} conversation events shown · {1:N0} meows", "PCに記録 · 会話{0}件を表示 · 鳴き声{1:N0}回" },
+            new[] { "야옹 묶음", "Grouped meows", "鳴き声のまとめ" },
             new[] { "야옹 메시지 숨기기", "Hide meows", "鳴き声を非表示" },
             new[] { "게임의 언어별 야옹 문구와 메시지 전체가 같을 때만 숨깁니다. 원본 기록은 보존됩니다.", "Hide only exact localized game meow phrases. Original records are kept.", "ゲームの各言語の鳴き声と全文が一致する場合だけ非表示にします。原本の記録は保持されます。" },
             new[] { "야옹 숨기기는 적용됐지만 설정 파일을 저장하지 못했어요.", "Meow filter applied, but the preference could not be saved.", "鳴き声フィルターは適用されましたが、設定を保存できませんでした。" },

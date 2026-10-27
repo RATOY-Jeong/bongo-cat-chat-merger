@@ -16,9 +16,9 @@ using Microsoft.Win32;
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.5")]
 [assembly: System.Reflection.AssemblyTitle("Bongo Cat Chat Merger")]
 [assembly: System.Reflection.AssemblyProduct("Bongo Cat Chat Merger")]
-[assembly: System.Reflection.AssemblyVersion("0.4.5.0")]
-[assembly: System.Reflection.AssemblyFileVersion("0.4.5.0")]
-[assembly: System.Reflection.AssemblyInformationalVersion("0.4.5")]
+[assembly: System.Reflection.AssemblyVersion("0.4.6.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.4.6.0")]
+[assembly: System.Reflection.AssemblyInformationalVersion("0.4.6")]
 
 namespace BongoChat
 {
@@ -33,6 +33,10 @@ namespace BongoChat
         public string text { get; set; }
         public string utc { get; set; }
         public int emoteId { get; set; }
+        public long meowCount { get; set; }
+        public string meowLastUtc { get; set; }
+        public bool meowMoreAuthors { get; set; }
+        public List<MeowAuthor> meowAuthors { get; set; }
     }
     public sealed class BridgeState
     {
@@ -116,6 +120,7 @@ namespace BongoChat
         private string currentRoom = "";
         private string currentFile = "";
         private long currentLength = -1;
+        private long currentWriteTicks = -1;
         private List<ChatEntry> entries = new List<ChatEntry>();
         private StackPanel messages;
         private ScrollViewer scroll;
@@ -230,7 +235,7 @@ namespace BongoChat
   </Border>
 </Grid>";
 
-        public ChatWindow(bool demonstration, string folderOverride = null, bool? darkOverride = null, string languageOverride = null)
+        public ChatWindow(bool demonstration, string folderOverride = null, bool? darkOverride = null, string languageOverride = null, bool backgroundCommunication = false)
         {
             demo = demonstration;
             language = UiText.IsLanguage(languageOverride) ? languageOverride : UiText.ReadPreference() ?? "en";
@@ -277,6 +282,7 @@ namespace BongoChat
                 if (folderOverride != null) gamePath = folderOverride;
                 else FindGame();
                 connectionPaused = BridgeSetup.IsConnectionPaused(gamePath);
+                if (backgroundCommunication) EnableBackgroundCommunication();
                 timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(750) };
                 timer.Tick += delegate { Poll(); };
                 timer.Start();
@@ -375,7 +381,7 @@ namespace BongoChat
                 if (snapshot.Entries != null)
                 {
                     entries = snapshot.Entries.Where(e => e.room == currentRoom).ToList();
-                    currentLength = snapshot.Length; currentAssetRevision = state.assetRevision;
+                    currentLength = snapshot.Length; currentWriteTicks = snapshot.WriteTicks; currentAssetRevision = state.assetRevision;
                     UiPhase("render-messages"); RenderMessages(false);
                 }
                 lastError = "";
@@ -392,7 +398,8 @@ namespace BongoChat
         private static bool SameRenderedEntry(ChatEntry a, ChatEntry b)
         {
             return a.id == b.id && a.kind == b.kind && a.utc == b.utc && a.text == b.text
-                && a.name == b.name && a.mine == b.mine && a.emoteId == b.emoteId;
+                && a.name == b.name && a.mine == b.mine && a.emoteId == b.emoteId
+                && a.meowCount == b.meowCount && a.meowLastUtc == b.meowLastUtc && a.meowMoreAuthors == b.meowMoreAuthors;
         }
         private void RenderEmptyIfNeeded() { if (messages.Children.Count == 0) RenderMessages(true); }
         public void RenderMessages(bool forceScroll)
@@ -400,9 +407,10 @@ namespace BongoChat
             bool atBottom = forceScroll || scroll.ScrollableHeight - scroll.VerticalOffset < 35;
             double offset = scroll.VerticalOffset;
             string query = search.Text.Trim();
-            var visible = entries.Where(e => showEmotes || e.kind != "emote").Where(e => !hideMeows || e.kind != "chat" || !MeowMessages.IsMeow(e.text)).Where(e => query.Length == 0 || (e.text ?? "").IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0
+            var visible = entries.Where(e => showEmotes || e.kind != "emote").Where(e => !hideMeows || (e.kind != "meow_group" && (e.kind != "chat" || !MeowMessages.IsMeow(e.text)))).Where(e => query.Length == 0 || (e.text ?? "").IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0
                 || (e.name ?? "").IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
             string context = language + "|" + dark + "|" + showEmotes + "|" + hideMeows + "|" + (ActualWidth > 0 ? ActualWidth : Width).ToString("R", CultureInfo.InvariantCulture) + "|" + currentAssetRevision + "|" + query;
+            RefreshLastMeowGroup(visible,context);
             bool append = renderedContext == context && renderedVisible.Count > 0 && renderedVisible.Count <= visible.Count;
             if (append) for (int i = 0; i < renderedVisible.Count; i++)
                 if (!SameRenderedEntry(renderedVisible[i], visible[i])) { append = false; break; }
@@ -410,6 +418,7 @@ namespace BongoChat
             if (!append) messages.Children.Clear();
             renderedVisible = visible; renderedContext = context;
             resultText.Text = F(demo ? "미리보기 데이터 · {0}개 표시 / 최근 {1}개" : "내 PC에 기록 · {0}개 표시 / 최근 {1}개", visible.Count, entries.Count);
+            ShowGroupedCount(visible);
             if (visible.Count == 0)
             {
                 var empty = new StackPanel { Margin = new Thickness(20, 105, 20, 50), HorizontalAlignment = HorizontalAlignment.Center };
@@ -441,6 +450,7 @@ namespace BongoChat
 
         private UIElement MessageBubble(ChatEntry entry, DateTime time)
         {
+            if (entry.kind == "meow_group") return MeowGroupBubble(entry,time);
             var row = new Grid { Margin = new Thickness(0, 0, 0, 18) };
             row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(44) });
             row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -479,11 +489,11 @@ namespace BongoChat
             {
                 var text = new StringBuilder("Bongo Cat Chat Merger · " + roomTitle.Text + "\r\n");
                 if (demo) text.AppendLine(L("[미리보기 데이터]"));
-                text.AppendLine(F("최근 {0}개 메시지", entries.Count) + "\r\n");
+                text.AppendLine((entries.Any(e => e.kind == "meow_group") ? F("최근 대화 {0}개 · 야옹 별도 묶음", entries.Count(e => e.kind != "meow_group")) : F("최근 {0}개 메시지", entries.Count)) + "\r\n");
                 foreach (ChatEntry entry in entries)
                 {
                     DateTime time; DateTime.TryParse(entry.utc, out time);
-                    text.AppendLine("[" + time.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") + "] " + entry.name + (entry.mine ? L(" (나)") : "") + ": " + (entry.kind == "emote" ? L("[이모티콘 #") + entry.emoteId + "] " : "") + entry.text);
+                    text.AppendLine("[" + time.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") + "] " + (entry.kind == "meow_group" ? L("야옹 묶음") : entry.name) + (entry.mine ? L(" (나)") : "") + ": " + (entry.kind == "meow_group" ? MeowGroupLabel(entry) + " [" + MeowAuthorSummary(entry).Replace("\n", "; ") + "]" : (entry.kind == "emote" ? L("[이모티콘 #") + entry.emoteId + "] " : "") + entry.text));
                 }
                 File.WriteAllText(save.FileName, text.ToString(), new UTF8Encoding(true));
                 resultText.Text = L("대화를 저장했어요");
@@ -500,6 +510,7 @@ namespace BongoChat
             string[] texts = { "다들 안녕하세요! 오늘도 같이 봉고 쳐요 🐾", "안녕하세요!\n오늘은 작업하면서 켜 두려고요.", "고양이들 모여 있으니까 너무 귀엽다 ㅋㅋ", "이제 대화가 안 사라지고 모여서 좋네요", "맞아요 😺\n아까 놓친 말도 여기서 볼 수 있어요.", "저도 왔어요. 다들 좋은 오후 보내세요!" };
             for (int i = 0; i < names.Length; i++) entries.Add(new ChatEntry { kind = "chat", id = "demo" + i, room = "123", sender = names[i], name = names[i], mine = names[i] == "나", text = texts[i], utc = start.AddMinutes(i).ToUniversalTime().ToString("o") });
             entries.Insert(3, new ChatEntry { kind = "emote", id = "demo-emote", room = "123", sender = "치즈", name = "치즈", text = "하트", emoteId = 1, utc = start.AddMinutes(2).ToUniversalTime().ToString("o") });
+            entries.Insert(5,DemoMeowGroup(start.AddMinutes(3)));
             RenderMessages(true);
         }
 
@@ -519,7 +530,7 @@ namespace BongoChat
 
     public static class Program
     {
-        public const string DisplayVersion = "0.4.5";
+        public const string DisplayVersion = "0.4.6";
         private static System.Threading.Mutex instanceMutex;
         private static System.Threading.EventWaitHandle activateEvent;
         private static bool ownsInstance;
@@ -565,7 +576,7 @@ namespace BongoChat
                     if (picker.ShowDialog() != true) { app.Shutdown(); return 0; }
                     selected = picker.SelectedLanguage;
                 }
-                var window = new ChatWindow(demonstration, null, args.Contains("--dark") ? (bool?)true : args.Contains("--light") ? (bool?)false : null, selected);
+                var window = new ChatWindow(demonstration, null, args.Contains("--dark") ? (bool?)true : args.Contains("--light") ? (bool?)false : null, selected, !demonstration);
                 if (preview) { window.Snapshot(args[1]); return 0; }
                 if (!demonstration) { window.EnableBackgroundCommunication(); window.EnableAutomaticSetup(); window.EnableUpdateNotifications(); }
                 app.MainWindow = window; app.ShutdownMode = ShutdownMode.OnMainWindowClose;

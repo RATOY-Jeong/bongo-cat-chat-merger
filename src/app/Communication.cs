@@ -10,8 +10,10 @@ namespace BongoChat
     internal sealed class PollRead
     {
         public string Game, Room, RequestId;
-        public long Length;
+        public long Length, WriteTicks;
         public int Assets;
+        public ConversationHistory History;
+        public CancellationToken Cancel;
     }
     internal sealed class PollSnapshot
     {
@@ -20,25 +22,27 @@ namespace BongoChat
         public BridgeState State;
         public Protocol.SendResult Result;
         public List<ChatEntry> Entries;
-        public long Length;
+        public long Length, WriteTicks;
     }
     public sealed partial class ChatWindow
     {
         private bool backgroundIo, pollReading;
         private UiHealthMonitor uiHealth;
         private CancellationTokenSource sendCancellation;
+        private readonly ConversationHistory historyReader = new ConversationHistory();
+        private readonly CancellationTokenSource historyCancellation = new CancellationTokenSource();
         public void EnableBackgroundCommunication()
         {
             if (backgroundIo || demo) return;
             backgroundIo = true;
             uiHealth = new UiHealthMonitor(Dispatcher, AppStorage.PathFor("ui-health.log"));
-            Closed += delegate { if (uiHealth != null) uiHealth.Dispose(); if (sendCancellation != null) sendCancellation.Cancel(); };
+            Closed += delegate { if (uiHealth != null) uiHealth.Dispose(); if (sendCancellation != null) sendCancellation.Cancel(); historyCancellation.Cancel(); };
         }
         private void UiPhase(string phase) { if (uiHealth != null) uiHealth.Phase(phase); }
         private PollRead CapturePollRead()
         {
-            return new PollRead { Game = gamePath, Room = currentRoom, Length = currentLength,
-                Assets = currentAssetRevision, RequestId = pendingRequest == null ? null : pendingRequest.id };
+            return new PollRead { Game = gamePath, Room = currentRoom, Length = currentLength, WriteTicks = currentWriteTicks,
+                Assets = currentAssetRevision, History = historyReader, Cancel = historyCancellation.Token, RequestId = pendingRequest == null ? null : pendingRequest.id };
         }
         private static PollSnapshot ReadPollSnapshot(PollRead read)
         {
@@ -69,9 +73,11 @@ namespace BongoChat
                         System.Globalization.DateTimeStyles.RoundtripKind, out stamp)
                     || Math.Abs((DateTime.UtcNow - stamp.ToUniversalTime()).TotalSeconds) >= 6) return view;
                 string journal = Path.Combine(folder, "room_" + state.room + ".jsonl");
-                view.Length = File.Exists(journal) ? new FileInfo(journal).Length : 0;
-                if (state.room != read.Room || view.Length != read.Length || state.assetRevision != read.Assets)
-                    view.Entries = Journal.ReadRecent(journal, 500);
+                var journalInfo = new FileInfo(journal);
+                view.Length = journalInfo.Exists ? journalInfo.Length : 0;
+                view.WriteTicks = journalInfo.Exists ? journalInfo.LastWriteTimeUtc.Ticks : 0;
+                if (state.room != read.Room || view.Length != read.Length || state.assetRevision != read.Assets || view.WriteTicks != read.WriteTicks)
+                    view.Entries = (read.History ?? new ConversationHistory()).Read(journal,state.room,500,read.Cancel);
             }
             catch (Exception ex) { view.ReadError = ex.GetType().Name; }
             return view;

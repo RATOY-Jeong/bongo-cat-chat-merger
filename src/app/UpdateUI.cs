@@ -10,6 +10,7 @@ namespace BongoChat
     public sealed partial class ChatWindow
     {
         private bool updateEnabled, updateBusy, updateShowNotice, updateLastFailed, updateStartupChecked;
+        private DateTime updateCheckedAt;
         private UpdateResult updateResult;
         private Button updateCheckButton, updateOpenButton;
         private TextBlock updateText;
@@ -62,12 +63,12 @@ namespace BongoChat
                 catch { result = UpdateResult.Failure(false); }
                 OnSetupUI(delegate
                 {
-                    updateBusy = false;
-                    bool failed = result.Kind == UpdateKind.Failed || result.Kind == UpdateKind.RateLimited;
+                    updateBusy = false; updateCheckedAt = DateTime.Now;
+                    bool failed = result.Kind == UpdateKind.Failed || result.Kind == UpdateKind.RateLimited || result.Kind == UpdateKind.Unavailable;
                     if (failed && updateResult != null && updateResult.Kind == UpdateKind.Available)
                         updateLastFailed = true; // Preserve a previously found download link while offline.
                     else { updateResult = result; updateLastFailed = false; }
-                    updateShowNotice = updateShowNotice || manual || result.Kind == UpdateKind.Available;
+                    updateShowNotice = true; // Startup failures must not disappear silently.
                     RefreshUpdateLabels();
                 });
             });
@@ -94,7 +95,11 @@ namespace BongoChat
                 updateText.Text = L("공개된 정식 업데이트 파일이 아직 없어요.");
             else if (updateResult.Kind == UpdateKind.RateLimited)
                 updateText.Text = L("GitHub 조회 제한에 도달했어요. 잠시 후 다시 확인해 주세요.");
+            else if (updateResult.Kind == UpdateKind.Unavailable)
+                updateText.Text = L("GitHub에서 릴리스 정보를 찾지 못했어요. 다운로드 페이지를 확인해 주세요.");
             else updateText.Text = L("업데이트를 확인하지 못했어요. 인터넷 연결을 확인하거나 다운로드 페이지를 열어 주세요.");
+            if (updateResult != null)
+                updateText.Text += "\n" + F("현재 {0} · 확인 {1}", Program.DisplayVersion, updateCheckedAt.ToString("HH:mm:ss"));
             updateOpenButton.Visibility = updateResult != null && updateResult.Kind != UpdateKind.Current ? Visibility.Visible : Visibility.Collapsed;
         }
     }
