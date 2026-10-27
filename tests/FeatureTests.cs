@@ -13,6 +13,11 @@ public static class FeatureTests
     static void Check(bool ok, string message) { if(!ok) throw new Exception(message); Console.WriteLine("PASS " + message); checks++; }
     static object Field(ChatWindow w,string name) { return typeof(ChatWindow).GetField(name,BindingFlags.NonPublic|BindingFlags.Instance).GetValue(w); }
     static void Invoke(ChatWindow w,string name) { typeof(ChatWindow).GetMethod(name,BindingFlags.NonPublic|BindingFlags.Instance).Invoke(w,null); }
+    static TextBox MessageText(DependencyObject node,string text) {
+        var box=node as TextBox;if(box!=null && box.Text==text)return box;
+        foreach(object child in LogicalTreeHelper.GetChildren(node)){var value=child as DependencyObject;if(value!=null){var found=MessageText(value,text);if(found!=null)return found;}}
+        return null;
+    }
     static SendRequest Request(string session,string room) { return new SendRequest {id=Guid.NewGuid().ToString("N"),session=session,room=room,kind="send_chat",createdUtc=DateTime.UtcNow.ToString("o"),text="한글 😺\n줄바꿈"}; }
     [STAThread] public static int Main(string[] args)
     {
@@ -58,6 +63,14 @@ public static class FeatureTests
                 emoteToggle.IsChecked=true;
                 Check(results.Text.Contains("2개 표시"),"turning emotes back on restores retained matching messages");
                 search.Clear();
+                var displayed=(StackPanel)Field(w,"messages");var selected=MessageText(displayed,"하트 일반 채팅");
+                Check(selected!=null,"chat text can be selected directly inside its existing bubble");
+                selected.Select(3,2);
+                Check(selected.SelectedText=="일반" && System.Windows.Input.ApplicationCommands.Copy.CanExecute(null,selected),"native copy command is available for the selected message substring");
+                Check(!System.Windows.Input.ApplicationCommands.Cut.CanExecute(null,selected),"selectable received messages cannot be cut or edited");
+                File.AppendAllText(Path.Combine(bridge,"room_123.jsonl"),Journal.Json.Serialize(new ChatEntry {kind="chat",id="selection-next",room="123",text="다음 수신 문장",name="냥",utc=DateTime.UtcNow.ToString("o")})+"\n");
+                w.Poll();
+                Check(Object.ReferenceEquals(selected,MessageText(displayed,"하트 일반 채팅")) && selected.SelectedText=="일반","receiving another message keeps the current selection intact");
             }
             finally
             {
