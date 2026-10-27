@@ -16,9 +16,9 @@ using Microsoft.Win32;
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.5")]
 [assembly: System.Reflection.AssemblyTitle("Bongo Cat Chat Merger")]
 [assembly: System.Reflection.AssemblyProduct("Bongo Cat Chat Merger")]
-[assembly: System.Reflection.AssemblyVersion("0.4.4.0")]
-[assembly: System.Reflection.AssemblyFileVersion("0.4.4.0")]
-[assembly: System.Reflection.AssemblyInformationalVersion("0.4.4")]
+[assembly: System.Reflection.AssemblyVersion("0.4.5.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.4.5.0")]
+[assembly: System.Reflection.AssemblyInformationalVersion("0.4.5")]
 
 namespace BongoChat
 {
@@ -177,6 +177,7 @@ namespace BongoChat
         <CheckBox x:Name='DarkMode' Content='다크 모드' Foreground='#667682' Margin='0,0,0,10'/>
         <CheckBox x:Name='Pin' Content='항상 위' Foreground='#667682' Margin='0,0,0,10'/>
         <CheckBox x:Name='ShowEmotes' Content='이모티콘 표시' Foreground='#667682' ToolTip='끄면 이모티콘을 대화 목록과 검색에서 숨깁니다. 기록은 보존됩니다.'/>
+        <CheckBox x:Name='HideMeows' Content='야옹 메시지 숨기기' Foreground='#667682' Margin='0,10,0,0' ToolTip='게임의 언어별 야옹 문구와 메시지 전체가 같을 때만 숨깁니다. 원본 기록은 보존됩니다.'/>
         <ComboBox x:Name='Language' Width='120' FontSize='11' Margin='0,9,0,0' HorizontalAlignment='Left'/>
       </StackPanel>
     </Grid>
@@ -241,6 +242,7 @@ namespace BongoChat
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             dark = darkOverride ?? ReadDarkPreference();
             showEmotes = ReadEmotePreference();
+            hideMeows = ReadMeowPreference();
             var root = (Grid)System.Windows.Markup.XamlReader.Parse(ThemedLayout());
             Content = root;
             roomTitle = (TextBlock)root.FindName("RoomTitle"); roomInfo = (TextBlock)root.FindName("RoomInfo");
@@ -398,9 +400,9 @@ namespace BongoChat
             bool atBottom = forceScroll || scroll.ScrollableHeight - scroll.VerticalOffset < 35;
             double offset = scroll.VerticalOffset;
             string query = search.Text.Trim();
-            var visible = entries.Where(e => showEmotes || e.kind != "emote").Where(e => query.Length == 0 || (e.text ?? "").IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0
+            var visible = entries.Where(e => showEmotes || e.kind != "emote").Where(e => !hideMeows || e.kind != "chat" || !MeowMessages.IsMeow(e.text)).Where(e => query.Length == 0 || (e.text ?? "").IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0
                 || (e.name ?? "").IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
-            string context = language + "|" + dark + "|" + showEmotes + "|" + (ActualWidth > 0 ? ActualWidth : Width).ToString("R", CultureInfo.InvariantCulture) + "|" + currentAssetRevision + "|" + query;
+            string context = language + "|" + dark + "|" + showEmotes + "|" + hideMeows + "|" + (ActualWidth > 0 ? ActualWidth : Width).ToString("R", CultureInfo.InvariantCulture) + "|" + currentAssetRevision + "|" + query;
             bool append = renderedContext == context && renderedVisible.Count > 0 && renderedVisible.Count <= visible.Count;
             if (append) for (int i = 0; i < renderedVisible.Count; i++)
                 if (!SameRenderedEntry(renderedVisible[i], visible[i])) { append = false; break; }
@@ -412,9 +414,9 @@ namespace BongoChat
             {
                 var empty = new StackPanel { Margin = new Thickness(20, 105, 20, 50), HorizontalAlignment = HorizontalAlignment.Center };
                 empty.Children.Add(new TextBlock { Text = query.Length == 0 ? "냥" : "…", FontSize = 38, Foreground = Brush("#718FA3"), HorizontalAlignment = HorizontalAlignment.Center });
-                bool hiddenOnly = query.Length == 0 && !showEmotes && entries.Count > 0;
-                empty.Children.Add(new TextBlock { Text = L(query.Length == 0 ? hiddenOnly ? "이모티콘을 숨기고 있어요" : "봉고캣 대화가 여기에 모여요" : "검색 결과가 없어요"), FontSize = 16, FontWeight = FontWeights.SemiBold, Foreground = Brush("#486477"), Margin = new Thickness(0, 18, 0, 8), HorizontalAlignment = HorizontalAlignment.Center });
-                empty.Children.Add(new TextBlock { Text = L(query.Length == 0 ? hiddenOnly ? "일반 채팅은 계속 표시돼요.\n상단 이모티콘 표시를 켜면 다시 볼 수 있어요." : "방에 들어가 채팅을 보내보세요.\n연결 후 받은 대화부터 기록됩니다." : "다른 메시지나 닉네임을 찾아보세요."), Foreground = Brush("#718799"), FontSize = 12, TextAlignment = TextAlignment.Center, LineHeight = 22, MaxWidth = Math.Max(200, Width - 100), TextWrapping = TextWrapping.Wrap });
+                bool hiddenOnly = query.Length == 0 && entries.Count > 0;
+                empty.Children.Add(new TextBlock { Text = L(query.Length == 0 ? hiddenOnly ? "표시 설정으로 메시지를 숨기고 있어요" : "봉고캣 대화가 여기에 모여요" : "검색 결과가 없어요"), FontSize = 16, FontWeight = FontWeights.SemiBold, Foreground = Brush("#486477"), Margin = new Thickness(0, 18, 0, 8), HorizontalAlignment = HorizontalAlignment.Center });
+                empty.Children.Add(new TextBlock { Text = L(query.Length == 0 ? hiddenOnly ? "상단의 이모티콘·야옹 표시 설정을 바꾸면 다시 볼 수 있어요." : "방에 들어가 채팅을 보내보세요.\n연결 후 받은 대화부터 기록됩니다." : "다른 메시지나 닉네임을 찾아보세요."), Foreground = Brush("#718799"), FontSize = 12, TextAlignment = TextAlignment.Center, LineHeight = 22, MaxWidth = Math.Max(200, Width - 100), TextWrapping = TextWrapping.Wrap });
                 messages.Children.Add(empty); return;
             }
             string previousDate = append ? renderedDate : "";
@@ -517,7 +519,7 @@ namespace BongoChat
 
     public static class Program
     {
-        public const string DisplayVersion = "0.4.4";
+        public const string DisplayVersion = "0.4.5";
         private static System.Threading.Mutex instanceMutex;
         private static System.Threading.EventWaitHandle activateEvent;
         private static bool ownsInstance;

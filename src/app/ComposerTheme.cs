@@ -108,6 +108,7 @@ namespace BongoChat
             emoteToggle.IsChecked = showEmotes;
             emoteToggle.Checked += delegate { ChangeEmoteVisibility(true); };
             emoteToggle.Unchecked += delegate { ChangeEmoteVisibility(false); };
+            InitializeMeowFilter(root);
             sendButton.Click += delegate { SendComposer(); };
             composer.TextChanged += delegate { draftRevision++; if (pendingRequest == null) sendNotice = ""; RefreshComposer(); };
             TextCompositionManager.AddPreviewTextInputStartHandler(composer, delegate { imeComposing = true; });
@@ -237,7 +238,7 @@ namespace BongoChat
             if (restore && draftRevision == pendingClearRevision && composer.Text.Length == 0) composer.Text = text;
             else recoverableDrafts.Enqueue(text);
         }
-        private void RefreshMinimumHeight() { MinHeight = (updateShowNotice ? 600 : 560) + (recoverableDrafts.Count > 0 ? 36 : 0); }
+        private void RefreshMinimumHeight() { MinHeight = (updateShowNotice ? 624 : 584) + (recoverableDrafts.Count > 0 ? 36 : 0); }
         private void RecoverSendDraft()
         {
             if (pendingRequest != null || composer.Text.Length != 0 || recoverableDrafts.Count == 0) return;

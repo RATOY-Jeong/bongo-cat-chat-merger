@@ -152,6 +152,11 @@ namespace BongoChat
             new[] { "게임에서 연결 파일을 불러오지 못했어요. 연결 도우미에서 다시 확인할 수 있어요.", "The game has not loaded the connection files. Use Connection helper to check again.", "ゲームが接続ファイルを読み込めませんでした。接続サポートで再確認できます。" }
         };
         private static readonly string[][] ReliabilityRows = {
+            new[] { "야옹 메시지 숨기기", "Hide meows", "鳴き声を非表示" },
+            new[] { "게임의 언어별 야옹 문구와 메시지 전체가 같을 때만 숨깁니다. 원본 기록은 보존됩니다.", "Hide only exact localized game meow phrases. Original records are kept.", "ゲームの各言語の鳴き声と全文が一致する場合だけ非表示にします。原本の記録は保持されます。" },
+            new[] { "야옹 숨기기는 적용됐지만 설정 파일을 저장하지 못했어요.", "Meow filter applied, but the preference could not be saved.", "鳴き声フィルターは適用されましたが、設定を保存できませんでした。" },
+            new[] { "표시 설정으로 메시지를 숨기고 있어요", "Messages are hidden by display settings", "表示設定によってメッセージが非表示になっています" },
+            new[] { "상단의 이모티콘·야옹 표시 설정을 바꾸면 다시 볼 수 있어요.", "Change the emote/meow display settings above to show them again.", "上部の絵文字・鳴き声の表示設定を変更すると再表示できます。" },
             new[] { "연결 기능 끄고 게임 재시작", "Disable connection and restart game", "接続機能を無効にしてゲームを再起動" },
             new[] { "연결 복원하고 게임 재시작", "Restore connection and restart game", "接続機能を復元してゲームを再起動" },
             new[] { "게임을 종료하고 채팅 연결 기능을 끈 상태로 다시 실행합니다. 게임 데이터와 대화 기록은 보존됩니다. 진행할까요?", "Close and restart the game with the chat connection disabled. Game data and chat records are kept. Continue?", "ゲームを終了し、チャット接続を無効にして再起動します。ゲームデータと会話の記録は保持されます。続行しますか？" },
@@ -261,13 +266,14 @@ namespace BongoChat
         }
         private void ApplyLanguage()
         {
-            foreach (string[] item in new[] { new[] { "DarkMode", "다크 모드" }, new[] { "Pin", "항상 위" }, new[] { "ShowEmotes", "이모티콘 표시" }, new[] { "Send", "전송" }, new[] { "Choose", "게임 폴더" }, new[] { "Export", "대화 저장" } })
+            foreach (string[] item in new[] { new[] { "DarkMode", "다크 모드" }, new[] { "Pin", "항상 위" }, new[] { "ShowEmotes", "이모티콘 표시" }, new[] { "HideMeows", "야옹 메시지 숨기기" }, new[] { "Send", "전송" }, new[] { "Choose", "게임 폴더" }, new[] { "Export", "대화 저장" } })
                 ((ContentControl)rootGrid.FindName(item[0])).Content = L(item[1]);
             ((TextBlock)rootGrid.FindName("SearchLabel")).Text = L("검색");
             ((TextBlock)rootGrid.FindName("OpacityLabel")).Text = L("투명도");
             ((Run)rootGrid.FindName("ContactLabel")).Text = L("문의 · ");
             ((Hyperlink)rootGrid.FindName("ContactEmail")).ToolTip = L("기본 메일 앱에서 문의 메일 작성");
             ((CheckBox)rootGrid.FindName("ShowEmotes")).ToolTip = L("끄면 이모티콘을 대화 목록과 검색에서 숨깁니다. 기록은 보존됩니다.");
+            ((CheckBox)rootGrid.FindName("HideMeows")).ToolTip = L("게임의 언어별 야옹 문구와 메시지 전체가 같을 때만 숨깁니다. 원본 기록은 보존됩니다.");
             search.ToolTip = L("메시지 또는 닉네임 검색"); composer.ToolTip = L("Enter로 전송 · Shift+Enter 줄바꿈");
             reconnectButton.Content = L(reconnectTimer.IsEnabled ? "확인 중…" : "재연결");
             reconnectButton.ToolTip = L("게임 폴더와 연결 상태를 다시 확인합니다.");
