@@ -15,7 +15,7 @@ public static class UpdateTests {
   var box=(ComboBox)((Grid)w.Content).FindName("Language");foreach(ComboBoxItem item in box.Items)if((string)item.Tag==code){box.SelectedItem=item;return;}
  }
  [STAThread]public static int Main(string[] args){try{
-  if(args.Length==1&&args[0]=="--live"){var r=UpdateService.Check(typeof(ChatWindow).Assembly.GetName().Version);Console.WriteLine(r.Kind+" "+r.VersionText+" "+r.PageUrl);return r.Kind==UpdateKind.Failed||r.Kind==UpdateKind.RateLimited?1:0;}
+  if(args.Length==1&&args[0]=="--live"){var r=UpdateService.Check(typeof(ChatWindow).Assembly.GetName().Version);Console.WriteLine(r.Kind+" "+r.VersionText+" "+r.PageUrl);return r.Kind==UpdateKind.Available||r.Kind==UpdateKind.Current?0:1;}
   var installed=new Version(0,4,2,0);
   Check(UpdateService.Parse(Release("v0.4.3"),installed).Kind==UpdateKind.Available,"a newer published EXE produces an update offer");
   Check(UpdateService.Parse(Release("v0.4.2"),installed).Kind==UpdateKind.Current,"an equal stable release does not prompt an update");
@@ -35,6 +35,25 @@ public static class UpdateTests {
   Check(UpdateService.Parse("{broken",installed).Kind==UpdateKind.Failed&&UpdateService.Parse("{}",installed).Kind==UpdateKind.Failed,"invalid metadata becomes a controlled failure");
   Check(UpdateService.Parse(new string('x',262145),installed).Kind==UpdateKind.Failed,"metadata size is bounded before parsing");
   Check(UpdateService.Parse(Release("v0.4.2"),new Version(0,4,2,8)).Kind==UpdateKind.Current,"assembly revision does not cause a false semver update");
+  string releases="["+Release("v0.4.4")+","+Release("v0.4.6")+","+Release("v0.4.5")+"]";
+  Check(UpdateService.ParseReleases(releases,installed).VersionText=="0.4.6","highest ready stable version wins independently of order or Latest label");
+  Check(UpdateService.ParseReleases("["+Release("v9.0.0",true)+","+Release("v8.0.0",false,true)+","+Release("v0.4.6")+"]",installed).VersionText=="0.4.6","drafts and prereleases cannot displace the newest stable package");
+  Check(UpdateService.ParseReleases("["+Release("v9.0.0",state:"starter")+","+Release("v0.4.6")+"]",installed).VersionText=="0.4.6","unfinished releases do not hide an available complete release");
+  Check(UpdateService.ParseReleases("["+Release("v0.9.9")+","+Release("v0.10.0")+"]",installed).VersionText=="0.10.0","release lists also compare versions numerically");
+  Check(UpdateService.ParseReleases(releases,new Version(0,4,6)).Kind==UpdateKind.Current,"a current list does not create a false update");
+  Check(UpdateService.ParseReleases("[]",installed).Kind==UpdateKind.NoPackage,"an empty release list reports no package");
+  Check(UpdateService.ParseReleases("[null,"+Release("v0.4.6")+"]",installed).Kind==UpdateKind.Available,"null list entries are ignored");
+  Check(UpdateService.ParseReleases("{}",installed).Kind==UpdateKind.Failed&&UpdateService.ParseReleases("broken",installed).Kind==UpdateKind.Failed,"malformed lists are failures rather than a false current version");
+  Check(UpdateService.ParseReleases(new string('x',1048577),installed).Kind==UpdateKind.Failed,"release-list metadata has a bounded size");
+  int attempts=0;string route=null;
+  var result=UpdateService.Check(installed,url=>{attempts++;route=url;return releases;});
+  Check(result.VersionText=="0.4.6"&&attempts==1&&route==UpdateService.ReleasesEndpoint,"a successful list check performs exactly one metadata request");
+  attempts=0;result=UpdateService.Check(installed,url=>{attempts++;if(url==UpdateService.ReleasesEndpoint)throw new IOException("offline list");return Release("v0.4.5");});
+  Check(result.VersionText=="0.4.5"&&attempts==2,"a failed list request falls back to the fixed latest endpoint once");
+  attempts=0;result=UpdateService.Check(installed,url=>{attempts++;return url==UpdateService.ReleasesEndpoint?"invalid":Release("v0.4.6");});
+  Check(result.VersionText=="0.4.6"&&attempts==2,"malformed list responses use the same bounded fallback");
+  attempts=0;result=UpdateService.Check(installed,url=>{attempts++;throw new IOException("offline");});
+  Check(result.Kind==UpdateKind.Failed&&attempts==2,"two failed requests never claim that the app is current");
   TabletCompatibility.Configure();new Application{ShutdownMode=ShutdownMode.OnExplicitShutdown};
   string root=Path.GetFullPath(args[0]);Directory.CreateDirectory(root);AppStorage.Root=root;string game=Path.Combine(root,"game");Directory.CreateDirectory(game);File.WriteAllText(Path.Combine(game,"BongoCat.exe"),"");
   var w=new ChatWindow(false,game,true,"ko"){Left=-10000,Top=-10000,WindowStartupLocation=WindowStartupLocation.Manual,ShowActivated=false};
@@ -68,6 +87,18 @@ public static class UpdateTests {
   w.Width=510;w.Height=750;w.UpdateLayout();w.Snapshot(Path.Combine(root,"update-ja.png"));Select(w,"ko");next=()=>safe;check.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Pump(w,()=>!(bool)Get(w,"updateBusy"));w.Snapshot(Path.Combine(root,"update-ko.png"));w.Close();gate.Dispose();
   var demo=new ChatWindow(true,null,true,"en");int demoCalls=0;demo.EnableUpdateNotifications(()=>{demoCalls++;return safe;});((Button)((Grid)demo.Content).FindName("CheckUpdate")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
   Check(demoCalls==0&&!((Button)((Grid)demo.Content).FindName("CheckUpdate")).IsEnabled,"demo and screenshot windows never contact GitHub");demo.Close();
+  var failureWindow=new ChatWindow(false,game,true,"ko"){Left=-10000,Top=-10000,WindowStartupLocation=WindowStartupLocation.Manual,ShowActivated=false};
+  failureWindow.EnableUpdateNotifications(()=>UpdateResult.Failure(false),url=>{});failureWindow.Show();
+  Pump(failureWindow,()=>Get(failureWindow,"updateResult")!=null&&!(bool)Get(failureWindow,"updateBusy"));
+  Check(((Border)Get(failureWindow,"updateOffer")).Visibility==Visibility.Visible&&((TextBlock)Get(failureWindow,"updateText")).Text.Contains("확인하지 못했어요"),"startup failures visibly report failure without requiring another button click");
+  Check(((TextBlock)Get(failureWindow,"updateText")).Text.Contains("현재 "+Program.DisplayVersion+" · 확인 ")&&((Button)Get(failureWindow,"updateOpenButton")).Visibility==Visibility.Visible,"a failed startup shows installed version, check time and browser fallback");
+  typeof(ChatWindow).GetField("updateProbe",flags).SetValue(failureWindow,new Func<UpdateResult>(()=>UpdateResult.Unavailable()));
+  ((Button)Get(failureWindow,"updateCheckButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Pump(failureWindow,()=>!(bool)Get(failureWindow,"updateBusy"));
+  Check(((TextBlock)Get(failureWindow,"updateText")).Text.Contains("릴리스 정보를 찾지 못했어요"),"unavailable release metadata has a specific explanation");
+  failureWindow.Width=420;failureWindow.Height=failureWindow.MinHeight;failureWindow.UpdateLayout();
+  var failurePanel=(Border)Get(failureWindow,"updateOffer");var failureBottom=failurePanel.TranslatePoint(new Point(failurePanel.ActualWidth,failurePanel.ActualHeight),(Grid)failureWindow.Content);
+  Check(failureBottom.Y<=((Grid)failureWindow.Content).ActualHeight+1,"multiline version/time status stays inside a narrow minimum-height window");
+  failureWindow.Width=510;failureWindow.Height=750;failureWindow.UpdateLayout();failureWindow.Snapshot(Path.Combine(root,"update-failure-ko.png"));failureWindow.Close();
   Console.WriteLine("All "+checks+" update checks passed.");return 0;
  }catch(Exception ex){Console.WriteLine(ex);return 1;}}
 }
