@@ -1,9 +1,12 @@
 # Bongo Cat Chat Merger
 
-**0.4.5:** Optional **Hide meows** toggle directly below **Show emotes**. Only exact localized meow phrases are hidden; longer messages mentioning them remain visible. Off by default; your choice is saved. [Details and supported phrases](docs/MEOW-FILTER.md). Drag selection / Ctrl+C copying is retained.
+## [⬇ Download for Windows — BongoCatChatMerger-0.4.5.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.5/BongoCatChatMerger-0.4.5.exe)
+
+**Download the EXE and run it. No ZIP extraction is needed.**
 
 **English** · [한국어](README.ko.md) · [日本語](README.ja.md)
 
+**0.4.5:** Optional **Hide meows** toggle directly below **Show emotes**. Only exact localized meow phrases are hidden; longer messages mentioning them remain visible. Off by default; your choice is saved. [Details and supported phrases](docs/MEOW-FILTER.md). Drag selection / Ctrl+C copying is retained.
 
 A lightweight Windows companion for your Steam Bongo Cat room: live chat, direct sending, original emote images, local history/search, and English/Korean/Japanese UI.
 

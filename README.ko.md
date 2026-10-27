@@ -1,9 +1,12 @@
 # Bongo Cat Chat Merger
 
-**0.4.5:** **이모티콘 표시 아래**에 **야옹 메시지 숨기기** 토글을 추가했습니다. 언어별 울음소리 문구와 전체가 정확히 같은 메시지만 숨기며, 문장에 포함된 경우는 그대로 표시합니다. 기본은 꺼짐, 선택은 저장됩니다. [지원 문구·상세 안내](docs/MEOW-FILTER.md). 드래그 선택·Ctrl+C 복사도 유지됩니다.
+## [⬇ 최신 버전 다운로드 — BongoCatChatMerger-0.4.5.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.5/BongoCatChatMerger-0.4.5.exe)
+
+**EXE 파일을 받아 실행하면 됩니다. 압축 해제는 필요 없습니다.**
 
 [English](README.md) · **한국어** · [日本語](README.ja.md)
 
+**0.4.5:** **이모티콘 표시 아래**에 **야옹 메시지 숨기기** 토글을 추가했습니다. 언어별 울음소리 문구와 전체가 정확히 같은 메시지만 숨기며, 문장에 포함된 경우는 그대로 표시합니다. 기본은 꺼짐, 선택은 저장됩니다. [지원 문구·상세 안내](docs/MEOW-FILTER.md). 드래그 선택·Ctrl+C 복사도 유지됩니다.
 
 Steam 봉고캣의 같은 방 대화를 한곳에 모아 보여주는 Windows 보조 앱입니다. 직접 채팅, 게임 이모티콘 그림, 로컬 기록·검색, 한·영·일 UI를 지원합니다.
 

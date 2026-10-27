@@ -1,9 +1,12 @@
 # Bongo Cat Chat Merger
 
-**0.4.5:** **絵文字を表示の下**に **鳴き声を非表示** を追加しました。各言語の鳴き声と全文が正確に一致する文だけを非表示にし、文章の一部に含まれる場合は表示します。初期値はオフで、選択は保存されます。[対応する文と詳細](docs/MEOW-FILTER.md)。ドラッグ選択・Ctrl+Cコピーも引き続き使えます。
+## [⬇ 最新版をダウンロード — BongoCatChatMerger-0.4.5.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.5/BongoCatChatMerger-0.4.5.exe)
+
+**EXEファイルをダウンロードして実行してください。ZIPの展開は不要です。**
 
 [English](README.md) · [한국어](README.ko.md) · **日本語**
 
+**0.4.5:** **絵文字を表示の下**に **鳴き声を非表示** を追加しました。各言語の鳴き声と全文が正確に一致する文だけを非表示にし、文章の一部に含まれる場合は表示します。初期値はオフで、選択は保存されます。[対応する文と詳細](docs/MEOW-FILTER.md)。ドラッグ選択・Ctrl+Cコピーも引き続き使えます。
 
 Steam Bongo Catの同じルームの会話をまとめる軽量なWindows用アプリです。直接送信、ゲームの絵文字画像、ローカル記録・検索、英語・韓国語・日本語UIに対応しています。
 
