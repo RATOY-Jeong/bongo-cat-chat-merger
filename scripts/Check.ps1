@@ -11,7 +11,7 @@ $csc = 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 $wpf = 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\WPF'
 & $csc /nologo /target:winexe ("/out:$run\GameLaunchFixture.exe") (Join-Path $repo 'tests\GameLaunchFixture.cs')
 if ($LASTEXITCODE -ne 0) { throw 'Fixture compilation failed.' }
-foreach ($test in @('SetupTests','LocalizationTests','FeatureTests','ReconnectTests','TabletCompatibilityTests','ReliabilityTests','UpdateTests','MeowFilterTests')) {
+foreach ($test in @('SetupTests','LocalizationTests','FeatureTests','ReconnectTests','TabletCompatibilityTests','ReliabilityTests','UpdateTests','MeowFilterTests','ConversationHistoryTests')) {
     & $csc /nologo /target:exe ("/out:$run\$test.exe") ("/reference:$run\BongoCatChatMerger.exe") /reference:System.dll /reference:System.Core.dll /reference:System.Xaml.dll /reference:System.Web.Extensions.dll /reference:System.IO.Compression.dll ("/reference:$wpf\PresentationFramework.dll") ("/reference:$wpf\PresentationCore.dll") ("/reference:$wpf\WindowsBase.dll") (Join-Path $repo "tests\$test.cs")
     if ($LASTEXITCODE -ne 0) { throw "Compilation failed: $test" }
     if ($test -eq 'SetupTests') {
