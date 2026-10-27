@@ -16,9 +16,9 @@ using Microsoft.Win32;
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.5")]
 [assembly: System.Reflection.AssemblyTitle("Bongo Cat Chat Merger")]
 [assembly: System.Reflection.AssemblyProduct("Bongo Cat Chat Merger")]
-[assembly: System.Reflection.AssemblyVersion("0.4.3.0")]
-[assembly: System.Reflection.AssemblyFileVersion("0.4.3.0")]
-[assembly: System.Reflection.AssemblyInformationalVersion("0.4.3")]
+[assembly: System.Reflection.AssemblyVersion("0.4.4.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.4.4.0")]
+[assembly: System.Reflection.AssemblyInformationalVersion("0.4.4")]
 
 namespace BongoChat
 {
@@ -460,7 +460,8 @@ namespace BongoChat
             var bubble = new Border { Background = Brush(entry.mine ? "#FFE36B" : "#FFFFFF"), CornerRadius = new CornerRadius(3, 12, 12, 12), Padding = new Thickness(12, 10, 12, 10), MaxWidth = bubbleWidth };
             if (entry.mine) bubble.CornerRadius = new CornerRadius(12, 3, 12, 12);
             if (entry.kind == "emote") bubble.Child = EmoteContent(entry);
-            else bubble.Child = new TextBlock { Text = entry.text, TextWrapping = TextWrapping.Wrap, Foreground = entry.mine ? RawBrush("#293B46") : Brush("#293B46"), FontSize = 13, LineHeight = 21 };
+            else bubble.Child = SelectableMessageText(entry);
+
             var stamp = new TextBlock { Text = time.ToString("t", UiText.Culture(language)), FontSize = 9, Foreground = Brush("#718795"), VerticalAlignment = VerticalAlignment.Bottom, Margin = entry.mine ? new Thickness(0, 0, 6, 2) : new Thickness(6, 0, 0, 2) };
             if (entry.mine) { line.Children.Add(stamp); line.Children.Add(bubble); }
             else { line.Children.Add(bubble); line.Children.Add(stamp); }
@@ -516,7 +517,7 @@ namespace BongoChat
 
     public static class Program
     {
-        public const string DisplayVersion = "0.4.3";
+        public const string DisplayVersion = "0.4.4";
         private static System.Threading.Mutex instanceMutex;
         private static System.Threading.EventWaitHandle activateEvent;
         private static bool ownsInstance;
