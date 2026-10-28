@@ -30,7 +30,7 @@ public static class UpdateTests {
   Check(UpdateService.Parse(Release("v0.4.3",link:"http://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.3/app.exe"),installed).Kind==UpdateKind.NoPackage,"an insecure asset URL is rejected");
   Check(UpdateService.Parse(Release("v0.4.3",link:"https://github.com/other/repo/releases/download/v0.4.3/app.exe"),installed).Kind==UpdateKind.NoPackage,"an asset from another repository is rejected");
   var safe=UpdateService.Parse(Release("v0.4.3"),installed);
-  Check(safe.PageUrl==UpdateService.Repository+"/releases/tag/v0.4.3","the browser target is built from the fixed repository, ignoring remote html_url");
+  Check(safe.PageUrl==UpdateService.Repository+"#readme","the browser target is built from the fixed repository, ignoring remote html_url");
   Check(UpdateService.ParseVersion("v0.4.3-rc1")==null&&UpdateService.ParseVersion("v00.4.3")==null&&UpdateService.ParseVersion("0.4.3+foo")==null,"non-stable and malformed version tags are rejected");
   Check(UpdateService.Parse("{broken",installed).Kind==UpdateKind.Failed&&UpdateService.Parse("{}",installed).Kind==UpdateKind.Failed,"invalid metadata becomes a controlled failure");
   Check(UpdateService.Parse(new string('x',262145),installed).Kind==UpdateKind.Failed,"metadata size is bounded before parsing");
@@ -94,7 +94,7 @@ public static class UpdateTests {
   Check(((TextBlock)Get(failureWindow,"updateText")).Text.Contains("현재 "+Program.DisplayVersion+" · 확인 ")&&((Button)Get(failureWindow,"updateOpenButton")).Visibility==Visibility.Visible,"a failed startup shows installed version, check time and browser fallback");
   typeof(ChatWindow).GetField("updateProbe",flags).SetValue(failureWindow,new Func<UpdateResult>(()=>UpdateResult.Unavailable()));
   ((Button)Get(failureWindow,"updateCheckButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Pump(failureWindow,()=>!(bool)Get(failureWindow,"updateBusy"));
-  Check(((TextBlock)Get(failureWindow,"updateText")).Text.Contains("릴리스 정보를 찾지 못했어요"),"unavailable release metadata has a specific explanation");
+  Check(((TextBlock)Get(failureWindow,"updateText")).Text.Contains("공개 접근 오류(404)"),"unavailable release metadata has a specific explanation");
   failureWindow.Width=420;failureWindow.Height=failureWindow.MinHeight;failureWindow.UpdateLayout();
   var failurePanel=(Border)Get(failureWindow,"updateOffer");var failureBottom=failurePanel.TranslatePoint(new Point(failurePanel.ActualWidth,failurePanel.ActualHeight),(Grid)failureWindow.Content);
   Check(failureBottom.Y<=((Grid)failureWindow.Content).ActualHeight+1,"multiline version/time status stays inside a narrow minimum-height window");

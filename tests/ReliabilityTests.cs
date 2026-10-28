@@ -80,9 +80,9 @@ public static class ReliabilityTests {
   string journal=Path.Combine(bridge,"room_123.jsonl");
   var entry=new ChatEntry{kind="chat",id="cache-one",room="123",name="fixture",text="first cached bubble",utc=DateTime.UtcNow.ToString("o")};
   File.WriteAllText(journal,Journal.Json.Serialize(entry)+Environment.NewLine);state.utc=DateTime.UtcNow.ToString("o");File.WriteAllText(statePath,Journal.Json.Serialize(state));w.Poll();
-  var messages=(StackPanel)Get(w,"messages");var originalBubble=messages.Children[1];
+  var messages=(StackPanel)Get(w,"messages");int cachedRows=messages.Children.Count;var originalBubble=messages.Children[messages.Children.Count-1];
   entry.id="cache-two";entry.text="second cached bubble";File.AppendAllText(journal,Journal.Json.Serialize(entry)+Environment.NewLine);w.Poll();
-  Check(messages.Children.Count==3&&Object.ReferenceEquals(originalBubble,messages.Children[1]),"new chat appends without rebuilding existing WPF bubbles");
+  Check(messages.Children.Count==cachedRows+1&&Object.ReferenceEquals(originalBubble,messages.Children[messages.Children.Count-2]),"new chat appends without rebuilding existing WPF bubbles");
   var search=(TextBox)Get(w,"search");search.Text="second cached";
   Check(messages.Children.Count==2,"search changes rebuild the visible view without duplicating cached rows");search.Clear();
   w.Left=-10000;w.Top=-10000;w.WindowStartupLocation=WindowStartupLocation.Manual;w.ShowActivated=false;w.Show();
