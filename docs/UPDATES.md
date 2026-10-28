@@ -1,3 +1,7 @@
+# 0.4.7 public-access clarification
+
+Repository settings already show Public. Unauthenticated account/profile and repository checks returned 404 while a control public repository API returned 200 (2026-10-29). The cause needs GitHub Support review; this release does not claim to restore public access. Update checks do not require login or send credentials. The 404 message now names public visibility/account status, and the browser button opens the public repository README (`#readme`) instead of `/releases/latest`. If account visibility remains restricted, that page can also return 404. See [0.4.7 details](RELIABILITY-0.4.7.md).
+
 # 0.4.6 — Update checks / 업데이트 확인 / 更新確認
 
 ## 한국어
