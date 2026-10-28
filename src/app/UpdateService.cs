@@ -25,7 +25,7 @@ namespace BongoChat
     public static class UpdateService
     {
         public const string Repository = "https://github.com/RATOY-Jeong/bongo-cat-chat-merger";
-        public const string LatestPage = Repository + "/releases/latest";
+        public const string LatestPage = Repository + "#readme";
         public const string Endpoint = "https://api.github.com/repos/RATOY-Jeong/bongo-cat-chat-merger/releases/latest";
         public const string ReleasesEndpoint = "https://api.github.com/repos/RATOY-Jeong/bongo-cat-chat-merger/releases?per_page=20";
         private sealed class Asset
@@ -71,7 +71,7 @@ namespace BongoChat
                 if (release.draft || release.prerelease || release.assets == null || !release.assets.Any(a => ReadyInstaller(a, release.tag_name)))
                     return UpdateResult.Create(UpdateKind.NoPackage, remote.ToString(3), LatestPage);
                 var local = new Version(installed.Major, installed.Minor, Math.Max(0, installed.Build));
-                string page = Repository + "/releases/tag/" + Uri.EscapeDataString(release.tag_name);
+                string page = LatestPage; // Public README has the current download; never use a login or owner-only edit URL.
                 return UpdateResult.Create(remote > local ? UpdateKind.Available : UpdateKind.Current, remote.ToString(3), page);
             }
             catch (Exception) { return UpdateResult.Failure(false); }

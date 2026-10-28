@@ -111,9 +111,7 @@ namespace BongoChat
             InitializeMeowFilter(root);
             sendButton.Click += delegate { SendComposer(); };
             composer.TextChanged += delegate { draftRevision++; if (pendingRequest == null) sendNotice = ""; RefreshComposer(); };
-            TextCompositionManager.AddPreviewTextInputStartHandler(composer, delegate { imeComposing = true; });
-            TextCompositionManager.AddPreviewTextInputHandler(composer, delegate { imeComposing = false; });
-            composer.LostKeyboardFocus += delegate { imeComposing = false; };
+            InitializeComposerInput();
             composer.PreviewKeyDown += delegate(object sender, KeyEventArgs args)
             {
                 if (args.Key == Key.Return && (Keyboard.Modifiers & ModifierKeys.Shift) == 0 && !imeComposing)
@@ -154,7 +152,7 @@ namespace BongoChat
             recoverSendButton.IsEnabled = pendingRequest == null && composer.Text.Length == 0;
             recoverSendButton.ToolTip = L("입력창을 비우면 보관한 전송문을 복원할 수 있어요. 대화에 이미 표시됐는지 먼저 확인해 주세요.");
             // Keep the IME/editing context stable while a send is pending.
-            sendButton.IsEnabled = !demo && canSend && pendingRequest == null && !String.IsNullOrWhiteSpace(composer.Text);
+            sendButton.IsEnabled = !demo && canSend && pendingRequest == null && !imeComposing && !String.IsNullOrWhiteSpace(composer.Text);
             composerHint.Text = L(demo ? "화면 미리보기 · 실제 메시지는 전송하지 않아요" :
                 pendingRequest != null ? "게임에 전송 요청 중…" :
                 !String.IsNullOrEmpty(sendNotice) ? sendNotice :
@@ -163,7 +161,7 @@ namespace BongoChat
         }
         private void SendComposer()
         {
-            if (demo || !canSend || pendingRequest != null || liveState == null) return;
+            if (demo || !canSend || pendingRequest != null || liveState == null || imeComposing) return;
             var request = new SendRequest { id = Guid.NewGuid().ToString("N"), session = liveState.session, room = liveState.room,
                 createdUtc = DateTime.UtcNow.ToString("o"), kind = "send_chat", text = composer.Text.Trim() };
             string problem = RequestPolicy.Validate(request, liveState.session, liveState.room, DateTime.UtcNow, composer.MaxLength);
@@ -214,11 +212,13 @@ namespace BongoChat
                 if (sendCancellation != null) sendCancellation.Cancel();
                 if (result.accepted)
                 {
+                    ownSends.Record(completed,true,backgroundIo);
                     pendingDraft = null; // Never erase the next draft on a delayed acknowledgement.
                     sendNotice = "게임에 전달했어요 · 수신한 메시지가 대화에 표시돼요";
                 }
                 else
                 {
+                    ownSends.Record(completed,false,backgroundIo);
                     PreservePendingDraft();
                     if (result.error == "게임의 채팅 필터가 전송을 허용하지 않았어요.")
                         sendNotice = "방으로 전송되지 않았어요. 게임의 문자 필터·채팅 설정을 확인해 주세요. 내 고양이 말풍선만 보일 수 있어요.";
@@ -235,7 +235,7 @@ namespace BongoChat
             if (text == null) return;
             // Restore only an untouched editor. Later edits, even type-and-delete,
             // belong to the next draft and must not be overwritten.
-            if (restore && draftRevision == pendingClearRevision && composer.Text.Length == 0) composer.Text = text;
+            if (restore && !imeComposing && draftRevision == pendingClearRevision && composer.Text.Length == 0) composer.Text = text;
             else recoverableDrafts.Enqueue(text);
         }
         private void RefreshMinimumHeight() { MinHeight = (updateShowNotice ? 624 : 584) + (recoverableDrafts.Count > 0 ? 36 : 0); }

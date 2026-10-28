@@ -28,8 +28,10 @@ namespace BongoChat
         public static CultureInfo Culture(string code) { return CultureInfo.GetCultureInfo(code == "ja" ? "ja-JP" : code == "ko" ? "ko-KR" : "en-US"); }
         // Korean keys are also the bridge's existing error messages; its protocol stays unchanged.
         private static readonly string[][] Rows = {
+            new[] { "전송 거절 · 내 PC 기록", "Send rejected · local record", "送信拒否 · このPCの記録" },
+            new[] { "게임 처리 · 방 수신 미확인", "Game processed · room receipt unconfirmed", "ゲーム処理済み · ルーム受信未確認" },
             new[] { "현재 {0} · 확인 {1}", "Installed {0} · Checked {1}", "現在 {0} · 確認 {1}" },
-            new[] { "GitHub에서 릴리스 정보를 찾지 못했어요. 다운로드 페이지를 확인해 주세요.", "GitHub release information is unavailable. Please check the download page.", "GitHubのリリース情報が見つかりません。ダウンロードページをご確認ください。" },
+            new[] { "GitHub 공개 접근 오류(404) · 저장소 공개 설정이나 계정 상태를 관리자에게 확인해 주세요.", "GitHub public access failed (404). Ask the owner to check repository visibility and account status.", "GitHubの公開アクセスに失敗しました(404)。管理者に公開設定とアカウント状態の確認を依頼してください。" },
             new[] { "다크 모드", "Dark mode", "ダークモード" },
             new[] { "항상 위", "Always on top", "最前面に表示" },
             new[] { "이모티콘 표시", "Show emotes", "絵文字を表示" },

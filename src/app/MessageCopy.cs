@@ -23,6 +23,7 @@ namespace BongoChat
                 VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
                 FocusVisualStyle = null, Cursor = Cursors.IBeam
             };
+            InputMethod.SetIsInputMethodSuspended(text,true); // Selection/Ctrl+C need no new IME document.
             TextBlock.SetLineHeight(text,21);
             return text;
         }

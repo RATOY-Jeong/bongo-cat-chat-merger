@@ -16,9 +16,9 @@ using Microsoft.Win32;
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.5")]
 [assembly: System.Reflection.AssemblyTitle("Bongo Cat Chat Merger")]
 [assembly: System.Reflection.AssemblyProduct("Bongo Cat Chat Merger")]
-[assembly: System.Reflection.AssemblyVersion("0.4.6.0")]
-[assembly: System.Reflection.AssemblyFileVersion("0.4.6.0")]
-[assembly: System.Reflection.AssemblyInformationalVersion("0.4.6")]
+[assembly: System.Reflection.AssemblyVersion("0.4.7.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.4.7.0")]
+[assembly: System.Reflection.AssemblyInformationalVersion("0.4.7")]
 
 namespace BongoChat
 {
@@ -28,6 +28,8 @@ namespace BongoChat
         public string id { get; set; }
         public string room { get; set; }
         public string sender { get; set; }
+        public string session { get; set; }
+        public string delivery { get; set; }
         public string name { get; set; }
         public bool mine { get; set; }
         public string text { get; set; }
@@ -310,7 +312,7 @@ namespace BongoChat
             gamePath = Path.GetDirectoryName(picker.FileName);
             try { File.WriteAllText(settingsPath, gamePath, new UTF8Encoding(false)); }
             catch (Exception ex) { MessageBox.Show(this, ex.Message, L("폴더 설정을 저장하지 못했어요")); }
-            currentRoom = ""; currentFile = ""; currentLength = -1; entries.Clear();
+            currentRoom = ""; currentFile = ""; currentLength = -1; entries.Clear(); receivedEntries.Clear();
             RenderMessages(true);
             if (!demo) Poll();
         }
@@ -363,27 +365,28 @@ namespace BongoChat
                 if (setupNotice != null) { setupNotice = null; setupLaunchDeadline = default(DateTime); setupAction = "retry"; RefreshSetupLabels(); }
                 if (!Journal.RoomIdValid(state.room))
                 {
-                    if (currentRoom != "") { currentRoom = ""; entries.Clear(); currentFile = ""; currentLength = -1; RenderMessages(true); }
+                    if (currentRoom != "") { currentRoom = ""; entries.Clear(); receivedEntries.Clear(); currentFile = ""; currentLength = -1; RenderMessages(true); }
                     roomTitle.Text = L("봉고캣 채팅방"); roomInfo.Text = L("같은 방의 대화를 한곳에");
                     SetStatus("봉고캣 실행 중 · 채팅방에 들어가 주세요", false); RenderEmptyIfNeeded(); return;
                 }
                 SetStatus("● 연결됨 · 봉고캣 방의 대화를 받고 있어요", true);
                 canSend = state.canSend && !String.IsNullOrEmpty(state.session);
-                composer.MaxLength = state.maxMessageLength > 0 ? Math.Min(300, state.maxMessageLength) : 300;
+                UpdateComposerLimit(state.maxMessageLength > 0 ? Math.Min(300, state.maxMessageLength) : 300);
                 roomTitle.Text = String.IsNullOrWhiteSpace(state.name) ? L("봉고캣 채팅방") : state.name;
                 roomInfo.Text = F("참여 중 {0}명 · 실시간 대화", state.count);
                 if (currentRoom != state.room)
                 {
                     currentRoom = state.room;
                     currentFile = Path.Combine(BridgeFolder, "room_" + currentRoom + ".jsonl");
-                    currentLength = -1; entries.Clear();
+                    currentLength = -1; entries.Clear(); receivedEntries.Clear();
                 }
                 if (snapshot.Entries != null)
                 {
-                    entries = snapshot.Entries.Where(e => e.room == currentRoom).ToList();
+                    receivedEntries = snapshot.Entries.Where(e => e.room == currentRoom).ToList();
                     currentLength = snapshot.Length; currentWriteTicks = snapshot.WriteTicks; currentAssetRevision = state.assetRevision;
-                    UiPhase("render-messages"); RenderMessages(false);
+                    UiPhase("render-messages");
                 }
+                MergeOwnSends(); RenderMessages(false);
                 lastError = "";
             }
             catch (Exception ex)
@@ -398,12 +401,13 @@ namespace BongoChat
         private static bool SameRenderedEntry(ChatEntry a, ChatEntry b)
         {
             return a.id == b.id && a.kind == b.kind && a.utc == b.utc && a.text == b.text
-                && a.name == b.name && a.mine == b.mine && a.emoteId == b.emoteId
+                && a.name == b.name && a.mine == b.mine && a.emoteId == b.emoteId && a.delivery == b.delivery
                 && a.meowCount == b.meowCount && a.meowLastUtc == b.meowLastUtc && a.meowMoreAuthors == b.meowMoreAuthors;
         }
         private void RenderEmptyIfNeeded() { if (messages.Children.Count == 0) RenderMessages(true); }
         public void RenderMessages(bool forceScroll)
         {
+            if (imeComposing) { deferredRender = true; deferredScroll |= forceScroll; return; }
             bool atBottom = forceScroll || scroll.ScrollableHeight - scroll.VerticalOffset < 35;
             double offset = scroll.VerticalOffset;
             string query = search.Text.Trim();
@@ -467,6 +471,7 @@ namespace BongoChat
             Grid.SetColumn(content, entry.mine ? 0 : 1);
             if (entry.mine) Grid.SetColumnSpan(content, 2);
             if (!entry.mine) content.Children.Add(new TextBlock { Text = entry.name ?? L("고양이"), Foreground = Brush("#506471"), FontSize = 11, Margin = new Thickness(0, 0, 0, 6), MaxWidth = 280, TextTrimming = TextTrimming.CharacterEllipsis });
+            if(entry.kind=="own_send") content.Children.Add(new TextBlock{Text=OwnSendLabel(entry),FontSize=10,Foreground=Brush(entry.delivery=="rejected"?"#775D25":"#506471"),Margin=new Thickness(0,0,0,5),TextWrapping=TextWrapping.Wrap});
             var line = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = entry.mine ? HorizontalAlignment.Right : HorizontalAlignment.Left };
             double bubbleWidth = Math.Min(275, Math.Max(140, (ActualWidth > 0 ? ActualWidth : Width) - 185));
             var bubble = new Border { Background = Brush(entry.mine ? "#FFE36B" : "#FFFFFF"), CornerRadius = new CornerRadius(3, 12, 12, 12), Padding = new Thickness(12, 10, 12, 10), MaxWidth = bubbleWidth };
@@ -493,7 +498,7 @@ namespace BongoChat
                 foreach (ChatEntry entry in entries)
                 {
                     DateTime time; DateTime.TryParse(entry.utc, out time);
-                    text.AppendLine("[" + time.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") + "] " + (entry.kind == "meow_group" ? L("야옹 묶음") : entry.name) + (entry.mine ? L(" (나)") : "") + ": " + (entry.kind == "meow_group" ? MeowGroupLabel(entry) + " [" + MeowAuthorSummary(entry).Replace("\n", "; ") + "]" : (entry.kind == "emote" ? L("[이모티콘 #") + entry.emoteId + "] " : "") + entry.text));
+                    text.AppendLine("[" + time.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") + "] " + (entry.kind == "meow_group" ? L("야옹 묶음") : entry.name) + (entry.mine ? L(" (나)") : "") + ": " + (entry.kind == "meow_group" ? MeowGroupLabel(entry) + " [" + MeowAuthorSummary(entry).Replace("\n", "; ") + "]" : (entry.kind == "emote" ? L("[이모티콘 #") + entry.emoteId + "] " : entry.kind == "own_send" ? "[" + OwnSendLabel(entry) + "] " : "") + entry.text));
                 }
                 File.WriteAllText(save.FileName, text.ToString(), new UTF8Encoding(true));
                 resultText.Text = L("대화를 저장했어요");
@@ -530,7 +535,7 @@ namespace BongoChat
 
     public static class Program
     {
-        public const string DisplayVersion = "0.4.6";
+        public const string DisplayVersion = "0.4.7";
         private static System.Threading.Mutex instanceMutex;
         private static System.Threading.EventWaitHandle activateEvent;
         private static bool ownsInstance;

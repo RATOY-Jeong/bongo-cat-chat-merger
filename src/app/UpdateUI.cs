@@ -96,7 +96,7 @@ namespace BongoChat
             else if (updateResult.Kind == UpdateKind.RateLimited)
                 updateText.Text = L("GitHub 조회 제한에 도달했어요. 잠시 후 다시 확인해 주세요.");
             else if (updateResult.Kind == UpdateKind.Unavailable)
-                updateText.Text = L("GitHub에서 릴리스 정보를 찾지 못했어요. 다운로드 페이지를 확인해 주세요.");
+                updateText.Text = L("GitHub 공개 접근 오류(404) · 저장소 공개 설정이나 계정 상태를 관리자에게 확인해 주세요.");
             else updateText.Text = L("업데이트를 확인하지 못했어요. 인터넷 연결을 확인하거나 다운로드 페이지를 열어 주세요.");
             if (updateResult != null)
                 updateText.Text += "\n" + F("현재 {0} · 확인 {1}", Program.DisplayVersion, updateCheckedAt.ToString("HH:mm:ss"));

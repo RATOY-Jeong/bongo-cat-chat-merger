@@ -13,6 +13,7 @@ namespace BongoChat
         public long Length, WriteTicks;
         public int Assets;
         public ConversationHistory History;
+        public OwnSendStore OwnSends;
         public CancellationToken Cancel;
     }
     internal sealed class PollSnapshot
@@ -42,7 +43,7 @@ namespace BongoChat
         private PollRead CapturePollRead()
         {
             return new PollRead { Game = gamePath, Room = currentRoom, Length = currentLength, WriteTicks = currentWriteTicks,
-                Assets = currentAssetRevision, History = historyReader, Cancel = historyCancellation.Token, RequestId = pendingRequest == null ? null : pendingRequest.id };
+                Assets = currentAssetRevision, History = historyReader, OwnSends = ownSends, Cancel = historyCancellation.Token, RequestId = pendingRequest == null ? null : pendingRequest.id };
         }
         private static PollSnapshot ReadPollSnapshot(PollRead read)
         {
@@ -50,6 +51,7 @@ namespace BongoChat
             if (String.IsNullOrEmpty(read.Game)) return view;
             try
             {
+                if(read.OwnSends!=null) read.OwnSends.Open(read.Game,read.Cancel);
                 string folder = Path.Combine(read.Game, "BepInEx", "BongoChat");
                 string statePath = Path.Combine(folder, "state.json");
                 view.StateExists = File.Exists(statePath);
