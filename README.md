@@ -1,20 +1,22 @@
 # Bongo Cat Chat Merger
 
-## [⬇ Download for Windows — BongoCatChatMerger-0.4.6.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.6/BongoCatChatMerger-0.4.6.exe)
+## [⬇ Download for Windows — BongoCatChatMerger-0.4.7.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.7/BongoCatChatMerger-0.4.7.exe)
 
 **Download the EXE and run it. No ZIP extraction is needed.**
 
 **English** · [한국어](README.ko.md) · [日本語](README.ja.md)
 
-**0.4.6:** Consecutive localized meows are compacted into one row, such as **Meows ×23 · 4 people**, with per-person counts in the tooltip. Meows no longer consume the **500 ordinary conversation events** limit. The existing Hide meows toggle still works. Update checks compare the highest ready stable version in recent releases and visibly report failures, the installed version and check time. [Meow details](docs/MEOW-FILTER.md) · [Update checks](docs/UPDATES.md).
+**0.4.7:** Own sends now have a local row when the game reply arrives, marked **Game processed · room receipt unconfirmed** or **Send rejected · local record**. A matching received message replaces the local row once. IME composition defers editor/message changes, protects new drafts from late replies and keeps Send from taking keyboard focus. This is a mitigation; the reported PC needs retesting. [Details](docs/RELIABILITY-0.4.7.md).
+
+**Public-access notice (2026-10-29):** Repository settings show Public, but unauthenticated requests for this account and its repositories currently return 404 in our checks. This also blocks public downloads and release checks. The cause is unconfirmed and needs GitHub Support review. The app does not require or collect a GitHub login; signing the owner in does not establish public availability.
 
 A lightweight Windows companion for your Steam Bongo Cat room: live chat, direct sending, original emote images, local history/search, and English/Korean/Japanese UI.
 
 ![English preview](docs/assets/preview.png)
 
-## Download and start — 0.4.6
+## Download and start — 0.4.7
 
-**[Download BongoCatChatMerger-0.4.6.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.6/BongoCatChatMerger-0.4.6.exe)** and run it. This single file includes everything required for connection setup. You do not need to extract a ZIP, find a game folder, or run Install.cmd.
+**[Download BongoCatChatMerger-0.4.7.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.7/BongoCatChatMerger-0.4.7.exe)** and run it. This single file includes everything required for connection setup. You do not need to extract a ZIP, find a game folder, or run Install.cmd.
 
 1. Run the EXE and choose your language on first launch.
 2. The app finds Bongo Cat and prepares the connection automatically. If the game must restart, click **Set up & restart game**. If Windows requests permission, approve the prompt to allow the required game-folder files to be installed.
@@ -36,7 +38,7 @@ A shortcut named **Bongo Cat Chat Merger** is created on the desktop and in the 
 
 Close your old companion, then run the new EXE. Updates are **manual**. The app does not download or execute updates from a server.
 
-The app checks public GitHub full-release metadata **once when it starts** and when you click **Check updates**. It does not run periodic update checks. A ready newer EXE shows **A new update is available!** and a **Download page** button. The button opens that release in your browser; the app never downloads or installs the file itself. It selects the highest ready stable version among the 20 most recent releases, independently of the Latest label, with a single latest-endpoint fallback on failure. Drafts and prereleases are excluded. Startup results, failures, installed version and check time are visible. Offline and rate-limit errors do not interrupt chat. [Update check details](docs/UPDATES.md).
+The app checks public GitHub full-release metadata **once when it starts** and when you click **Check updates**. It does not run periodic update checks. A ready newer EXE shows **A new update is available!** and a **Download page** button. The button opens the public repository README with the download link in your browser; the app never downloads or installs the file itself. It selects the highest ready stable version among the 20 most recent releases, independently of the Latest label, with a single latest-endpoint fallback on failure. Drafts and prereleases are excluded. Startup results, failures, installed version and check time are visible. Offline and rate-limit errors do not interrupt chat. [Update check details](docs/UPDATES.md).
 
 The app stores its managed copy, settings, and diagnostic logs under <code>%LOCALAPPDATA%\BongoCatChatMerger</code>. Existing preferences beside the downloaded EXE are imported once without replacing choices already stored there. If your old EXE is in another folder, language/theme may need to be selected again; game conversation records stay in the game folder.
 
@@ -49,7 +51,7 @@ The verified bridge **0.2.2** binary and its protocol are unchanged. An installe
 - Select English / 한국어 / 日本語 from the dropdown. Messages, player/room names and game emote names keep their original text.
 - Changing language keeps drafts and pending requests. Reconnecting cancels uncertain requests without replaying them.
 
-## Pen tablet compatibility — 0.4.6
+## Pen tablet compatibility — 0.4.7
 
 For reports of the chat window freezing while a pen tablet is used elsewhere, the app now requests WPF's process-local stylus/touch opt-out before the first window is created. Chat uses ordinary mouse/text input; raw pressure, ink and touch gestures are not used in this window. Other applications and the tablet driver's Windows Ink settings are not changed.
 
@@ -59,7 +61,7 @@ This mitigates a known class of WPF tablet-processing freezes; it does not estab
 
 Other players do not need this app. Only messages received after installation are recorded; earlier server history cannot be restored. The game bridge continues recording while the game runs, even if the companion is closed.
 
-Records remain in <code>BepInEx\BongoChat\room_&lt;room ID&gt;.jsonl</code> under the game folder. The app scans backwards in the background to retain up to 500 ordinary chat/emote events, with consecutive exact meows grouped separately. Meows do not consume that limit, even when hidden. Later polls read appended records only. The full original journal remains on disk. Exports contain the retained conversation and meow group summaries, including hidden groups. Records include room IDs, Steam IDs, names, content and timestamps. Emote caches and local send requests are in that same BongoChat folder. This app does not upload conversations to a separate server, add antivirus exclusions, or change Windows security settings.
+Records remain in <code>BepInEx\BongoChat\room_&lt;room ID&gt;.jsonl</code> under the game folder. The app scans backwards in the background to retain up to 500 ordinary chat/emote events, with consecutive exact meows grouped separately. Meows do not consume that limit, even when hidden. Later polls read appended records only. The full original journal remains on disk. Exports contain the retained conversation and meow group summaries, including hidden groups. Local send receipts are stored separately under <code>%LOCALAPPDATA%\BongoCatChatMerger\own-sends</code> (up to 500 per game installation), including rejected/unconfirmed text. They are explicitly labeled in the view and text export, do not prove room delivery and never change the game journal. Records include room IDs, Steam IDs, names, content and timestamps. Emote caches and local send requests are in that same BongoChat folder. This app does not upload conversations to a separate server, add antivirus exclusions, or change Windows security settings.
 
 Future game updates work only while the relevant internal APIs remain compatible. Structural changes can require a new app/bridge release.
 
@@ -67,7 +69,7 @@ Future game updates work only while the relevant internal APIs remain compatible
 
 The full ZIP includes <code>runtime</code>, source, scripts, licenses and docs. Build with <code>./scripts/Build.ps1</code> in Windows PowerShell; optional <code>-GamePath</code> selects a game installation. For release reproduction, <code>-BridgeBinary</code> reuses an already verified bridge. Run <code>./scripts/Check.ps1</code> after building. Original game assemblies are not redistributed.
 
-0.4.6 passed **63 setup + 62 feature/language/reconnect + 11 tablet compatibility + 37 reliability + 48 update + 39 meow filter + 24 grouped-history checks (284 total)**.
+0.4.7 passed **63 setup + 62 feature/language/reconnect + 11 tablet compatibility + 37 reliability + 48 update + 39 meow filter + 24 grouped-history + 27 own-send/input checks (311 total)**.
 
 To remove the game bridge, close Bongo Cat and run <code>Uninstall.cmd</code> from the full ZIP. It preserves journals and modified files. The companion itself uses a per-user app folder and shortcuts rather than a system service.
 
