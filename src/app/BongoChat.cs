@@ -16,9 +16,9 @@ using Microsoft.Win32;
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.5")]
 [assembly: System.Reflection.AssemblyTitle("Bongo Cat Chat Merger")]
 [assembly: System.Reflection.AssemblyProduct("Bongo Cat Chat Merger")]
-[assembly: System.Reflection.AssemblyVersion("0.4.7.0")]
-[assembly: System.Reflection.AssemblyFileVersion("0.4.7.0")]
-[assembly: System.Reflection.AssemblyInformationalVersion("0.4.7")]
+[assembly: System.Reflection.AssemblyVersion("0.4.8.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.4.8.0")]
+[assembly: System.Reflection.AssemblyInformationalVersion("0.4.8")]
 
 namespace BongoChat
 {
@@ -535,7 +535,7 @@ namespace BongoChat
 
     public static class Program
     {
-        public const string DisplayVersion = "0.4.7";
+        public const string DisplayVersion = "0.4.8";
         private static System.Threading.Mutex instanceMutex;
         private static System.Threading.EventWaitHandle activateEvent;
         private static bool ownsInstance;

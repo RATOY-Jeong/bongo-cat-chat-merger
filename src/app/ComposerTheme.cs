@@ -112,11 +112,7 @@ namespace BongoChat
             sendButton.Click += delegate { SendComposer(); };
             composer.TextChanged += delegate { draftRevision++; if (pendingRequest == null) sendNotice = ""; RefreshComposer(); };
             InitializeComposerInput();
-            composer.PreviewKeyDown += delegate(object sender, KeyEventArgs args)
-            {
-                if (args.Key == Key.Return && (Keyboard.Modifiers & ModifierKeys.Shift) == 0 && !imeComposing)
-                { args.Handled = true; SendComposer(); }
-            };
+            composer.PreviewKeyDown += ComposerPreviewKeyDown;
             SourceInitialized += delegate { UpdateTitleBar(); SetWindowOpacity(windowAlpha); };
             ApplyTheme();
             RefreshComposer();
