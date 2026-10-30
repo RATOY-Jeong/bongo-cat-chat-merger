@@ -1,8 +1,8 @@
 # Bongo Cat Chat Merger
 
-## [⬇ Download for Windows — BongoCatChatMerger-0.4.7.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.7/BongoCatChatMerger-0.4.7.exe)
+**Windows app · Version 0.4.7**
 
-**Download the EXE and run it. No ZIP extraction is needed.**
+Release packages are available in the repository’s Releases section.
 
 **English** · [한국어](README.ko.md) · [日本語](README.ja.md)
 
@@ -16,13 +16,13 @@ A lightweight Windows companion for your Steam Bongo Cat room: live chat, direct
 
 ## Download and start — 0.4.7
 
-**[Download BongoCatChatMerger-0.4.7.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.7/BongoCatChatMerger-0.4.7.exe)** and run it. This single file includes everything required for connection setup. You do not need to extract a ZIP, find a game folder, or run Install.cmd.
+Get **BongoCatChatMerger-0.4.7.exe** from the repository’s Releases section and run it. This single file includes everything required for connection setup. You do not need to extract a ZIP, find a game folder, or run Install.cmd.
 
 1. Run the EXE and choose your language on first launch.
 2. The app finds Bongo Cat and prepares the connection automatically. If the game must restart, click **Set up & restart game**. If Windows requests permission, approve the prompt to allow the required game-folder files to be installed.
 3. Bongo Cat opens automatically. **Join your preferred room**; the companion connects automatically.
 
-A shortcut named **Bongo Cat Chat Merger** is created on the desktop and in the Start menu. Windows 10/11 x64 with .NET Framework 4.5+ is required. Steam and Bongo Cat must already be installed. The ZIP in [Releases](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/latest) is an optional full/developer package; the generated Source code archives are not the standalone app.
+A shortcut named **Bongo Cat Chat Merger** is created on the desktop and in the Start menu. Windows 10/11 x64 with .NET Framework 4.5+ is required. Steam and Bongo Cat must already be installed. The ZIP in the repository’s Releases section is an optional full/developer package; the generated Source code archives are not the standalone app.
 
 ## Automatic connection setup
 
@@ -38,7 +38,7 @@ A shortcut named **Bongo Cat Chat Merger** is created on the desktop and in the 
 
 Close your old companion, then run the new EXE. Updates are **manual**. The app does not download or execute updates from a server.
 
-The app checks public GitHub full-release metadata **once when it starts** and when you click **Check updates**. It does not run periodic update checks. A ready newer EXE shows **A new update is available!** and a **Download page** button. The button opens the public repository README with the download link in your browser; the app never downloads or installs the file itself. It selects the highest ready stable version among the 20 most recent releases, independently of the Latest label, with a single latest-endpoint fallback on failure. Drafts and prereleases are excluded. Startup results, failures, installed version and check time are visible. Offline and rate-limit errors do not interrupt chat. [Update check details](docs/UPDATES.md).
+The app checks public GitHub full-release metadata **once when it starts** and when you click **Check updates**. It does not run periodic update checks. A ready newer EXE shows **A new update is available!** and a **Download page** button. The button opens the public repository README in your browser; use the repository’s Releases section to obtain the release package. The app never downloads or installs the file itself. It selects the highest ready stable version among the 20 most recent releases, independently of the Latest label, with a single latest-endpoint fallback on failure. Drafts and prereleases are excluded. Startup results, failures, installed version and check time are visible. Offline and rate-limit errors do not interrupt chat. [Update check details](docs/UPDATES.md).
 
 The app stores its managed copy, settings, and diagnostic logs under <code>%LOCALAPPDATA%\BongoCatChatMerger</code>. Existing preferences beside the downloaded EXE are imported once without replacing choices already stored there. If your old EXE is in another folder, language/theme may need to be selected again; game conversation records stay in the game folder.
 
