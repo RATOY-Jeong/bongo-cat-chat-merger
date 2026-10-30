@@ -1,8 +1,8 @@
 # Bongo Cat Chat Merger
 
-## [⬇ 최신 버전 다운로드 — BongoCatChatMerger-0.4.7.exe](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.7/BongoCatChatMerger-0.4.7.exe)
+**Windows 앱 · 버전 0.4.7**
 
-**EXE 파일을 받아 실행하면 됩니다. 압축 해제는 필요 없습니다.**
+배포 파일은 저장소의 Releases 항목에서 받을 수 있습니다.
 
 [English](README.md) · **한국어** · [日本語](README.ja.md)
 
@@ -16,7 +16,7 @@ Steam 봉고캣의 같은 방 대화를 한곳에 모아 보여주는 Windows �
 
 ## 다운로드와 실행 — 0.4.7
 
-**[BongoCatChatMerger-0.4.7.exe 받기](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/download/v0.4.7/BongoCatChatMerger-0.4.7.exe)** → **실행**하면 됩니다.
+저장소의 Releases 항목에서 **BongoCatChatMerger-0.4.7.exe**를 받은 다음 → **실행**하면 됩니다.
 
 이 실행파일 하나에 연결에 필요한 파일이 모두 들어 있습니다. **압축 해제·게임 폴더 찾기·Install.cmd 실행은 필요 없습니다.**
 
@@ -24,7 +24,7 @@ Steam 봉고캣의 같은 방 대화를 한곳에 모아 보여주는 Windows �
 2. 앱이 봉고캣 위치와 연결 파일을 자동으로 준비합니다. 재시작이 필요하면 **설치하고 게임 재시작**을 누르세요. Windows 권한 창이 뜨면 필요한 파일을 설치할 수 있도록 허용합니다.
 3. 봉고캣이 자동으로 켜지면 **원하는 방에 입장**합니다. 봉고챗은 자동으로 연결됩니다.
 
-다음부터는 바탕화면 또는 시작 메뉴의 **Bongo Cat Chat Merger** 바로가기를 실행하세요. Windows 10/11 64비트, .NET Framework 4.5 이상이 필요합니다. Steam과 봉고캣은 설치되어 있어야 합니다. [Releases](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/latest)의 ZIP은 선택 사항인 전체/개발용 패키지이며, Source code ZIP은 실행용 앱이 아닙니다.
+다음부터는 바탕화면 또는 시작 메뉴의 **Bongo Cat Chat Merger** 바로가기를 실행하세요. Windows 10/11 64비트, .NET Framework 4.5 이상이 필요합니다. Steam과 봉고캣은 설치되어 있어야 합니다. Releases의 ZIP은 선택 사항인 전체/개발용 패키지이며, Source code ZIP은 실행용 앱이 아닙니다.
 
 ## 자동으로 처리하는 작업
 
@@ -40,7 +40,7 @@ Steam 봉고캣의 같은 방 대화를 한곳에 모아 보여주는 Windows �
 
 기존 봉고챗을 닫고 새 EXE를 실행하세요. **업데이트는 수동**이며 서버에서 새 프로그램을 자동으로 내려받거나 실행하지 않습니다.
 
-앱은 **시작 시 한 번**, 그리고 **업데이트 확인** 버튼을 눌렀을 때만 GitHub의 정식 버전을 조회합니다. 실행 중 주기적으로 확인하지 않습니다. 새 EXE가 공개되면 **최신 업데이트가 있습니다!**와 **다운로드 페이지** 버튼을 표시합니다. 버튼은 다운로드 링크가 있는 공개 저장소 README를 열며 파일 다운로드·설치는 사용자가 직접 합니다. 최근 릴리스 20개에서 EXE가 준비된 가장 높은 정식 버전을 비교하므로 Latest 지정에만 의존하지 않습니다. 조회 실패 시 최신 단일 릴리스 경로로 한 번 더 확인합니다. 임시 저장·테스트 버전은 알리지 않습니다. 시작 시 결과·실패 이유·현재 버전·확인 시각을 표시합니다. 인터넷 오류나 조회 제한이 있어도 채팅은 계속 사용할 수 있습니다. [업데이트 확인 안내](docs/UPDATES.md).
+앱은 **시작 시 한 번**, 그리고 **업데이트 확인** 버튼을 눌렀을 때만 GitHub의 정식 버전을 조회합니다. 실행 중 주기적으로 확인하지 않습니다. 새 EXE가 공개되면 **최신 업데이트가 있습니다!**와 **다운로드 페이지** 버튼을 표시합니다. 버튼은 공개 저장소 README를 엽니다. 배포 파일은 저장소의 Releases 항목에서 받고, 설치는 사용자가 직접 합니다. 최근 릴리스 20개에서 EXE가 준비된 가장 높은 정식 버전을 비교하므로 Latest 지정에만 의존하지 않습니다. 조회 실패 시 최신 단일 릴리스 경로로 한 번 더 확인합니다. 임시 저장·테스트 버전은 알리지 않습니다. 시작 시 결과·실패 이유·현재 버전·확인 시각을 표시합니다. 인터넷 오류나 조회 제한이 있어도 채팅은 계속 사용할 수 있습니다. [업데이트 확인 안내](docs/UPDATES.md).
 
 앱 본체·설정·진단 로그는 <code>%LOCALAPPDATA%\BongoCatChatMerger</code>에 보관합니다. 다운로드한 EXE 옆의 기존 설정은 이미 저장된 값을 덮어쓰지 않고 한 번 가져옵니다. 예전 EXE가 다른 폴더에 있었다면 언어·테마를 다시 선택할 수 있지만 게임 폴더의 대화 기록은 유지됩니다.
 
