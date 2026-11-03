@@ -28,6 +28,16 @@ namespace BongoChat
         public static CultureInfo Culture(string code) { return CultureInfo.GetCultureInfo(code == "ja" ? "ja-JP" : code == "ko" ? "ko-KR" : "en-US"); }
         // Korean keys are also the bridge's existing error messages; its protocol stays unchanged.
         private static readonly string[][] Rows = {
+            new[] { "상자 자동 열기", "Auto-open chests", "宝箱を自動で開く" },
+            new[] { "자동 열기 꺼짐", "Auto-open off", "自動開封オフ" },
+            new[] { "게임 연결 대기", "Waiting for game", "ゲーム接続待ち" },
+            new[] { "연결을 켜야 자동으로 열어요", "Enable the connection first", "先に接続を有効にしてください" },
+            new[] { "새 연결 플러그인이 필요해요", "Bridge update required", "接続プラグインの更新が必要です" },
+            new[] { "열기 대기 · 껐다 켜서 재시도", "Paused · toggle off/on to retry", "待機中 · オフ/オンで再試行" },
+            new[] { "상자를 여는 중…", "Opening a chest…", "宝箱を開封中…" },
+            new[] { "상자 준비·포인트 대기", "Waiting for chest/points", "宝箱・ポイント待ち" },
+            new[] { "상자 자동 열기는 적용됐지만 설정을 저장하지 못했어요.", "Auto-open applied, but the preference could not be saved.", "自動開封は適用しましたが設定を保存できませんでした。" },
+            new[] { "준비된 일반·이모티콘 상자를 게임 포인트를 사용하여 하나씩 엽니다. 머지어 실행 중에만 동작합니다. 끄거나 종료하면 최대 6초 안에 새 요청을 멈춥니다. 진행 중인 열기는 완료됩니다.", "Uses game points to open ready normal and emote chests one at a time. Runs only while the companion is open. Off/exit stops new requests within 6 seconds; an in-progress opening finishes.", "準備できた通常・絵文字の宝箱をゲーム内ポイントを消費して1つずつ開きます。アプリ起動中のみ動作し、オフ/終了で6秒以内に新規要求を停止します。処理中の開封は完了します。" },
             new[] { "전송 거절 · 내 PC 기록", "Send rejected · local record", "送信拒否 · このPCの記録" },
             new[] { "게임 처리 · 방 수신 미확인", "Game processed · room receipt unconfirmed", "ゲーム処理済み · ルーム受信未確認" },
             new[] { "현재 {0} · 확인 {1}", "Installed {0} · Checked {1}", "現在 {0} · 確認 {1}" },
@@ -299,7 +309,7 @@ namespace BongoChat
                 roomTitle.Text = liveState != null && Journal.RoomIdValid(currentRoom) && !String.IsNullOrWhiteSpace(liveState.name) ? liveState.name : L("봉고캣 채팅방");
                 roomInfo.Text = Journal.RoomIdValid(currentRoom) && liveState != null ? F("참여 중 {0}명 · 실시간 대화", liveState.count) : L("같은 방의 대화를 한곳에");
             }
-            RefreshSetupLabels(); RefreshFrameLabels(); RefreshUpdateLabels(); RenderMessages(false); RefreshComposer();
+            RefreshSetupLabels(); RefreshFrameLabels(); RefreshUpdateLabels(); RefreshAutoChestLabels(); RenderMessages(false); RefreshComposer();
         }
     }
 }

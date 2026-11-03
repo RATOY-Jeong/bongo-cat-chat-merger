@@ -16,9 +16,9 @@ using Microsoft.Win32;
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.5")]
 [assembly: System.Reflection.AssemblyTitle("Bongo Cat Chat Merger")]
 [assembly: System.Reflection.AssemblyProduct("Bongo Cat Chat Merger")]
-[assembly: System.Reflection.AssemblyVersion("0.4.8.0")]
-[assembly: System.Reflection.AssemblyFileVersion("0.4.8.0")]
-[assembly: System.Reflection.AssemblyInformationalVersion("0.4.8")]
+[assembly: System.Reflection.AssemblyVersion("0.4.9.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.4.9.0")]
+[assembly: System.Reflection.AssemblyInformationalVersion("0.4.9")]
 
 namespace BongoChat
 {
@@ -56,6 +56,9 @@ namespace BongoChat
         public bool canSend { get; set; }
         public int maxMessageLength { get; set; }
         public int assetRevision { get; set; }
+        public bool autoChestSupported { get; set; }
+        public string autoChestState { get; set; }
+        public int autoChestRequests { get; set; }
     }
 
     public static class Journal
@@ -185,6 +188,8 @@ namespace BongoChat
         <CheckBox x:Name='Pin' Content='항상 위' Foreground='#667682' Margin='0,0,0,10'/>
         <CheckBox x:Name='ShowEmotes' Content='이모티콘 표시' Foreground='#667682' ToolTip='끄면 이모티콘을 대화 목록과 검색에서 숨깁니다. 기록은 보존됩니다.'/>
         <CheckBox x:Name='HideMeows' Content='야옹 메시지 숨기기' Foreground='#667682' Margin='0,10,0,0' ToolTip='게임의 언어별 야옹 문구와 메시지 전체가 같을 때만 숨깁니다. 원본 기록은 보존됩니다.'/>
+        <CheckBox x:Name='AutoChests' Content='상자 자동 열기' Foreground='#667682' Margin='0,10,0,0'/>
+        <TextBlock x:Name='AutoChestHint' Text='자동 열기 꺼짐' Foreground='#718799' FontSize='9' TextWrapping='Wrap' MaxWidth='150' Margin='0,4,0,0'/>
         <ComboBox x:Name='Language' Width='120' FontSize='11' Margin='0,9,0,0' HorizontalAlignment='Left'/>
       </StackPanel>
     </Grid>
@@ -273,6 +278,7 @@ namespace BongoChat
                 catch (InvalidOperationException) { ShowContactAddress(); }
             };
             InitializeComposerAndTheme(root);
+            InitializeAutoChests(root);
             InitializeReconnect(root);
             InitializeSetup(root);
             InitializeTransparentFrame(root);
@@ -393,7 +399,7 @@ namespace BongoChat
             {
                 if (lastError != ex.GetType().Name) { SetStatus("기록을 읽지 못했어요: " + ex.GetType().Name, false); lastError = ex.GetType().Name; }
             }
-            finally { ExpirePendingRequest(); RefreshComposer(); UiPhase("idle"); }
+            finally { ExpirePendingRequest(); RefreshComposer(); RefreshAutoChestLabels(); UiPhase("idle"); }
         }
 
         private List<ChatEntry> renderedVisible = new List<ChatEntry>();
@@ -535,7 +541,7 @@ namespace BongoChat
 
     public static class Program
     {
-        public const string DisplayVersion = "0.4.8";
+        public const string DisplayVersion = "0.4.9";
         private static System.Threading.Mutex instanceMutex;
         private static System.Threading.EventWaitHandle activateEvent;
         private static bool ownsInstance;

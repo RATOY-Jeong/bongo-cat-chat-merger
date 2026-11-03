@@ -224,7 +224,7 @@ namespace BongoChat
                             if (preserve) { if (old != null) { var previous = old.files.FirstOrDefault(f => f.relative == file.Relative); if (previous != null) records.Add(previous); } continue; }
                             records.Add(new InstallRecord { relative = file.Relative, sha256 = file.Hash, previousSha256 = current });
                         }
-                        var manifest = new InstallManifest { version = "0.2.2", gamePath = game, installedUtc = DateTime.UtcNow.ToString("o"), pending = true, files = records.ToArray() };
+                        var manifest = new InstallManifest { version = "0.2.3", gamePath = game, installedUtc = DateTime.UtcNow.ToString("o"), pending = true, files = records.ToArray() };
                         if (GameLocator.IsRunning(game)) throw new IOException("연결 준비를 위해 봉고캣을 먼저 종료해 주세요.");
                         string manifestPath = Destination(game, "BongoChat-install.json"); SaveManifest(manifestPath, manifest);
                         int completed = 0;

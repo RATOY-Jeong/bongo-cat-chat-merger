@@ -14,6 +14,9 @@ namespace BongoChat
         public int Assets;
         public ConversationHistory History;
         public OwnSendStore OwnSends;
+        public AutoChestLeaseWriter ChestWriter;
+        public int ChestRevision;
+        public bool AutoChests;
         public CancellationToken Cancel;
     }
     internal sealed class PollSnapshot
@@ -43,7 +46,7 @@ namespace BongoChat
         private PollRead CapturePollRead()
         {
             return new PollRead { Game = gamePath, Room = currentRoom, Length = currentLength, WriteTicks = currentWriteTicks,
-                Assets = currentAssetRevision, History = historyReader, OwnSends = ownSends, Cancel = historyCancellation.Token, RequestId = pendingRequest == null ? null : pendingRequest.id };
+                Assets = currentAssetRevision, History = historyReader, OwnSends = ownSends, ChestWriter = autoChestWriter, ChestRevision = autoChestWriter.Revision, AutoChests = autoChests && !connectionPaused && !setupBusy, Cancel = historyCancellation.Token, RequestId = pendingRequest == null ? null : pendingRequest.id };
         }
         private static PollSnapshot ReadPollSnapshot(PollRead read)
         {
@@ -69,6 +72,7 @@ namespace BongoChat
                     catch (ArgumentException) { } catch (InvalidOperationException) { }
                 }
                 BridgeState state = view.State;
+                try { if(read.ChestWriter!=null) read.ChestWriter.Write(read.Game,state,read.AutoChests,read.ChestRevision); } catch { }
                 DateTime stamp;
                 if (state == null || state.protocol != 1 || !state.ready || state.stopped || !Journal.RoomIdValid(state.room)
                     || !DateTime.TryParse(state.utc, System.Globalization.CultureInfo.InvariantCulture,
