@@ -19,3 +19,7 @@ BongoChat-install.json
 hide-meows.txt
 
 own-sends/
+
+auto-chests.txt
+auto-chests.json
+auto-chests.json.*.tmp
