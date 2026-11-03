@@ -11,7 +11,7 @@ $csc = 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 $wpf = 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\WPF'
 & $csc /nologo /target:winexe ("/out:$run\GameLaunchFixture.exe") (Join-Path $repo 'tests\GameLaunchFixture.cs')
 if ($LASTEXITCODE -ne 0) { throw 'Fixture compilation failed.' }
-foreach ($test in @('SetupTests','LocalizationTests','FeatureTests','ReconnectTests','TabletCompatibilityTests','ReliabilityTests','UpdateTests','MeowFilterTests','ConversationHistoryTests','OwnSendInputTests','ComposerEnterTests')) {
+foreach ($test in @('SetupTests','LocalizationTests','FeatureTests','ReconnectTests','TabletCompatibilityTests','ReliabilityTests','UpdateTests','MeowFilterTests','ConversationHistoryTests','OwnSendInputTests','ComposerEnterTests','AutoChestTests')) {
     & $csc /nologo /target:exe ("/out:$run\$test.exe") ("/reference:$run\BongoCatChatMerger.exe") /reference:System.dll /reference:System.Core.dll /reference:System.Xaml.dll /reference:System.Web.Extensions.dll /reference:System.IO.Compression.dll ("/reference:$wpf\PresentationFramework.dll") ("/reference:$wpf\PresentationCore.dll") ("/reference:$wpf\WindowsBase.dll") (Join-Path $repo "tests\$test.cs")
     if ($LASTEXITCODE -ne 0) { throw "Compilation failed: $test" }
     if ($test -eq 'SetupTests') {
@@ -22,4 +22,10 @@ foreach ($test in @('SetupTests','LocalizationTests','FeatureTests','ReconnectTe
     }
     if ($LASTEXITCODE -ne 0) { throw "Check failed: $test" }
 }
+& $csc /nologo /target:library ("/out:$run\Assembly-CSharp.dll") (Join-Path $repo 'tests\AutoChestGameFixture.cs')
+if ($LASTEXITCODE -ne 0) { throw 'Chest model compilation failed.' }
+& $csc /nologo /target:exe ("/out:$run\BridgeAutoChestTests.exe") ("/reference:$run\Assembly-CSharp.dll") ("/reference:$run\BongoCatChatMerger.exe") /reference:System.dll /reference:System.Core.dll /reference:System.Web.Extensions.dll (Join-Path $repo 'tests\BridgeAutoChestTests.cs') (Join-Path $repo 'src\bridge\BridgeAutoChests.cs')
+if ($LASTEXITCODE -ne 0) { throw 'Bridge chest test compilation failed.' }
+& (Join-Path $run 'BridgeAutoChestTests.exe') (Join-Path $run 'bridge-chest-fixtures')
+if ($LASTEXITCODE -ne 0) { throw 'Bridge chest checks failed.' }
 Write-Output "All checks passed. Isolated fixtures: $run"
