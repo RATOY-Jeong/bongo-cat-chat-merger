@@ -23,3 +23,7 @@ own-sends/
 auto-chests.txt
 auto-chests.json
 auto-chests.json.*.tmp
+
+other-chests.txt
+other-chests.json
+other-chests.json.*.tmp
