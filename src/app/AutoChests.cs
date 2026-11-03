@@ -50,6 +50,7 @@ namespace BongoChat
             autoChests=enabled;autoChestWriter.Invalidate();
             try{File.WriteAllText(autoChestPreference,enabled?"true":"false",new UTF8Encoding(false));}catch{sendNotice="상자 자동 열기는 적용됐지만 설정을 저장하지 못했어요.";}
             SendChestLease(enabled);RefreshAutoChestLabels();
+            if(enabled&&automaticSetupEnabled&&liveState!=null&&!BridgeSetup.MeetsRequiredBridgeVersion(liveState.version))BeginSetup(false);
         }
         private void SendChestLease(bool enabled)
         {
@@ -61,7 +62,7 @@ namespace BongoChat
         {
             if(autoChestToggle==null)return;
             autoChestToggle.Content=L("상자 자동 열기");autoChestToggle.ToolTip=L("준비된 일반·이모티콘 상자를 게임 포인트를 사용하여 하나씩 엽니다. 머지어 실행 중에만 동작합니다. 끄거나 종료하면 최대 6초 안에 새 요청을 멈춥니다. 진행 중인 열기는 완료됩니다.");
-            string label=!autoChests?"자동 열기 꺼짐":connectionPaused?"연결을 켜야 자동으로 열어요":liveState==null?"게임 연결 대기":!liveState.autoChestSupported?"새 연결 플러그인이 필요해요":liveState.autoChestState=="error"||liveState.autoChestState=="retry"?"열기 대기 · 껐다 켜서 재시도":liveState.autoChestState=="opening"||liveState.autoChestState=="normal"||liveState.autoChestState=="emote"?"상자를 여는 중…":"상자 준비·포인트 대기";
+            string label=!autoChests?"자동 열기 꺼짐":connectionPaused?"연결을 켜야 자동으로 열어요":liveState==null?"게임 연결 대기":!liveState.autoChestSupported?(BridgeSetup.MeetsRequiredBridgeVersion(liveState.version)?"현재 게임의 상자 기능을 지원하지 않아요":"연결 도우미에서 플러그인을 업데이트해 주세요"):liveState.autoChestState=="error"||liveState.autoChestState=="retry"?"열기 대기 · 껐다 켜서 재시도":liveState.autoChestState=="opening"||liveState.autoChestState=="normal"||liveState.autoChestState=="emote"?"상자를 여는 중…":"상자 준비·포인트 대기";
             autoChestHint.Text=L(label);autoChestHint.ToolTip=autoChestToggle.ToolTip;
         }
     }

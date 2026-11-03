@@ -16,9 +16,9 @@ using Microsoft.Win32;
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.5")]
 [assembly: System.Reflection.AssemblyTitle("Bongo Cat Chat Merger")]
 [assembly: System.Reflection.AssemblyProduct("Bongo Cat Chat Merger")]
-[assembly: System.Reflection.AssemblyVersion("0.4.9.0")]
-[assembly: System.Reflection.AssemblyFileVersion("0.4.9.0")]
-[assembly: System.Reflection.AssemblyInformationalVersion("0.4.9")]
+[assembly: System.Reflection.AssemblyVersion("0.4.10.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.4.10.0")]
+[assembly: System.Reflection.AssemblyInformationalVersion("0.4.10")]
 
 namespace BongoChat
 {
@@ -368,14 +368,14 @@ namespace BongoChat
                     && Math.Abs((DateTime.UtcNow - timestamp.ToUniversalTime()).TotalSeconds) < 6;
                 if (!fresh || state.stopped) { SetStatus(setupNotice ?? "봉고캣 연결이 끊겼어요 · 기록은 남아 있어요", false); return; }
                 if (!state.ready) { SetStatus("연결 오류: " + (state.error ?? "플러그인을 확인해 주세요"), false); return; }
-                if (setupNotice != null) { setupNotice = null; setupLaunchDeadline = default(DateTime); setupAction = "retry"; RefreshSetupLabels(); }
+                if (setupNotice != null && !setupBusy && setupAction != "restart" && setupAction != "resume") { setupNotice = null; setupLaunchDeadline = default(DateTime); setupAction = "retry"; RefreshSetupLabels(); }
                 if (!Journal.RoomIdValid(state.room))
                 {
                     if (currentRoom != "") { currentRoom = ""; entries.Clear(); receivedEntries.Clear(); currentFile = ""; currentLength = -1; RenderMessages(true); }
                     roomTitle.Text = L("봉고캣 채팅방"); roomInfo.Text = L("같은 방의 대화를 한곳에");
-                    SetStatus("봉고캣 실행 중 · 채팅방에 들어가 주세요", false); RenderEmptyIfNeeded(); return;
+                    SetStatus(setupNotice ?? "봉고캣 실행 중 · 채팅방에 들어가 주세요", false); RenderEmptyIfNeeded(); return;
                 }
-                SetStatus("● 연결됨 · 봉고캣 방의 대화를 받고 있어요", true);
+                SetStatus(setupNotice ?? "● 연결됨 · 봉고캣 방의 대화를 받고 있어요", setupNotice == null);
                 canSend = state.canSend && !String.IsNullOrEmpty(state.session);
                 UpdateComposerLimit(state.maxMessageLength > 0 ? Math.Min(300, state.maxMessageLength) : 300);
                 roomTitle.Text = String.IsNullOrWhiteSpace(state.name) ? L("봉고캣 채팅방") : state.name;
@@ -541,7 +541,7 @@ namespace BongoChat
 
     public static class Program
     {
-        public const string DisplayVersion = "0.4.9";
+        public const string DisplayVersion = "0.4.10";
         private static System.Threading.Mutex instanceMutex;
         private static System.Threading.EventWaitHandle activateEvent;
         private static bool ownsInstance;

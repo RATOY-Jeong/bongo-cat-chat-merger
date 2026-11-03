@@ -63,7 +63,7 @@ namespace BongoChat
             {
                 var state = json.Deserialize<BridgeState>(Journal.ReadShared(Path.Combine(BridgeFolder, "state.json")));
                 DateTime time;
-                return state != null && state.protocol == 1 && state.ready && !state.stopped
+                return state != null && state.protocol == 1 && state.ready && !state.stopped && BridgeSetup.MeetsRequiredBridgeVersion(state.version)
                     && DateTime.TryParse(state.utc, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind, out time)
                     && Math.Abs((DateTime.UtcNow - time.ToUniversalTime()).TotalSeconds) < 6;
             }
@@ -102,17 +102,17 @@ namespace BongoChat
                         return;
                     }
                     connectionPaused = false;
-                    if (GameLocator.IsRunning(found) && HasLiveBridge())
+                    var check = BridgeSetup.Inspect(found);
+                    if (check.Problem != null) throw new IOException(check.Problem);
+                    bool running = GameLocator.IsRunning(found);
+                    if (running && !check.NeedsInstall && HasLiveBridge())
                     {
                         OnSetupUI(delegate { setupNotice = null; setupAction = "retry"; FinishSetupTask(); Poll(); });
                         return;
                     }
-                    var check = BridgeSetup.Inspect(found);
-                    if (check.Problem != null) throw new IOException(check.Problem);
-                    bool running = GameLocator.IsRunning(found);
                     if (running && !restartConfirmed)
                     {
-                        OnSetupUI(delegate { FinishSetupTask(); SetupMessage("처음 연결을 준비하려면 봉고캣을 다시 시작해야 해요. 아래 버튼을 누르면 자동으로 진행해요.", "restart"); });
+                        OnSetupUI(delegate { FinishSetupTask(); SetupMessage("연결 플러그인을 적용하려면 봉고캣을 다시 시작해야 해요. 아래 버튼을 누르면 자동으로 진행해요.", "restart"); });
                         return;
                     }
                     if (running)
