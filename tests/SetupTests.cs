@@ -45,7 +45,7 @@ public static class SetupTests
             int progress=0;BridgeSetup.Install(game,p=>progress=p);
             Check(progress==100 && !BridgeSetup.Inspect(game).NeedsInstall,"fresh setup installs and verifies every embedded file");
             string plugin=Path.Combine(game,"BepInEx","plugins","BongoChat","BongoChatBridge.dll");
-            Check(BridgeSetup.FileHash(plugin)==BridgeSetup.FileHash(args[1]),"installed bridge exactly matches the verified 0.2.2 binary");
+            Check(BridgeSetup.FileHash(plugin)==BridgeSetup.FileHash(args[1]),"installed bridge exactly matches the packaged binary");
             Check(BridgeSetup.FileHash(Path.Combine(game,"BongoCat.exe"))==exeHash && BridgeSetup.FileHash(Path.Combine(game,"BongoCat_Data","Managed","Assembly-CSharp.dll"))==assemblyHash,"game EXE and original managed assembly remain unchanged");
             var manifest=Manifest(game);
             Check(!manifest.pending && manifest.files.Length>10 && manifest.files.All(f=>f.previousSha256==null),"successful setup leaves a complete compatible ownership manifest");
