@@ -9,15 +9,19 @@ namespace BongoChat.Protocol
         public string owner {get;set;}
         public string session {get;set;}
         public bool enabled {get;set;}
+        public string room {get;set;}
         public string createdUtc {get;set;}
         public string expiresUtc {get;set;}
     }
     public static class AutoChestPolicy
     {
-        public static bool Valid(AutoChestLease lease,string session,DateTime now)
+        public static bool Valid(AutoChestLease lease,string session,DateTime now) { return ValidKind(lease,session,now,"auto_chests"); }
+        public static bool ValidForOthers(AutoChestLease lease,string session,string room,DateTime now)
+        { ulong id;return UInt64.TryParse(room,out id)&&id!=0&&ValidKind(lease,session,now,"other_chests")&&lease.room==room; }
+        private static bool ValidKind(AutoChestLease lease,string session,DateTime now,string kind)
         {
             DateTime made,expires;Guid owner;
-            if(lease==null||lease.protocol!=1||lease.kind!="auto_chests"||String.IsNullOrEmpty(session)||lease.session!=session||!Guid.TryParseExact(lease.owner,"N",out owner))return false;
+            if(lease==null||lease.protocol!=1||lease.kind!=kind||String.IsNullOrEmpty(session)||lease.session!=session||!Guid.TryParseExact(lease.owner,"N",out owner))return false;
             if(!DateTime.TryParse(lease.createdUtc,CultureInfo.InvariantCulture,DateTimeStyles.RoundtripKind,out made)||!DateTime.TryParse(lease.expiresUtc,CultureInfo.InvariantCulture,DateTimeStyles.RoundtripKind,out expires))return false;
             made=made.ToUniversalTime();expires=expires.ToUniversalTime();now=now.ToUniversalTime();
             return made<=now.AddSeconds(1)&&made>=now.AddSeconds(-6)&&expires>now&&expires>made&&expires<=made.AddSeconds(6);
