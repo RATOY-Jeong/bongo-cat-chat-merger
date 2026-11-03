@@ -63,7 +63,7 @@ namespace BongoChatBridge
         }
     }
 
-    [BepInPlugin("local.bongochat.bridge", "Bongo Chat Bridge", "0.2.3")]
+    [BepInPlugin("local.bongochat.bridge", "Bongo Chat Bridge", "0.2.4")]
     public sealed partial class BridgePlugin : BaseUnityPlugin
     {
         [Serializable]
@@ -98,7 +98,7 @@ namespace BongoChatBridge
                 harmony = new Harmony("local.bongochat.bridge");
                 harmony.Patch(receive, prefix: new HarmonyMethod(typeof(BridgePlugin), "ReceivePrefix"));
                 InitializeFeatures(multiplayer);
-                InitializeAutoChests();
+                InitializeAutoChests(); InitializeOtherChests();
                 Logger.LogInfo("Bongo Chat Bridge ready (chat, emotes and composer). Directory: " + directory);
             }
             catch (Exception ex)
@@ -150,7 +150,7 @@ namespace BongoChatBridge
         private void Update()
         {
             UpdateFeatures();
-            UpdateAutoChests(UnityEngine.Time.realtimeSinceStartup);
+            UpdateAutoChests(UnityEngine.Time.realtimeSinceStartup); UpdateOtherChests(UnityEngine.Time.realtimeSinceStartup);
             if (UnityEngine.Time.realtimeSinceStartup < nextHeartbeat) return;
             nextHeartbeat = UnityEngine.Time.realtimeSinceStartup + 1.0f;
             WriteState(false);
@@ -164,14 +164,15 @@ namespace BongoChatBridge
                 bool valid = !stopped && lobby.IsValid;
                 var state = new
                 {
-                    protocol = 1, version = "0.2.3", utc = DateTime.UtcNow.ToString("o"),
+                    protocol = 1, version = "0.2.4", utc = DateTime.UtcNow.ToString("o"),
                     session = session, stopped = stopped, ready = harmony != null && String.IsNullOrEmpty(error),
                     room = valid ? lobby.SteamId.m_SteamID.ToString() : "",
                     name = valid ? lobby.Name : "", code = valid ? lobby.LobbyCode : "",
                     count = valid ? lobby.MemberCount : 0, error = error,
                     canSend = valid && speech != null && harmony != null && String.IsNullOrEmpty(error),
                     maxMessageLength = messageLimit, assetRevision = assetRevision,
-                    autoChestSupported = autoChestSupported, autoChestState = autoChestStatus, autoChestRequests = autoChestRequests
+                    autoChestSupported = autoChestSupported, autoChestState = autoChestStatus, autoChestRequests = autoChestRequests,
+                    autoOtherChestSupported=autoOtherChestSupported,autoOtherChestState=autoOtherChestStatus,autoOtherChestRequests=autoOtherChestRequests
                 };
                 string temporary = Path.Combine(directory, "state.tmp");
                 string destination = Path.Combine(directory, "state.json");
