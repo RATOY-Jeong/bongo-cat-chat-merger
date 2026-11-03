@@ -28,6 +28,13 @@ namespace BongoChat
         public static CultureInfo Culture(string code) { return CultureInfo.GetCultureInfo(code == "ja" ? "ja-JP" : code == "ko" ? "ko-KR" : "en-US"); }
         // Korean keys are also the bridge's existing error messages; its protocol stays unchanged.
         private static readonly string[][] Rows = {
+            new[] { "다른 사람 상자 자동 열기", "Auto-open others' chests", "他の人の宝箱を自動で開く" },
+            new[] { "내 포인트 사용 · 꺼짐", "Uses my points · off", "自分のポイント使用 · オフ" },
+            new[] { "내 포인트 사용 · 방 입장 대기", "Uses my points · join a room", "自分のポイント使用 · 入室待ち" },
+            new[] { "내 포인트 사용 · 선물 처리 중", "Uses my points · gifting", "自分のポイント使用 · 贈呈中" },
+            new[] { "내 포인트 사용 · 다른 상자 대기", "Uses my points · waiting", "自分のポイント使用 · 宝箱待ち" },
+            new[] { "다른 사람 상자 옵션은 적용됐지만 설정을 저장하지 못했어요.", "Others' chest option applied, but preference could not be saved.", "他の人の宝箱設定は適用しましたが保存できませんでした。" },
+            new[] { "내 게임 포인트를 사용하여 같은 방 다른 사람의 준비된 일반·이모티콘 상자를 하나씩 열어 줍니다. 상대가 상자를 받고 내 포인트가 차감됩니다. 내 상자 자동 열기와 별도이며, 끄거나 종료하면 6초 안에 새 요청을 멈춥니다.", "Spends MY game points to open ready normal/emote chests for other members of the same room, one at a time. They receive the chest and my points are deducted. Independent of my own chests. Off/exit stops new requests within 6 seconds.", "自分のゲーム内ポイントを消費し、同じ部屋の他の人の準備済み通常・絵文字宝箱を1つずつ開きます。相手が宝箱を受け取り、自分のポイントが減ります。自分の宝箱とは独立し、オフ/終了後6秒以内に新規要求を停止します。" },
             new[] { "상자 자동 열기", "Auto-open chests", "宝箱を自動で開く" },
             new[] { "자동 열기 꺼짐", "Auto-open off", "自動開封オフ" },
             new[] { "게임 연결 대기", "Waiting for game", "ゲーム接続待ち" },
@@ -310,7 +317,7 @@ namespace BongoChat
                 roomTitle.Text = liveState != null && Journal.RoomIdValid(currentRoom) && !String.IsNullOrWhiteSpace(liveState.name) ? liveState.name : L("봉고캣 채팅방");
                 roomInfo.Text = Journal.RoomIdValid(currentRoom) && liveState != null ? F("참여 중 {0}명 · 실시간 대화", liveState.count) : L("같은 방의 대화를 한곳에");
             }
-            RefreshSetupLabels(); RefreshFrameLabels(); RefreshUpdateLabels(); RefreshAutoChestLabels(); RenderMessages(false); RefreshComposer();
+            RefreshSetupLabels(); RefreshFrameLabels(); RefreshUpdateLabels(); RefreshAutoChestLabels(); RefreshOtherChestLabels(); RenderMessages(false); RefreshComposer();
         }
     }
 }

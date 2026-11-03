@@ -15,7 +15,7 @@ namespace BongoChat
     }
     public static class DesktopInstall
     {
-        public static readonly string[] Preferences = { "language.txt", "appearance.txt", "always-on-top.txt", "show-emotes.txt", "hide-meows.txt", "auto-chests.txt", "game-path.txt" };
+        public static readonly string[] Preferences = { "language.txt", "appearance.txt", "always-on-top.txt", "show-emotes.txt", "hide-meows.txt", "auto-chests.txt", "other-chests.txt", "game-path.txt" };
         public static void MigratePreferences(string source, string target)
         {
             Directory.CreateDirectory(target);

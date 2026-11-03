@@ -234,7 +234,7 @@ namespace BongoChat
             if (restore && !imeComposing && draftRevision == pendingClearRevision && composer.Text.Length == 0) composer.Text = text;
             else recoverableDrafts.Enqueue(text);
         }
-        private void RefreshMinimumHeight() { MinHeight = (updateShowNotice ? 674 : 634) + (recoverableDrafts.Count > 0 ? 36 : 0); }
+        private void RefreshMinimumHeight() { MinHeight = (updateShowNotice ? 744 : 704) + (recoverableDrafts.Count > 0 ? 36 : 0); }
         private void RecoverSendDraft()
         {
             if (pendingRequest != null || composer.Text.Length != 0 || recoverableDrafts.Count == 0) return;

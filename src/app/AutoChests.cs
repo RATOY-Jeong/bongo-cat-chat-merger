@@ -4,6 +4,9 @@ namespace BongoChat
     public sealed class AutoChestLeaseWriter
     {
         private readonly object writeGate=new object();
+        private readonly bool others;
+        public AutoChestLeaseWriter():this(false){} 
+        public AutoChestLeaseWriter(bool otherMembers){others=otherMembers;}
         private int revision;
         private readonly string owner=Guid.NewGuid().ToString("N");
         public int Revision {get{return Volatile.Read(ref revision);}}
@@ -12,8 +15,8 @@ namespace BongoChat
         {
             if(String.IsNullOrEmpty(game)||state==null||String.IsNullOrEmpty(state.session)||expected!=Revision)return;
             DateTime stamp;bool fresh=DateTime.TryParse(state.utc,System.Globalization.CultureInfo.InvariantCulture,System.Globalization.DateTimeStyles.RoundtripKind,out stamp)&&Math.Abs((DateTime.UtcNow-stamp.ToUniversalTime()).TotalSeconds)<6;
-            var now=DateTime.UtcNow;var lease=new AutoChestLease{protocol=1,kind="auto_chests",owner=owner,session=state.session,enabled=enabled&&fresh&&state.protocol==1&&state.ready&&!state.stopped&&state.autoChestSupported,createdUtc=now.ToString("o"),expiresUtc=now.AddSeconds(5).ToString("o")};
-            string folder=Path.Combine(game,"BepInEx","BongoChat"),file=Path.Combine(folder,"auto-chests.json"),temp=file+"."+owner+".tmp";
+            var now=DateTime.UtcNow;var lease=new AutoChestLease{protocol=1,kind=others?"other_chests":"auto_chests",room=others?state.room:null,owner=owner,session=state.session,enabled=enabled&&fresh&&state.protocol==1&&state.ready&&!state.stopped&&(others?state.autoOtherChestSupported&&Journal.RoomIdValid(state.room):state.autoChestSupported),createdUtc=now.ToString("o"),expiresUtc=now.AddSeconds(5).ToString("o")};
+            string folder=Path.Combine(game,"BepInEx","BongoChat"),file=Path.Combine(folder,others?"other-chests.json":"auto-chests.json"),temp=file+"."+owner+".tmp";
             if(!Directory.Exists(folder))return;
             lock(writeGate)
             {

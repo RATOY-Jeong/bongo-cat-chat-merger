@@ -111,7 +111,7 @@ namespace BongoChat
     internal sealed class PayloadFile { public string Entry, Relative, Hash; }
     public static partial class BridgeSetup
     {
-        public const string RequiredBridgeVersion = "0.2.3";
+        public const string RequiredBridgeVersion = "0.2.4";
         public static bool MeetsRequiredBridgeVersion(string text)
         { Version version; return Version.TryParse(text, out version) && version >= new Version(RequiredBridgeVersion); }
 

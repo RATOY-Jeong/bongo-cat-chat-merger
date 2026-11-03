@@ -17,6 +17,7 @@ namespace BongoChat
         public AutoChestLeaseWriter ChestWriter;
         public int ChestRevision;
         public bool AutoChests;
+        public AutoChestLeaseWriter OtherChestWriter; public int OtherChestRevision;public bool AutoOtherChests;
         public CancellationToken Cancel;
     }
     internal sealed class PollSnapshot
@@ -46,7 +47,7 @@ namespace BongoChat
         private PollRead CapturePollRead()
         {
             return new PollRead { Game = gamePath, Room = currentRoom, Length = currentLength, WriteTicks = currentWriteTicks,
-                Assets = currentAssetRevision, History = historyReader, OwnSends = ownSends, ChestWriter = autoChestWriter, ChestRevision = autoChestWriter.Revision, AutoChests = autoChests && !connectionPaused && !setupBusy, Cancel = historyCancellation.Token, RequestId = pendingRequest == null ? null : pendingRequest.id };
+                Assets = currentAssetRevision, History = historyReader, OwnSends = ownSends, OtherChestWriter=otherChestWriter,OtherChestRevision=otherChestWriter.Revision,AutoOtherChests=autoOtherChests&&!connectionPaused&&!setupBusy, ChestWriter = autoChestWriter, ChestRevision = autoChestWriter.Revision, AutoChests = autoChests && !connectionPaused && !setupBusy, Cancel = historyCancellation.Token, RequestId = pendingRequest == null ? null : pendingRequest.id };
         }
         private static PollSnapshot ReadPollSnapshot(PollRead read)
         {
@@ -73,6 +74,7 @@ namespace BongoChat
                 }
                 BridgeState state = view.State;
                 try { if(read.ChestWriter!=null) read.ChestWriter.Write(read.Game,state,read.AutoChests,read.ChestRevision); } catch { }
+                try { if(read.OtherChestWriter!=null) read.OtherChestWriter.Write(read.Game,state,read.AutoOtherChests,read.OtherChestRevision); } catch { }
                 DateTime stamp;
                 if (state == null || state.protocol != 1 || !state.ready || state.stopped || !Journal.RoomIdValid(state.room)
                     || !DateTime.TryParse(state.utc, System.Globalization.CultureInfo.InvariantCulture,
