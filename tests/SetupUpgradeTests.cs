@@ -1,0 +1,35 @@
+using System;using System.IO;using System.Linq;using System.Diagnostics;using System.Reflection;using System.Windows;using System.Windows.Controls;using System.Windows.Threading;using BongoChat;
+public static class SetupUpgradeTests
+{
+ static int checks;static BindingFlags flags=BindingFlags.NonPublic|BindingFlags.Instance;
+ static object Get(ChatWindow w,string name){return typeof(ChatWindow).GetField(name,flags).GetValue(w);}
+ static void Set(ChatWindow w,string name,object value){typeof(ChatWindow).GetField(name,flags).SetValue(w,value);}
+ static void Check(bool value,string label){if(!value)throw new Exception(label);checks++;Console.WriteLine("PASS "+label);}
+ static void Setup(ChatWindow w){typeof(ChatWindow).GetMethod("BeginSetup",flags).Invoke(w,new object[]{false});DateTime deadline=DateTime.UtcNow.AddSeconds(10);while((bool)Get(w,"setupBusy")&&DateTime.UtcNow<deadline){w.Dispatcher.Invoke(DispatcherPriority.ApplicationIdle,new Action(delegate{}));System.Threading.Thread.Sleep(10);}Check(!(bool)Get(w,"setupBusy"),"setup inspection completes without blocking the UI");}
+ static bool Live(ChatWindow w){return (bool)typeof(ChatWindow).GetMethod("HasLiveBridge",flags).Invoke(w,null);}
+ [STAThread]public static int Main(string[] args){Process child=null;ChatWindow w=null;try{
+  string root=Path.GetFullPath(args[0]);Directory.CreateDirectory(root);AppStorage.Root=root;
+  Check(!BridgeSetup.MeetsRequiredBridgeVersion("0.2.2"),"legacy chat-only bridge is not treated as current");
+  Check(BridgeSetup.MeetsRequiredBridgeVersion("0.2.3")&&BridgeSetup.MeetsRequiredBridgeVersion("0.2.4"),"current and newer compatible bridge versions pass the minimum requirement");
+  Check(!BridgeSetup.MeetsRequiredBridgeVersion(null)&&!BridgeSetup.MeetsRequiredBridgeVersion("bad"),"missing or malformed bridge versions require inspection");
+  string game=Path.Combine(root,"game");Directory.CreateDirectory(Path.Combine(game,"BongoCat_Data","Managed"));string exe=Path.Combine(game,"BongoCat.exe");
+  File.Copy(Path.Combine(Path.GetDirectoryName(typeof(ChatWindow).Assembly.Location),"GameLaunchFixture.exe"),exe);File.WriteAllText(Path.Combine(game,"BongoCat_Data","Managed","Assembly-CSharp.dll"),"isolated fixture");
+  BridgeSetup.Install(game,null);string manifestPath=Path.Combine(game,"BongoChat-install.json"),manifest=File.ReadAllText(manifestPath),plugin=Path.Combine(game,"BepInEx","plugins","BongoChat","BongoChatBridge.dll");byte[] current=File.ReadAllBytes(plugin);
+  File.WriteAllText(plugin,"owned older bridge fixture");var old=Journal.Json.Deserialize<InstallManifest>(manifest);old.files.First(x=>x.relative.EndsWith("BongoChatBridge.dll")).sha256=BridgeSetup.FileHash(plugin);old.version="0.2.2";File.WriteAllText(manifestPath,Journal.Json.Serialize(old));
+  string statePath=Path.Combine(game,"BepInEx","BongoChat","state.json");Directory.CreateDirectory(Path.GetDirectoryName(statePath));var state=new BridgeState{protocol=1,version="0.2.2",ready=true,canSend=true,room="123",session="upgrade-test",utc=DateTime.UtcNow.ToString("o")};File.WriteAllText(statePath,Journal.Json.Serialize(state));
+  child=Process.Start(new ProcessStartInfo(exe,"--hold"){UseShellExecute=false,WorkingDirectory=game,WindowStyle=ProcessWindowStyle.Hidden});Check(GameLocator.IsRunning(game),"only the isolated running game fixture is selected");
+  TabletCompatibility.Configure();new Application{ShutdownMode=ShutdownMode.OnExplicitShutdown};w=new ChatWindow(false,game,true,"ko");
+  Check(!Live(w),"a fresh old bridge heartbeat cannot skip the upgrade");Setup(w);
+  Check((string)Get(w,"setupAction")=="restart","running owned legacy installation exposes install and restart");
+  Check(File.ReadAllText(plugin)=="owned older bridge fixture"&&!child.HasExited,"inspection never replaces a loaded plugin or closes the game without the restart action");
+  w.Poll();Check((string)Get(w,"setupAction")=="restart","old heartbeat polling cannot erase the upgrade action");Check(((TextBlock)Get(w,"statusText")).Text.Contains("다시 시작"),"upgrade guidance stays visible while legacy chat is connected");
+  state.room="";state.utc=DateTime.UtcNow.ToString("o");File.WriteAllText(statePath,Journal.Json.Serialize(state));w.Poll();Check((string)Get(w,"setupAction")=="restart"&&((TextBlock)Get(w,"statusText")).Text.Contains("다시 시작"),"the restart action survives an old heartbeat outside a room");
+  Set(w,"automaticSetupEnabled",true);var toggle=(CheckBox)((Grid)w.Content).FindName("AutoChests");toggle.IsChecked=true;DateTime end=DateTime.UtcNow.AddSeconds(10);while((bool)Get(w,"setupBusy")&&DateTime.UtcNow<end){w.Dispatcher.Invoke(DispatcherPriority.ApplicationIdle,new Action(delegate{}));System.Threading.Thread.Sleep(10);}Check((string)Get(w,"setupAction")=="restart","enabling automatic chests on an old bridge starts setup inspection");
+  File.WriteAllBytes(plugin,current);File.WriteAllText(manifestPath,manifest);Check(!BridgeSetup.Inspect(game).NeedsInstall,"current files alone are already verified on disk");Setup(w);Check((string)Get(w,"setupAction")=="restart","an old in-memory bridge still requires restart even after disk files were upgraded");
+  state.version="0.2.3";state.autoChestSupported=true;state.room="123";state.utc=DateTime.UtcNow.ToString("o");File.WriteAllText(statePath,Journal.Json.Serialize(state));Check(Live(w),"fresh required-version heartbeat is recognized");Setup(w);Check((string)Get(w,"setupAction")=="retry"&&File.ReadAllBytes(plugin).SequenceEqual(current),"verified current running bridge connects without restart or writes");
+  state.autoChestSupported=false;File.WriteAllText(statePath,Journal.Json.Serialize(state));w.Poll();Check(((TextBlock)((Grid)w.Content).FindName("AutoChestHint")).Text.Contains("현재 게임"),"changed chest API is distinguished from a missing bridge upgrade");
+  state.utc=DateTime.UtcNow.AddMinutes(-1).ToString("o");File.WriteAllText(statePath,Journal.Json.Serialize(state));Check(!Live(w),"stale current bridge heartbeat cannot bypass setup");
+  state.utc=DateTime.UtcNow.ToString("o");File.WriteAllText(statePath,Journal.Json.Serialize(state));string loader=Path.Combine(game,"winhttp.dll");File.WriteAllText(loader,"modified fixture loader");Setup(w);Check(((string)Get(w,"lastSetupError")).Contains("変更")||((string)Get(w,"lastSetupError")).Contains("변경"),"even a current live heartbeat cannot bypass file ownership inspection");Check(File.ReadAllText(loader)=="modified fixture loader","changed loader remains untouched during a rejected upgrade");
+  w.Snapshot(Path.Combine(root,"upgrade-guidance-ko.png"));w.Close();w=null;Console.WriteLine("All "+checks+" setup upgrade checks passed.");return 0;
+ }catch(Exception ex){Console.WriteLine(ex);return 1;}finally{if(w!=null)w.Close();if(child!=null){try{if(!child.HasExited){child.Kill();child.WaitForExit(5000);}}finally{child.Dispose();}}if(Application.Current!=null)Application.Current.Shutdown();}}
+}

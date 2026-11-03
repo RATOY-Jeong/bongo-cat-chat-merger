@@ -1,2 +1,2 @@
 using System;using System.IO;
-class Fixture { [STAThread] static void Main(){File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"launch.txt"),Directory.GetCurrentDirectory()+"\n"+Environment.GetEnvironmentVariable("DOORSTOP_DISABLE")+"\n"+Environment.GetEnvironmentVariable("DOORSTOP_INITIALIZED"));} }
+class Fixture { [STAThread] static void Main(string[] args){File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"launch.txt"),Directory.GetCurrentDirectory()+"\n"+Environment.GetEnvironmentVariable("DOORSTOP_DISABLE")+"\n"+Environment.GetEnvironmentVariable("DOORSTOP_INITIALIZED"));if(args.Length>0&&args[0]=="--hold")System.Threading.Thread.Sleep(60000);} }
