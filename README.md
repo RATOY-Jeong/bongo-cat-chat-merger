@@ -1,12 +1,14 @@
 # Bongo Cat Chat Merger
 
-**Windows app · Version 0.4.9**
+**Windows app · Version 0.4.10**
 
 Release packages are available in the repository’s Releases section.
 
 **English** · [한국어](README.ko.md) · [日本語](README.ja.md)
 
-**0.4.9:** Optional **Auto-open chests** opens both normal and emote chests through the game's existing click action when the timer and game-point requirements are met. Off by default, with a saved preference. Requests are sequential and stop within six seconds of off/exit. **Bridge 0.2.3 requires one game restart.** [Instructions](docs/AUTO-CHESTS.md). Live opening on the user's account is still unverified.
+**0.4.10:** Optional **Auto-open chests** opens both normal and emote chests through the game's existing click action when the timer and game-point requirements are met. Off by default, with a saved preference. Requests are sequential and stop within six seconds of off/exit. **Bridge 0.2.3 requires one game restart.** [Instructions](docs/AUTO-CHESTS.md). Live opening on the user's account is still unverified.
+
+0.4.10 also fixes skipped bridge upgrades when chat was already connected. Startup verifies the packaged files and running bridge version, and keeps the **Set up & restart game** action visible. [Upgrade fix](docs/UPGRADE-0.4.10.md).
 
 **Public-access notice (2026-10-29):** Repository settings show Public, but unauthenticated requests for this account and its repositories currently return 404 in our checks. This also blocks public downloads and release checks. The cause is unconfirmed and needs GitHub Support review. The app does not require or collect a GitHub login; signing the owner in does not establish public availability.
 
@@ -14,9 +16,9 @@ A lightweight Windows companion for your Steam Bongo Cat room: live chat, direct
 
 ![English preview](docs/assets/preview.png)
 
-## Download and start — 0.4.9
+## Download and start — 0.4.10
 
-Get **BongoCatChatMerger-0.4.9.exe** from the repository’s Releases section and run it. This single file includes everything required for connection setup. You do not need to extract a ZIP, find a game folder, or run Install.cmd.
+Get **BongoCatChatMerger-0.4.10.exe** from the repository’s Releases section and run it. This single file includes everything required for connection setup. You do not need to extract a ZIP, find a game folder, or run Install.cmd.
 
 1. Run the EXE and choose your language on first launch.
 2. The app finds Bongo Cat and prepares the connection automatically. If the game must restart, click **Set up & restart game**. If Windows requests permission, approve the prompt to allow the required game-folder files to be installed.
@@ -42,7 +44,7 @@ The app checks public GitHub full-release metadata **once when it starts** and w
 
 The app stores its managed copy, settings, and diagnostic logs under <code>%LOCALAPPDATA%\BongoCatChatMerger</code>. Existing preferences beside the downloaded EXE are imported once without replacing choices already stored there. If your old EXE is in another folder, language/theme may need to be selected again; game conversation records stay in the game folder.
 
-The verified bridge **0.2.2** binary and its protocol are unchanged. An installed compatible bridge does not need to be reinstalled. If an older owned installation needs repair, the helper checks its ownership manifest and keeps backups of replaced files.
+The verified bridge **0.2.3** binary and its protocol are unchanged. An installed compatible bridge does not need to be reinstalled. If an older owned installation needs repair, the helper checks its ownership manifest and keeps backups of replaced files.
 
 ## Chat features
 
@@ -51,7 +53,7 @@ The verified bridge **0.2.2** binary and its protocol are unchanged. An installe
 - Select English / 한국어 / 日本語 from the dropdown. Messages, player/room names and game emote names keep their original text.
 - Changing language keeps drafts and pending requests. Reconnecting cancels uncertain requests without replaying them.
 
-## Pen tablet compatibility — 0.4.9
+## Pen tablet compatibility — 0.4.10
 
 For reports of the chat window freezing while a pen tablet is used elsewhere, the app now requests WPF's process-local stylus/touch opt-out before the first window is created. Chat uses ordinary mouse/text input; raw pressure, ink and touch gestures are not used in this window. Other applications and the tablet driver's Windows Ink settings are not changed.
 
@@ -69,7 +71,7 @@ Future game updates work only while the relevant internal APIs remain compatible
 
 The full ZIP includes <code>runtime</code>, source, scripts, licenses and docs. Build with <code>./scripts/Build.ps1</code> in Windows PowerShell; optional <code>-GamePath</code> selects a game installation. For release reproduction, <code>-BridgeBinary</code> reuses an already verified bridge. Run <code>./scripts/Check.ps1</code> after building. Original game assemblies are not redistributed.
 
-0.4.9 passed **373 isolated checks**: 311 existing checks, 13 Korean/IME Enter checks, and 49 automatic-chest policy/UI/native-adapter checks. Real-account chest opening and rewards still require user verification.
+0.4.10 passed **396 isolated checks**: 311 existing checks, 13 Korean/IME Enter checks, 49 automatic-chest policy/UI/native-adapter checks, and 23 live-bridge upgrade-flow checks. Real-account chest opening and rewards still require user verification.
 
 To remove the game bridge, close Bongo Cat and run <code>Uninstall.cmd</code> from the full ZIP. It preserves journals and modified files. The companion itself uses a per-user app folder and shortcuts rather than a system service.
 
