@@ -6,7 +6,7 @@
 
 **내 게임 포인트를 사용합니다.** 게임의 다른 사람 상자를 직접 클릭할 때와 같은 선물 동작입니다. 내가 포인트를 지불하고, 상대가 상자를 받습니다. 같은 방 다른 사람의 준비된 일반·이모티콘 상자를 하나씩 대상으로 하며 내 상자 열기를 켤 필요는 없습니다.
 
-기존 머지어를 완전히 닫고 **0.4.11 EXE**를 실행하세요. 연결 플러그인 **0.2.4**는 EXE에 포함됩니다. 필요하면 **설치하고 게임 재시작**을 누르고 방에 들어간 다음 새 옵션을 켜세요. 중단해 둔 연결은 자동 복원하지 않습니다.
+기존 머지어를 완전히 닫고 **0.4.12 EXE**를 실행하세요. 연결 플러그인 **0.2.5**는 EXE에 포함됩니다. 필요하면 **설치하고 게임 재시작**을 누르고 방에 들어간 다음 새 옵션을 켜세요. 중단해 둔 연결은 자동 복원하지 않습니다.
 
 - 게임에 실제로 표시된 상자와 현재 방 멤버·종류별 준비 신호를 함께 확인합니다. 내 고양이, 방을 떠난 사람, 숨김/비활성/이미 누른/고정된 상자는 건너뜁니다.
 - 내 게임 포인트가 부족하면 기다립니다. 내 상자 열기·Steam 교환·게임 선물 연출이 진행 중이면 다음 요청을 미룹니다. 두 자동화는 같은 순차 처리 간격을 공유합니다.
@@ -22,7 +22,7 @@
 
 A separate **Auto-open others' chests** checkbox sits below the existing own-chest option. It is off by default and saves its own preference. **It spends MY game points; the other player receives the chest.** This is the game's normal gift click, for ready normal and emote chests of other members in the same room. Own-chest automation can stay off.
 
-Close the old companion and run **0.4.11**. The EXE includes bridge **0.2.4**; use **Set up & restart game** when requested, join a room, and opt in. Paused connections stay paused.
+Close the old companion and run **0.4.12**. The EXE includes bridge **0.2.5**; use **Set up & restart game** when requested, join a room, and opt in. Paused connections stay paused.
 
 Only live visible/enabled native chest controls with matching current membership/readiness are selected. Self, departed members, hidden/prefab/already-clicked/frozen controls and insufficient points are skipped. Native exchanges, own openings and gift animations serialize requests. Uncertain gifts are latched per room/member/chest type until an actual not-ready signal or explicit off/on; recreating UI does not repeat them. Room/session-specific permission expires in five seconds, stopping new requests within six seconds of off/exit/stall. Already-started operations may finish. No players are created and no timers/currency values are edited. Local settings/permissions are excluded from packages.
 
@@ -32,7 +32,7 @@ Only live visible/enabled native chest controls with matching current membership
 
 既存の自分の宝箱設定の下に、独立した**他の人の宝箱を自動で開く**チェックを追加しました。初期値はオフで個別に保存します。**自分のゲーム内ポイントを消費し、相手が宝箱を受け取ります。** 同じ部屋の他のメンバーの準備済み通常・絵文字宝箱が対象です。自分の宝箱設定をオンにする必要はありません。
 
-旧アプリを終了し**0.4.11 EXE**を実行してください。**0.2.4**を内蔵し、必要なら**セットアップしてゲームを再起動**後、入室して新設定をオンにします。停止中の接続は維持します。
+旧アプリを終了し**0.4.12 EXE**を実行してください。**0.2.5**を内蔵し、必要なら**セットアップしてゲームを再起動**後、入室して新設定をオンにします。停止中の接続は維持します。
 
 表示中の有効なゲームボタン・現在の部屋メンバー・種類ごとの準備状態を確認します。自分、退出した人、非表示/無効/クリック済み/固定された対象とポイント不足は除外します。自分の開封・Steam交換・贈呈演出中は待機します。不確実な同じ要求は、実際の準備解除または明示的なオフ/オンまで繰り返しません。UI再生成も再試行の理由にしません。オフ/終了/停止後6秒以内に新規要求を止め、既に開始した処理は完了できます。部屋変更時は旧許可を使用しません。プレイヤー作成や時間・通貨の書換えは行いません。
 
