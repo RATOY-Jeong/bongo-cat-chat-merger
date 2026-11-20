@@ -63,7 +63,7 @@ namespace BongoChatBridge
         }
     }
 
-    [BepInPlugin("local.bongochat.bridge", "Bongo Chat Bridge", "0.2.4")]
+    [BepInPlugin("local.bongochat.bridge", "Bongo Chat Bridge", "0.2.5")]
     public sealed partial class BridgePlugin : BaseUnityPlugin
     {
         [Serializable]
@@ -87,6 +87,7 @@ namespace BongoChatBridge
             directory = Path.Combine(Paths.BepInExRootPath, "BongoChat");
             try
             {
+                JsonRuntimeCompatibility.Verify(typeof(JsonConvert).Assembly);
                 CatalogCompatibility.Prepare(
                     Type.GetType("UnityEngine.AddressableAssets.ResourceLocators.ContentCatalogData, Unity.Addressables", true),
                     Path.Combine(Paths.GameRootPath, "BongoCat_Data", "StreamingAssets", "aa", "catalog.bin"));
@@ -164,7 +165,7 @@ namespace BongoChatBridge
                 bool valid = !stopped && lobby.IsValid;
                 var state = new
                 {
-                    protocol = 1, version = "0.2.4", utc = DateTime.UtcNow.ToString("o"),
+                    protocol = 1, version = "0.2.5", utc = DateTime.UtcNow.ToString("o"),
                     session = session, stopped = stopped, ready = harmony != null && String.IsNullOrEmpty(error),
                     room = valid ? lobby.SteamId.m_SteamID.ToString() : "",
                     name = valid ? lobby.Name : "", code = valid ? lobby.LobbyCode : "",
