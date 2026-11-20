@@ -17,3 +17,5 @@ The original upstream BepInEx runtime binaries are included without modification
 
 The game itself and its original assemblies are not redistributed. Build scripts reference the user's installed game.
 
+
+Json.NET compatibility runtime (0.4.12): official Newtonsoft.Json 13.0.2 NuGet package, https://www.nuget.org/packages/Newtonsoft.Json/13.0.2 . Unmodified lib/net45/Newtonsoft.Json.dll is included in runtime/BepInEx/unstripped to match full Mono interface contracts. Package SHA256: 112CA3B7F47BCBD743BEFCF949FB68CE4F9EFF73AD9F7F1B39C2C61A1EBD3ADD. DLL SHA256: C5C83BBC1741BE6FF4C490C0AEE34C162945423EC577C646538B2D21CE13199E. License: Newtonsoft.Json-LICENSE.txt (MIT). The game's original Managed files are preserved.
