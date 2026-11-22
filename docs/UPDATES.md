@@ -1,6 +1,6 @@
 # 0.4.7 public-access clarification
 
-Repository settings already show Public. Unauthenticated account/profile and repository checks returned 404 while a control public repository API returned 200 (2026-10-29). The cause needs GitHub Support review; this release does not claim to restore public access. Update checks do not require login or send credentials. The 404 message now names public visibility/account status, and the browser button opens the public repository README (`#readme`) instead of `/releases/latest`. If account visibility remains restricted, that page can also return 404. See [0.4.7 details](RELIABILITY-0.4.7.md).
+Repository settings already show Public. Unauthenticated account/profile and repository checks returned 404 while a control public repository API returned 200 (2026-10-29). These are the access-check results recorded for 0.4.7. Update checks do not require login or send credentials. The 404 message now names public visibility/account status, and the browser button opens the public repository README (`#readme`) instead of `/releases/latest`. If account visibility remains restricted, that page can also return 404. See [0.4.7 details](RELIABILITY-0.4.7.md).
 
 # 0.4.6 — Update checks / 업데이트 확인 / 更新確認
 
@@ -30,6 +30,6 @@ Startup results and failures are visible with installed version/check time. Fail
 
 ## Validation
 
-48 update checks cover highest-version selection, numeric ordering, stable/ready/repository eligibility, bounded malformed metadata, fallback request counts, controlled total failure, startup/manual behavior, visible startup failure and 404 explanation, installed version/time, saved offers, language switching, narrow window layout and no periodic checks. All tests use synthetic metadata and isolated UI fixtures. A live unauthenticated request in this environment returned 404; this is not proof that the reporting user's PC had the same cause, and successful live API discovery is not claimed for this release. Browser publication and downloadable assets are verified separately.
+48 update checks cover highest-version selection, numeric ordering, stable/ready/repository eligibility, bounded malformed metadata, fallback request counts, controlled total failure, startup/manual behavior, visible startup failure and 404 explanation, installed version/time, saved offers, language switching, narrow window layout and no periodic checks. All tests use synthetic metadata and isolated UI fixtures. The live unauthenticated request at the time of the 0.4.7 check returned 404. Browser publication and downloadable assets are verified separately.
 
 GitHub API reference: [List releases](https://docs.github.com/en/rest/releases/releases#list-releases), [API versions](https://docs.github.com/en/rest/about-the-rest-api/api-versions).

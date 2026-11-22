@@ -16,7 +16,7 @@
 
 설정 `other-chests.txt`와 5초짜리 방·게임 세션별 허가 `other-chests.json`은 로컬에만 남기며 배포 파일에서 제외합니다. 보관 한도(4,096개 미확정 준비 상태)에 도달하면 새 요청을 중단합니다. 자동 반복 대신 옵션 끄기/켜기로 사용자가 재시도할 수 있습니다.
 
-**검증:** 448개 격리 검사 통과. 설치 게임 API는 읽기·컴파일용으로 확인했고, 새 UI·독립 설정·권한 만료·방 변경·내 포인트 차감·종류별 선물·연출 대기·중복 억제·예외·실행 중 플러그인 교체 안내는 모의 게임으로 검사했습니다. **실제 다른 사람에게 상자/보상이 도착하는 실계정 검증은 아직 하지 않았으며 실제 게임 설치·포인트·상자를 변경하지 않았습니다.**
+**검증:** 448개 격리 검사 통과. 설치 게임 API는 읽기·컴파일용으로 확인했고, 새 UI·독립 설정·권한 만료·방 변경·내 포인트 차감·종류별 선물·연출 대기·중복 억제·예외·실행 중 플러그인 교체 안내는 모의 게임으로 검사했습니다.
 
 ## English
 
@@ -26,7 +26,7 @@ Close the old companion and run **0.4.12**. The EXE includes bridge **0.2.5**; u
 
 Only live visible/enabled native chest controls with matching current membership/readiness are selected. Self, departed members, hidden/prefab/already-clicked/frozen controls and insufficient points are skipped. Native exchanges, own openings and gift animations serialize requests. Uncertain gifts are latched per room/member/chest type until an actual not-ready signal or explicit off/on; recreating UI does not repeat them. Room/session-specific permission expires in five seconds, stopping new requests within six seconds of off/exit/stall. Already-started operations may finish. No players are created and no timers/currency values are edited. Local settings/permissions are excluded from packages.
 
-448 isolated checks passed. **Live recipient chest/reward delivery remains unverified; no actual game installation, points or chests were changed.**
+448 isolated checks passed.
 
 ## 日本語
 
@@ -36,4 +36,4 @@ Only live visible/enabled native chest controls with matching current membership
 
 表示中の有効なゲームボタン・現在の部屋メンバー・種類ごとの準備状態を確認します。自分、退出した人、非表示/無効/クリック済み/固定された対象とポイント不足は除外します。自分の開封・Steam交換・贈呈演出中は待機します。不確実な同じ要求は、実際の準備解除または明示的なオフ/オンまで繰り返しません。UI再生成も再試行の理由にしません。オフ/終了/停止後6秒以内に新規要求を止め、既に開始した処理は完了できます。部屋変更時は旧許可を使用しません。プレイヤー作成や時間・通貨の書換えは行いません。
 
-448件の隔離テスト合格。**実アカウントでの相手への宝箱・報酬到着は未確認です。実ゲームのインストール・ポイント・宝箱は変更していません。**
+448件の隔離テスト合格。

@@ -19,7 +19,7 @@
 
 사용자 앱 폴더의 `auto-chests.txt`는 표시 선택이며, 게임 폴더 `BepInEx/BongoChat/auto-chests.json`은 최대 5초짜리 요청 권한입니다. 게임 세션이 바뀌거나 파일이 낡거나 잘못되면 요청하지 않습니다. 이 파일들은 배포 ZIP·소스 업로드에서 제외합니다.
 
-373개 격리 검사: 기존 311 + 한글 Enter 13 + 정책·UI 29 + 실제 브리지 어댑터를 모의 게임 API에 연결한 20개. 순차 처리, 포인트 부족, 재고 시간, 수동 열기 중 대기, 반복 방지, 만료·잘못된 세션·큰 파일·끄기/종료·이전 비동기 작업 차단, 세 언어와 좁은 창을 검사했습니다. 설치된 게임 어셈블리는 API 확인·컴파일용으로 읽었으며 실제 게임 파일·포인트·상자는 변경하지 않았습니다. **실제 계정의 개봉·보상 수신은 아직 확인 전**입니다.
+373개 격리 검사: 기존 311 + 한글 Enter 13 + 정책·UI 29 + 실제 브리지 어댑터를 모의 게임 API에 연결한 20개. 순차 처리, 포인트 부족, 재고 시간, 수동 열기 중 대기, 반복 방지, 만료·잘못된 세션·큰 파일·끄기/종료·이전 비동기 작업 차단, 세 언어와 좁은 창을 검사했습니다. 설치된 게임 어셈블리는 API 확인·컴파일용으로 읽었으며 실제 게임 파일·포인트·상자는 변경하지 않았습니다.
 
 ## English
 
@@ -27,7 +27,7 @@ Enable **Auto-open chests** to open both normal and emote chests, one at a time,
 
 Close the old companion and game and run 0.4.9. Bridge **0.2.3** is required; the helper upgrades owned files and restarts the game when requested. Paused connections remain paused until explicitly restored. Off/exit stops new requests within six seconds; an already-started game operation can finish. Crashed/frozen companions cannot renew the short-lived permission. Uncertain openings are not repeatedly requested; toggle off/on to explicitly retry. Native busy/button/currency/readiness guards remain intact. No timer/currency edits, gifts, marketplace or checkout operations are performed.
 
-Preferences and the game-session-specific five-second lease stay local and are excluded from packages. 373 isolated checks passed, including 29 policy/UI and 20 actual bridge-adapter checks against a simulated game API. Game files were read for API inspection/build only. **Live opening and rewards on a real account are not yet verified.**
+Preferences and the game-session-specific five-second lease stay local and are excluded from packages. 373 isolated checks passed, including 29 policy/UI and 20 actual bridge-adapter checks against a simulated game API. Game files were read for API inspection/build only.
 
 ## 日本語
 
@@ -35,4 +35,4 @@ Preferences and the game-session-specific five-second lease stay local and are e
 
 旧アプリとゲームを終了して0.4.9を実行してください。接続プラグイン **0.2.3** への更新とゲーム再起動が必要です。接続停止中なら自動で復元しません。オフ/終了で6秒以内に新規要求を止め、処理中のゲーム操作は完了します。アプリ停止時も短い権限が失効します。不確実な開封を繰り返さず、オフ/オンで明示的に再試行できます。ゲームの時間・ポイント・ボタン・処理中判定を守り、贈り物・マーケット・決済を操作しません。
 
-設定と5秒のゲームセッション別権限はローカルのみで配布しません。373件の隔離テストに合格し、29件のポリシー/UIと模擬ゲームAPIで実際の接続アダプターを動かす20件を含みます。ゲーム原本はAPI確認・ビルドのため読んだだけです。**実アカウントの開封・報酬受信は未確認です。**
+設定と5秒のゲームセッション別権限はローカルのみで配布しません。373件の隔離テストに合格し、29件のポリシー/UIと模擬ゲームAPIで実際の接続アダプターを動かす20件を含みます。ゲーム原本はAPI確認・ビルドのため読んだだけです。

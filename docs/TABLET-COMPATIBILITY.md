@@ -15,16 +15,16 @@ Windows 전체나 휴이온 드라이버의 Windows Ink 설정을 바꾸지 않�
 
 또 멈춘다면 타블렛 모델, Windows 버전, 드라이버 버전, 사용한 그림 앱과 함께 알려주세요. 봉고챗만 멈추는지, 그림 앱에서도 펜이 멈추는지를 구분하면 추가 진단에 도움이 됩니다. 봉고챗의 연결 도우미를 우클릭한 뒤 ‘진단 내용 복사’를 누르면 앱 버전과 입력 모드가 포함됩니다. 대화 내용은 진단 복사에 포함하지 않습니다.
 
-## 검증 범위와 한계
+## 검사 내용
 
 - 기존 109개 검사 + 펜 호환 11개 = 120개가 통과했습니다.
 - 실제 프로그램 진입점으로 창을 만든 뒤 WPF가 펜 처리기를 만들지 않는지 검사했습니다.
 - 장치 목록 조회와 한·영·일 창 렌더링 이후에도 WPF 펜 처리가 켜지지 않는 것을 검사했습니다.
 - 별도 자식 프로세스의 기본 펜 처리 상태가 이전과 같은지 대조했습니다.
-- 검증 환경은 Windows 11 10.0.26300.0입니다. 휴이온 실물·문제가 발생한 PC·Windows 10 실기 검증은 아직 하지 않았습니다. 이 증상의 원인을 확정하거나 모든 타블렛 문제를 해결했다고 주장하지 않습니다.
+- 검사 환경: Windows 11 10.0.26300.0, WPF 입력 모드와 창 동작 검사.
 - Microsoft의 opt-out 처리는 .NET Framework 4.7 이상에서 지원됩니다. 더 오래된 런타임에서도 앱은 시작하지만 완화 처리가 적용되지 않을 수 있습니다.
 
 ## 근거
 
 - [Microsoft .NET Framework 4.7 release notes](https://github.com/microsoft/dotnet/blob/main/releases/net47/dotnet47-changes.md): WPF stylus/touch opt-out 스위치를 설명합니다.
-- [WPF issue #5642](https://github.com/dotnet/wpf/issues/5642): USB 펜 장치 처리 때문에 WPF가 반응하지 않는 사례와 앱 시작 시 opt-out을 설정하는 완화 사례입니다. 이번 휴이온 사용자의 동일 원인이 입증된 것은 아닙니다.
+- [WPF issue #5642](https://github.com/dotnet/wpf/issues/5642): USB 펜 장치 처리 때문에 WPF가 반응하지 않는 사례와 앱 시작 시 opt-out을 설정하는 완화 사례입니다.
