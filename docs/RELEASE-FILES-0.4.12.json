@@ -1,0 +1,1021 @@
+{
+  "schema": "bongo-cat-chat-merger-release-inventory-1",
+  "version": "0.4.12",
+  "inventoryDate": "2026-11-22",
+  "sourceCommit": "ee81f0513900e8872f5b7574c69632b32aa61317",
+  "scope": "Exact original v0.4.12 release ZIP and EXE; later documentation changes are outside this inventory. SHA-256 is used to compare file contents.",
+  "artifacts": [
+    {
+      "name": "BongoCatChatMerger-0.4.12.exe",
+      "bytes": 7100928,
+      "sha256": "b6728088f1184288598e72b523fcbe27f7747ae980d6cc368706e8e40224d50f"
+    },
+    {
+      "name": "BongoCatChatMerger-0.4.12.zip",
+      "bytes": 14141012,
+      "sha256": "21206291214f91fb79a227537399ac7bfe79589428a812f1476c738dc70e45f5"
+    }
+  ],
+  "embeddedResource": {
+    "name": "BongoChat.SetupPayload",
+    "sha256": "575d14997f5f0927b5721ba461811059da135feacc0957f35e1fff4cdf10d67d",
+    "matchesReleaseFiles": true,
+    "files": [
+      {
+        "path": "BongoChatBridge.dll",
+        "bytes": 46080,
+        "sha256": "fba7168306b2893d0cf80ac8ef94a462fb4119dd43b819fe16be98709cdae23c"
+      },
+      {
+        "path": "runtime/.doorstop_version",
+        "bytes": 5,
+        "sha256": "75a2f501000d4fe28f74bc7ee66dae5581959d28b6c44f0c1b0c05cd5ba261e6"
+      },
+      {
+        "path": "runtime/BepInEx/config/BepInEx.cfg",
+        "bytes": 174,
+        "sha256": "6c360b396980d394898008f90c9b4a685994bc77caa22055ff66f09fc2d3d78f"
+      },
+      {
+        "path": "runtime/BepInEx/core/0Harmony.dll",
+        "bytes": 204800,
+        "sha256": "1a21cc03424fc82c3dd1346905d16494536b9595ae4162228d99fb7c285c1031"
+      },
+      {
+        "path": "runtime/BepInEx/core/0Harmony.xml",
+        "bytes": 267107,
+        "sha256": "d1f02fc3ada3a13da307de421225bfe56ebe24064370980979391c4be021672f"
+      },
+      {
+        "path": "runtime/BepInEx/core/0Harmony20.dll",
+        "bytes": 112640,
+        "sha256": "c755a5ab2712915a32f9a850d580a8c1b70ff1653bc76600f2767aa8ffccc663"
+      },
+      {
+        "path": "runtime/BepInEx/core/BepInEx.dll",
+        "bytes": 128512,
+        "sha256": "8255b28902886085c578b9e427d3073c97002db85176d2090cdeda90ef14ce70"
+      },
+      {
+        "path": "runtime/BepInEx/core/BepInEx.Harmony.dll",
+        "bytes": 6656,
+        "sha256": "00c8f2ac48593e4d45ce4eb26ce4e68b18113c5c489b38b8bf0850f65830d601"
+      },
+      {
+        "path": "runtime/BepInEx/core/BepInEx.Harmony.xml",
+        "bytes": 4056,
+        "sha256": "a04fedf08f7c81f5d01aba6f2840a7ffce50b79bbd24587d8dbe69ab73971d29"
+      },
+      {
+        "path": "runtime/BepInEx/core/BepInEx.Preloader.dll",
+        "bytes": 43008,
+        "sha256": "55d3895351a9d16b63b6f35f1c01b44ac650979e853d0bd3a442b92a082af64f"
+      },
+      {
+        "path": "runtime/BepInEx/core/BepInEx.Preloader.xml",
+        "bytes": 7964,
+        "sha256": "33275b2783b7b99495a02c098ee86d6a9a2783e884a5c9369021f20c94cf99e7"
+      },
+      {
+        "path": "runtime/BepInEx/core/BepInEx.xml",
+        "bytes": 89835,
+        "sha256": "7ba2266061b9f8a9f146218a312bfdd0d7f2b53a99a7e66c957215c6b66ca0d7"
+      },
+      {
+        "path": "runtime/BepInEx/core/HarmonyXInterop.dll",
+        "bytes": 23552,
+        "sha256": "7ce1342d3afa0334b59a3e38c0aed15e162b9abe9d46f95f34be44af47f3b493"
+      },
+      {
+        "path": "runtime/BepInEx/core/Mono.Cecil.dll",
+        "bytes": 339456,
+        "sha256": "7ae470288fff4a402899c254d0a76cefef55877f5c54f96e83c797cc5bb6e2f6"
+      },
+      {
+        "path": "runtime/BepInEx/core/Mono.Cecil.Mdb.dll",
+        "bytes": 43008,
+        "sha256": "5896d1898f616701fff18f3b2c71e6b844d2390ef9f41e1c5fccce8cb27c698e"
+      },
+      {
+        "path": "runtime/BepInEx/core/Mono.Cecil.Pdb.dll",
+        "bytes": 86528,
+        "sha256": "174db44a067f58561510af746f3caeb032037762c57a31c8d9ee32db25174984"
+      },
+      {
+        "path": "runtime/BepInEx/core/Mono.Cecil.Rocks.dll",
+        "bytes": 27648,
+        "sha256": "54ac539fb5ddc8b44c0e9acd0fcb7324f89d1a072edf8ebc1b06dd691e3d3927"
+      },
+      {
+        "path": "runtime/BepInEx/core/MonoMod.RuntimeDetour.dll",
+        "bytes": 105984,
+        "sha256": "40e49bb314391cd7bddc2644f8553eeba92c194b940836b103df16955c464e0c"
+      },
+      {
+        "path": "runtime/BepInEx/core/MonoMod.RuntimeDetour.xml",
+        "bytes": 9414,
+        "sha256": "54887808960d156550b37d602d08847607aa9e908d039f2765fb0b5e79394aa4"
+      },
+      {
+        "path": "runtime/BepInEx/core/MonoMod.Utils.dll",
+        "bytes": 187904,
+        "sha256": "9d1495f147ac93c4f81f84538c1a326e8f8a6aefc78d6289d798f3ce1162c5e9"
+      },
+      {
+        "path": "runtime/BepInEx/core/MonoMod.Utils.xml",
+        "bytes": 78973,
+        "sha256": "0577b362023a3432d6e8d7934c5eddc3e08fdbb19e191af083e341562c5ede38"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/Microsoft.CSharp.dll",
+        "bytes": 301568,
+        "sha256": "515c05eb3ffcca8bdeb54b10e92c9686b38f0562bf163a5ed3cee7556b750e99"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/Mono.Posix.dll",
+        "bytes": 214528,
+        "sha256": "dec097b96bdeed2e475c9108cc01f6222b4933bab1c33553e9a503a3d8adfa46"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/Mono.Security.dll",
+        "bytes": 241152,
+        "sha256": "f274e930e8a3d8c4ec61e46bc9717dc278162b467380b05c9deb660af6ba4fb8"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/mscorlib.dll",
+        "bytes": 4644352,
+        "sha256": "947db308d9d996456ff90bbb2c0812189240007a06148a4b953baa9f4b228b3e"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/Newtonsoft.Json.dll",
+        "bytes": 711952,
+        "sha256": "c5c83bbc1741be6ff4c490c0aee34c162945423ec577c646538b2d21ce13199e"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/System.Configuration.dll",
+        "bytes": 122880,
+        "sha256": "18019928f34f6729b47addec8bdd9bec27b16f60982a23e1cd196f6ec48e46f8"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/System.Core.dll",
+        "bytes": 1084928,
+        "sha256": "3f01b442efc38a636e73162f48f8853f8c250da1c174e403c6c91e8c6d308546"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/System.Data.dll",
+        "bytes": 2128896,
+        "sha256": "e589d9b5b08143e3d1fa7205a684c3f8aabad5798fe6bb37fbcab67eeba7cf32"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/System.dll",
+        "bytes": 2630144,
+        "sha256": "c399bd2873c878c3ea12511ad64a9a1c3138bcd253d70ca949d39a1926cd6c39"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/System.Net.Http.dll",
+        "bytes": 123392,
+        "sha256": "d87db54fa673f1cbb771ee35aac2bf45017fa89b58cb3e9781a7c052da13e478"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/System.Numerics.dll",
+        "bytes": 119808,
+        "sha256": "94a3f438fb7dd714f896e9d0d71cb935fb52c394df62446467ff83d7b36db9c3"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/System.Runtime.Serialization.dll",
+        "bytes": 939008,
+        "sha256": "fe533006fc83eb898b7354c448dfea66a6ebd26e0e26501f14b73f45d6a0d64c"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/System.Security.dll",
+        "bytes": 321024,
+        "sha256": "f101da9277ea1d2bb5419c4843c7299f310d47ba5da7f0ea7be340e06c550c04"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/System.Xml.dll",
+        "bytes": 3173888,
+        "sha256": "ea9fc6d2436e0254781e4366c3578369718ece02785c6b156c1ae3365476a5a9"
+      },
+      {
+        "path": "runtime/BepInEx/unstripped/System.Xml.Linq.dll",
+        "bytes": 137216,
+        "sha256": "bf3b73b57ca2f4e9c48aa11867aedf220b97fb4d689dccbcf5b10b44ce315a69"
+      },
+      {
+        "path": "runtime/changelog.txt",
+        "bytes": 338,
+        "sha256": "b184d858cb0ff6614ca8ce0247fb0d186cabc91ed7e4d4d9d57ea3d744ce98b5"
+      },
+      {
+        "path": "runtime/doorstop_config.ini",
+        "bytes": 1481,
+        "sha256": "42931664d7aad905a8303b2ec89f3f618282670dd5c5692531f22b782f004166"
+      },
+      {
+        "path": "runtime/winhttp.dll",
+        "bytes": 26112,
+        "sha256": "8c6cdbc38836dee87e3368f5de1994d7c0ccebf29e4ce7aba3c0981f9375412c"
+      }
+    ]
+  },
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 327,
+      "sha256": "9dce3bd53cc0862b06ddc90b3cd3d785ab6691669a7effd329c8023216c150d4",
+      "component": "documentation"
+    },
+    {
+      "path": "BongoCatChatMerger.exe",
+      "bytes": 7100928,
+      "sha256": "b6728088f1184288598e72b523fcbe27f7747ae980d6cc368706e8e40224d50f",
+      "component": "project-app-with-embedded-runtime"
+    },
+    {
+      "path": "BongoChatBridge.dll",
+      "bytes": 46080,
+      "sha256": "fba7168306b2893d0cf80ac8ef94a462fb4119dd43b819fe16be98709cdae23c",
+      "component": "project-game-bridge"
+    },
+    {
+      "path": "docs/assets/auto-chests-ko.png",
+      "bytes": 42554,
+      "sha256": "32563469117b58cc99a98b602e4bf6ae8a5838f06ed0a736879b8fdb96441d49",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/assets/first-run-language.png",
+      "bytes": 7752,
+      "sha256": "79bbb3286bbaebaf0907f11ccdc1d31f5fcfa925675280e0f5f8fa4bda0c31e2",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/assets/other-chests-ko.png",
+      "bytes": 41614,
+      "sha256": "6641dd5db4001647c42112c20a7f7d9ae16dbc4002ca3a630e75210518ba054d",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/assets/own-send-ko.png",
+      "bytes": 39087,
+      "sha256": "d0f166336290fd030cff8d1a8bdd04b310ef0f831dbb1ad98504d00f26146a00",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/assets/preview-ja.png",
+      "bytes": 50153,
+      "sha256": "93c9ea1ef23618f4a5a89188ed6696ad7c7eeed0318b861489562d724b79d409",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/assets/preview-ko.png",
+      "bytes": 42746,
+      "sha256": "37399f62c354297a1ea95c15e2424d9e08c5e8e1eabc49ce77c2bee1a1d03950",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/assets/preview.png",
+      "bytes": 47499,
+      "sha256": "00d128d8e90e6555125f9511d4800e6b3ad8b592727e1009ab6fc94d01fbe551",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/AUTO-CHESTS.md",
+      "bytes": 5885,
+      "sha256": "cd60181b922ed0c43341b16b75a486a8ed9631205bb40c22aed924078fe8b4b5",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/INPUT-0.4.8.md",
+      "bytes": 1950,
+      "sha256": "b4c71efd1b709cd12f077cd4f42c79018ee58c7f9234f499ed7c439803a41c02",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/MEOW-FILTER.md",
+      "bytes": 6238,
+      "sha256": "5a8586a01ec0adda3aec4a42201c299a57895019f4d9b5f1674a6eac02e699d7",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/OTHER-CHESTS.md",
+      "bytes": 6072,
+      "sha256": "4d6c7737110846a578b54c876cb9fae62336d54d6b13a0bade901ef3485352ed",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/RELIABILITY-0.4.2.md",
+      "bytes": 6568,
+      "sha256": "491206f495c8b96626fa1443ce2ed98735544cadd4a68fde6f76668ef5d2e820",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/RELIABILITY-0.4.3.md",
+      "bytes": 6198,
+      "sha256": "f122611d2f8af61193c0a8631f29d3917a5060f218b777493a78b8740977977f",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/RELIABILITY-0.4.7.md",
+      "bytes": 8015,
+      "sha256": "1a1ad1cf16c315f813168bef2764518caa5e0f8555efa99a6cf612d4a8eeccb0",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/RUNTIME-0.4.12.md",
+      "bytes": 5193,
+      "sha256": "10a2198a0881de8c0b5b4b56557a7c8888035bbef396ab7c50149ca8583384a0",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/TABLET-COMPATIBILITY.md",
+      "bytes": 3083,
+      "sha256": "c270d72ac4b0710608459d829ae3d14a85c22b049911e7b1f7e3e72d7752f2fb",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/UPDATES.md",
+      "bytes": 5638,
+      "sha256": "2e5d438ae9eeec1090799e23fc109da439193e297b5faed16904685c04eb8831",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/UPGRADE-0.4.10.md",
+      "bytes": 3994,
+      "sha256": "49852b6ac40b692b37a0d849197cdee5a7661e9ac1d007f03dc627aabea8f6c1",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/USER-GUIDE.md",
+      "bytes": 8563,
+      "sha256": "a4e727563b02daa74d9031af9cc331de94767b66f98e0055678b2fa4f6923306",
+      "component": "documentation"
+    },
+    {
+      "path": "docs/VALIDATION.md",
+      "bytes": 20535,
+      "sha256": "469e449d0bd35beed526bbfa8dfabdcadd31c224bf750fcdf6b9bf60b0ccb904",
+      "component": "documentation"
+    },
+    {
+      "path": "Install.cmd",
+      "bytes": 116,
+      "sha256": "ab16a900c4db9c49a633bb37db52ec2b9ef38b1bcb4c3b404eb34a97aaccacb6",
+      "component": "project-build-install-scripts"
+    },
+    {
+      "path": "licenses/BepInEx-LICENSE.txt",
+      "bytes": 1083,
+      "sha256": "dbfeb372fd35d28379a24fbf10a1d2d102b1ed2ccd30b3ad69c2db97fe493c01",
+      "component": "documentation"
+    },
+    {
+      "path": "licenses/Doorstop-LICENSE.txt",
+      "bytes": 27030,
+      "sha256": "7ffe1954587c77dfba1cf8eb9b2ea743671fa6e63f9e7a2f258119d42e14eefe",
+      "component": "documentation"
+    },
+    {
+      "path": "licenses/HarmonyX-LICENSE.txt",
+      "bytes": 1083,
+      "sha256": "1aaf59a35b7d0bc58cdc4ffe303558974ad5acae6700ba9e04a182e9f6cb5c8b",
+      "component": "documentation"
+    },
+    {
+      "path": "licenses/Mono-ClassLibraries-LICENSE.txt",
+      "bytes": 68,
+      "sha256": "2e52fc29eb2ce5a903f17649b56227c95d45fc1118e2df180cffcfeedf452540",
+      "component": "documentation"
+    },
+    {
+      "path": "licenses/Mono-LICENSE.txt",
+      "bytes": 74910,
+      "sha256": "dc57c37ddfde46d5200e259055431be7af7b29a30e82694fb93b3b48d17cfb23",
+      "component": "documentation"
+    },
+    {
+      "path": "licenses/Mono.Cecil-LICENSE.txt",
+      "bytes": 1119,
+      "sha256": "62dad7936fc1214d0187b1dd27bd68ec055af168b7fd1989cc8e36e0e2b9a990",
+      "component": "documentation"
+    },
+    {
+      "path": "licenses/MonoMod-LICENSE.txt",
+      "bytes": 1101,
+      "sha256": "320f00de1f9da62e71cf79d7bf4c229ded2ac55a7e83b14a5b75cb9960b7ef6f",
+      "component": "documentation"
+    },
+    {
+      "path": "licenses/Newtonsoft.Json-LICENSE.txt",
+      "bytes": 1104,
+      "sha256": "b98a397897ff55f76cddc380041507a95a896b2946e0188703bf0496793d6516",
+      "component": "documentation"
+    },
+    {
+      "path": "licenses/THIRD-PARTY-NOTICES.md",
+      "bytes": 1980,
+      "sha256": "e4074cc19aa389a789bd82cff03207ef564084793d5597f33310a5b5543777b9",
+      "component": "documentation"
+    },
+    {
+      "path": "README.ja.md",
+      "bytes": 10865,
+      "sha256": "d3242f8670ae0924a65840be9dba88ac3bfcbb0c5cb7d5d8ebefd644a5b74855",
+      "component": "documentation"
+    },
+    {
+      "path": "README.ko.md",
+      "bytes": 10563,
+      "sha256": "b2b190274c6b584f4e11856596f75c8c00cc9104dc073b0bb92601bcf0502f35",
+      "component": "documentation"
+    },
+    {
+      "path": "README.md",
+      "bytes": 9150,
+      "sha256": "dbdb014e525442ee17ef05fec846f4552a80423b7d693efbb6626eb7d378bdb1",
+      "component": "documentation"
+    },
+    {
+      "path": "runtime/.doorstop_version",
+      "bytes": 5,
+      "sha256": "75a2f501000d4fe28f74bc7ee66dae5581959d28b6c44f0c1b0c05cd5ba261e6",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/config/BepInEx.cfg",
+      "bytes": 174,
+      "sha256": "6c360b396980d394898008f90c9b4a685994bc77caa22055ff66f09fc2d3d78f",
+      "component": "project-runtime-configuration"
+    },
+    {
+      "path": "runtime/BepInEx/core/0Harmony.dll",
+      "bytes": 204800,
+      "sha256": "1a21cc03424fc82c3dd1346905d16494536b9595ae4162228d99fb7c285c1031",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/0Harmony.xml",
+      "bytes": 267107,
+      "sha256": "d1f02fc3ada3a13da307de421225bfe56ebe24064370980979391c4be021672f",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/0Harmony20.dll",
+      "bytes": 112640,
+      "sha256": "c755a5ab2712915a32f9a850d580a8c1b70ff1653bc76600f2767aa8ffccc663",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/BepInEx.dll",
+      "bytes": 128512,
+      "sha256": "8255b28902886085c578b9e427d3073c97002db85176d2090cdeda90ef14ce70",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/BepInEx.Harmony.dll",
+      "bytes": 6656,
+      "sha256": "00c8f2ac48593e4d45ce4eb26ce4e68b18113c5c489b38b8bf0850f65830d601",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/BepInEx.Harmony.xml",
+      "bytes": 4056,
+      "sha256": "a04fedf08f7c81f5d01aba6f2840a7ffce50b79bbd24587d8dbe69ab73971d29",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/BepInEx.Preloader.dll",
+      "bytes": 43008,
+      "sha256": "55d3895351a9d16b63b6f35f1c01b44ac650979e853d0bd3a442b92a082af64f",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/BepInEx.Preloader.xml",
+      "bytes": 7964,
+      "sha256": "33275b2783b7b99495a02c098ee86d6a9a2783e884a5c9369021f20c94cf99e7",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/BepInEx.xml",
+      "bytes": 89835,
+      "sha256": "7ba2266061b9f8a9f146218a312bfdd0d7f2b53a99a7e66c957215c6b66ca0d7",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/HarmonyXInterop.dll",
+      "bytes": 23552,
+      "sha256": "7ce1342d3afa0334b59a3e38c0aed15e162b9abe9d46f95f34be44af47f3b493",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/Mono.Cecil.dll",
+      "bytes": 339456,
+      "sha256": "7ae470288fff4a402899c254d0a76cefef55877f5c54f96e83c797cc5bb6e2f6",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/Mono.Cecil.Mdb.dll",
+      "bytes": 43008,
+      "sha256": "5896d1898f616701fff18f3b2c71e6b844d2390ef9f41e1c5fccce8cb27c698e",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/Mono.Cecil.Pdb.dll",
+      "bytes": 86528,
+      "sha256": "174db44a067f58561510af746f3caeb032037762c57a31c8d9ee32db25174984",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/Mono.Cecil.Rocks.dll",
+      "bytes": 27648,
+      "sha256": "54ac539fb5ddc8b44c0e9acd0fcb7324f89d1a072edf8ebc1b06dd691e3d3927",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/MonoMod.RuntimeDetour.dll",
+      "bytes": 105984,
+      "sha256": "40e49bb314391cd7bddc2644f8553eeba92c194b940836b103df16955c464e0c",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/MonoMod.RuntimeDetour.xml",
+      "bytes": 9414,
+      "sha256": "54887808960d156550b37d602d08847607aa9e908d039f2765fb0b5e79394aa4",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/MonoMod.Utils.dll",
+      "bytes": 187904,
+      "sha256": "9d1495f147ac93c4f81f84538c1a326e8f8a6aefc78d6289d798f3ce1162c5e9",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/core/MonoMod.Utils.xml",
+      "bytes": 78973,
+      "sha256": "0577b362023a3432d6e8d7934c5eddc3e08fdbb19e191af083e341562c5ede38",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/Microsoft.CSharp.dll",
+      "bytes": 301568,
+      "sha256": "515c05eb3ffcca8bdeb54b10e92c9686b38f0562bf163a5ed3cee7556b750e99",
+      "component": "Mono-Unity-2022.3.30-Win-profile"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/Mono.Posix.dll",
+      "bytes": 214528,
+      "sha256": "dec097b96bdeed2e475c9108cc01f6222b4933bab1c33553e9a503a3d8adfa46",
+      "component": "Mono-Unity-2022.3.30-Win-profile"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/Mono.Security.dll",
+      "bytes": 241152,
+      "sha256": "f274e930e8a3d8c4ec61e46bc9717dc278162b467380b05c9deb660af6ba4fb8",
+      "component": "Mono-Unity-2022.3.30-Win-profile"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/mscorlib.dll",
+      "bytes": 4644352,
+      "sha256": "947db308d9d996456ff90bbb2c0812189240007a06148a4b953baa9f4b228b3e",
+      "component": "Mono-Unity-2022.3.30-Win-profile"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/Newtonsoft.Json.dll",
+      "bytes": 711952,
+      "sha256": "c5c83bbc1741be6ff4c490c0aee34c162945423ec577c646538b2d21ce13199e",
+      "component": "Newtonsoft.Json-13.0.2-net45"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/System.Configuration.dll",
+      "bytes": 122880,
+      "sha256": "18019928f34f6729b47addec8bdd9bec27b16f60982a23e1cd196f6ec48e46f8",
+      "component": "Mono-Unity-2022.3.30-Win-profile"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/System.Core.dll",
+      "bytes": 1084928,
+      "sha256": "3f01b442efc38a636e73162f48f8853f8c250da1c174e403c6c91e8c6d308546",
+      "component": "Mono-Unity-2022.3.30-Win-profile"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/System.Data.dll",
+      "bytes": 2128896,
+      "sha256": "e589d9b5b08143e3d1fa7205a684c3f8aabad5798fe6bb37fbcab67eeba7cf32",
+      "component": "Mono-Unity-2022.3.30-Win-profile"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/System.dll",
+      "bytes": 2630144,
+      "sha256": "c399bd2873c878c3ea12511ad64a9a1c3138bcd253d70ca949d39a1926cd6c39",
+      "component": "Mono-Unity-2022.3.30-Win-profile"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/System.Net.Http.dll",
+      "bytes": 123392,
+      "sha256": "d87db54fa673f1cbb771ee35aac2bf45017fa89b58cb3e9781a7c052da13e478",
+      "component": "Mono-Unity-2022.3.30-Win-profile"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/System.Numerics.dll",
+      "bytes": 119808,
+      "sha256": "94a3f438fb7dd714f896e9d0d71cb935fb52c394df62446467ff83d7b36db9c3",
+      "component": "Mono-Unity-2022.3.30-Win-profile"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/System.Runtime.Serialization.dll",
+      "bytes": 939008,
+      "sha256": "fe533006fc83eb898b7354c448dfea66a6ebd26e0e26501f14b73f45d6a0d64c",
+      "component": "Mono-Unity-2022.3.30-Win-profile"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/System.Security.dll",
+      "bytes": 321024,
+      "sha256": "f101da9277ea1d2bb5419c4843c7299f310d47ba5da7f0ea7be340e06c550c04",
+      "component": "Mono-Unity-2022.3.30-Win-profile"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/System.Xml.dll",
+      "bytes": 3173888,
+      "sha256": "ea9fc6d2436e0254781e4366c3578369718ece02785c6b156c1ae3365476a5a9",
+      "component": "Mono-Unity-2022.3.30-Win-profile"
+    },
+    {
+      "path": "runtime/BepInEx/unstripped/System.Xml.Linq.dll",
+      "bytes": 137216,
+      "sha256": "bf3b73b57ca2f4e9c48aa11867aedf220b97fb4d689dccbcf5b10b44ce315a69",
+      "component": "Mono-Unity-2022.3.30-Win-profile"
+    },
+    {
+      "path": "runtime/changelog.txt",
+      "bytes": 338,
+      "sha256": "b184d858cb0ff6614ca8ce0247fb0d186cabc91ed7e4d4d9d57ea3d744ce98b5",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "runtime/doorstop_config.ini",
+      "bytes": 1481,
+      "sha256": "42931664d7aad905a8303b2ec89f3f618282670dd5c5692531f22b782f004166",
+      "component": "project-runtime-configuration"
+    },
+    {
+      "path": "runtime/winhttp.dll",
+      "bytes": 26112,
+      "sha256": "8c6cdbc38836dee87e3368f5de1994d7c0ccebf29e4ce7aba3c0981f9375412c",
+      "component": "BepInEx-win-x64-5.4.23.5-bundle"
+    },
+    {
+      "path": "scripts/Build.ps1",
+      "bytes": 4366,
+      "sha256": "87e345cd8c22ab0a7af7db7cf606eaeb211f6b812892c77d650b530a4eba7100",
+      "component": "project-build-install-scripts"
+    },
+    {
+      "path": "scripts/Check.ps1",
+      "bytes": 3787,
+      "sha256": "8d4766b9989e650e6ef6568acacd091ecc4e93133a5196ee543e96e7cb9e6dfe",
+      "component": "project-build-install-scripts"
+    },
+    {
+      "path": "scripts/Find-Game.ps1",
+      "bytes": 1467,
+      "sha256": "9c543e06ca079495b1a9c46875cc81d2994f3dc5acf26164856c6efa1c03cba3",
+      "component": "project-build-install-scripts"
+    },
+    {
+      "path": "scripts/Install-Bridge.ps1",
+      "bytes": 3401,
+      "sha256": "880d0f393aafbc48156d04db354b5b35550de68808f213100e27793440e18737",
+      "component": "project-build-install-scripts"
+    },
+    {
+      "path": "scripts/Install.cmd",
+      "bytes": 108,
+      "sha256": "83d8d1550d87b00624e000f9247991832a487c63dd53f1517797116c33545ea6",
+      "component": "project-build-install-scripts"
+    },
+    {
+      "path": "scripts/Uninstall-Bridge.ps1",
+      "bytes": 1807,
+      "sha256": "351659982739f04dc5a675ddd5b04649cb628c9bd613f170ab49c040bec64af4",
+      "component": "project-build-install-scripts"
+    },
+    {
+      "path": "scripts/Uninstall.cmd",
+      "bytes": 110,
+      "sha256": "b063af30492c86176e2b1a2bee2cd7081f047bad43fed4450981e722fe203c35",
+      "component": "project-build-install-scripts"
+    },
+    {
+      "path": "src/app/app.manifest",
+      "bytes": 819,
+      "sha256": "50d7dbc1b879b6b89c5fa69337c7739e2f67f0a016f307e5c7359562bf878452",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/AutoChests.cs",
+      "bytes": 5573,
+      "sha256": "986da6579093511437f14f70a0bc50e6e83c9316a9ccfd9f2c583f29db16df93",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/BongoChat.cs",
+      "bytes": 44827,
+      "sha256": "42cebb3753a2c4144ef5c4d279b46523a0d17c2e46744aca3a87127ff4458ac6",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/Communication.cs",
+      "bytes": 7947,
+      "sha256": "f7ad03c2fb86f4399b2a7f16c78470b6b14e66f8338c64d76c788c55f00d106b",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/ComposerInput.cs",
+      "bytes": 3934,
+      "sha256": "0a3e03f00feb66e5e654c7a69908c73297f19842c8d07ddffabdfed1cba87cb3",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/ComposerTheme.cs",
+      "bytes": 15394,
+      "sha256": "e3e74ea74ccb2da906c33622355a825bfd4d63312794d945d0442474f11b4d85",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/ConnectionRecovery.cs",
+      "bytes": 7289,
+      "sha256": "7be06c95820c155060a69eb864f5fc703a8f323e450c0c0c67c6703c7b94a0b4",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/ConversationHistory.cs",
+      "bytes": 11970,
+      "sha256": "05aa469b548d3938d051696453c50332d50ca40a187337f83c001cd4a8d24a99",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/DesktopInstall.cs",
+      "bytes": 8291,
+      "sha256": "0d58645f6dd82cb0a847fd5fab909df98c314fbac22473fa414e708cfc140cf7",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/Localization.cs",
+      "bytes": 43806,
+      "sha256": "e0072c32f8dfabdd42ced74d879abd842d757de62e04dde7f580544180119e3a",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/MeowFilter.cs",
+      "bytes": 2443,
+      "sha256": "d2673ee34df96bb5a01e0b2ac3a4499a860ecdf807ad328817160ef8c2d9eae1",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/MeowGrouping.cs",
+      "bytes": 4279,
+      "sha256": "a86f1d52ab612e9ae52fa6dfbb09ba259eb8c076c9d980c70cfa3478ed123ee7",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/MessageCopy.cs",
+      "bytes": 1381,
+      "sha256": "73da603656a41c65558d01e63b95f4c244fa1f012a3c565c3ef95ff0b3ee6d01",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/OtherChests.cs",
+      "bytes": 3357,
+      "sha256": "d4d39cca38674eb4cea2c5a4dd955d469e06d907f6cf4488bbe7e23f6a890380",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/OwnSendTracking.cs",
+      "bytes": 6558,
+      "sha256": "8912924a634624f5a2e57606a9ff6c463a201b395bb0c2e43696c7f315c00563",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/Reconnect.cs",
+      "bytes": 3031,
+      "sha256": "8259a47e5bee05469394d969c042c585dc0b93e5508e9ac86ab28bb9491644d7",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/SetupEngine.cs",
+      "bytes": 18363,
+      "sha256": "9c3814a9b7d68dd1761f7a15c4c9f73a0d50c5b731dad212cd1ee6e33af8b649",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/SetupUI.cs",
+      "bytes": 10260,
+      "sha256": "6612ab7856bb503fbe99a441011cef8e434f382c8d6c1ae4300cff9330d0d4b8",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/TabletCompatibility.cs",
+      "bytes": 1775,
+      "sha256": "13ed032a114ef0616a0b397413b8454dfbd18e679f051d1cf40896efac93ad16",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/UiHealthMonitor.cs",
+      "bytes": 2687,
+      "sha256": "00ac8f50301dffd99ceffca6dae01bf1ff4eb01eb05af71e76cd0d5ab4bcc041",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/UpdateService.cs",
+      "bytes": 9002,
+      "sha256": "641dfc3128fcabd37a8a3b6b828d41d85ca8e13790f13e8586eef6023cd00388",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/UpdateUI.cs",
+      "bytes": 5882,
+      "sha256": "1679c24d6a3766d8925b1cab8bcfd85be625577ba9c6131b442ed0334b4a51d4",
+      "component": "project-source"
+    },
+    {
+      "path": "src/app/WindowEffects.cs",
+      "bytes": 3833,
+      "sha256": "4e449813bc8649164ba61921f067a4ad31c6cbba17d50421d8d18354f37e2799",
+      "component": "project-source"
+    },
+    {
+      "path": "src/bridge/BridgeAutoChests.cs",
+      "bytes": 6188,
+      "sha256": "a36976725581e8a0679c878ec93ed28e7c05a3f76347cd3c4272b5fc7a72ac57",
+      "component": "project-source"
+    },
+    {
+      "path": "src/bridge/BridgeFeatures.cs",
+      "bytes": 11221,
+      "sha256": "b00190ba340e57aecc7ce8d75856c8adc4bc542167380d5db3895cbc51b5bbc7",
+      "component": "project-source"
+    },
+    {
+      "path": "src/bridge/BridgeOtherChests.cs",
+      "bytes": 6820,
+      "sha256": "7545bab3464689459f90ee1a3defa80fc0295220beebbb2c07518a7d168e438f",
+      "component": "project-source"
+    },
+    {
+      "path": "src/bridge/BridgePlugin.cs",
+      "bytes": 9564,
+      "sha256": "1e384d6d672ae147b12bb292b539d179ed356b4b261fb34e3cac696c30a8417c",
+      "component": "project-source"
+    },
+    {
+      "path": "src/bridge/JsonRuntimeCompatibility.cs",
+      "bytes": 917,
+      "sha256": "c5590d5f5e41f84343f757964b91bf09939457b497584f6e5bb60fae10caaec0",
+      "component": "project-source"
+    },
+    {
+      "path": "src/bridge/SpriteExporter.cs",
+      "bytes": 3715,
+      "sha256": "11c944c1f9cf05608003211b4857167b0c9cee9b59c61e01c8864b05512d4d8f",
+      "component": "project-source"
+    },
+    {
+      "path": "src/shared/AutoChestProtocol.cs",
+      "bytes": 3010,
+      "sha256": "711492ce337478b4db21ae58e62cd4c4457d5a71e4c2a1d1e8ef289ab9bd48a9",
+      "component": "project-source"
+    },
+    {
+      "path": "src/shared/BridgeProtocol.cs",
+      "bytes": 2439,
+      "sha256": "6c840e9875009ed68346e373dfb03f23b13f5eb3f3e41a5ac43fda0af9f4bb55",
+      "component": "project-source"
+    },
+    {
+      "path": "tests/AutoChestGameFixture.cs",
+      "bytes": 3950,
+      "sha256": "75ef5004ab77c10163e9955820e373e7da488bd63d0c3950d817bbfa87e490c1",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/AutoChestTests.cs",
+      "bytes": 7068,
+      "sha256": "578504032afcd541188a5bd2093e311ae7c97c6e5c78ebaf3bbbd1190a1944f0",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/BridgeAutoChestTests.cs",
+      "bytes": 5769,
+      "sha256": "368a5a541e58c9d2ad478af8a42d3a0b09e4fb1ccdcfaa197eeddda64d59052e",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/BridgeOtherChestTests.cs",
+      "bytes": 8584,
+      "sha256": "29dbd2e711967e095c009af88ef6b22b6b5c91f7c2c3afe75182ae3d2092428d",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/ComposerEnterTests.cs",
+      "bytes": 5848,
+      "sha256": "3eba0de5d9d1818b6a18def3c1bbe6b53de68979e5d6e4f95c8f6876a080b015",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/ConversationHistoryTests.cs",
+      "bytes": 9441,
+      "sha256": "14badf33374f3a388f978817242e86e10125122d47d7fc86e80d61296bd26880",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/FeatureTests.cs",
+      "bytes": 9221,
+      "sha256": "70ff3cc34dbd2691a12cf662266d923489b38875015616342b0e5f5882ddc7b6",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/GameLaunchFixture.cs",
+      "bytes": 406,
+      "sha256": "c51f708a6a0d3a3eaa9c7dbadfcf176060e9690ee39d663b2aba5a4fc71a41f7",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/JsonRuntimeProbe.cs",
+      "bytes": 817,
+      "sha256": "3e91e68d3f832730b833e2c08f066c85796159673c6ed31e13062583c06bb0ee",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/JsonRuntimeTests.cs",
+      "bytes": 5987,
+      "sha256": "2d317083acaae97a8ddbdb354c7e834003abc6760b55563e104afef4143aee59",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/LocalizationTests.cs",
+      "bytes": 10076,
+      "sha256": "039719a8bb7466bc9cd9c628c731f9d6a9e22065d883454f36f0a5d92c4241a8",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/MeowFilterTests.cs",
+      "bytes": 7120,
+      "sha256": "a13cccd6dd0cdf7b6fc158a0ed824bc077b6caf0bb65998b4c014486ef4a5db9",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/OtherChestTests.cs",
+      "bytes": 7341,
+      "sha256": "f3bd5e1d3ef06867e34e6761884f83ff68cefdb2f2afad0e5a859092d7d16859",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/OwnSendInputTests.cs",
+      "bytes": 9417,
+      "sha256": "1bb9e6e7b58b9e4ffb718aa3e3f89631551868922aa0ecccf8fde153e7ebf012",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/ReconnectTests.cs",
+      "bytes": 5040,
+      "sha256": "6a70ef57fb286f7e97ab1c88ea2d804dcf7a77f5b4db0630226212c9e4ea3741",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/ReliabilityTests.cs",
+      "bytes": 13565,
+      "sha256": "9a5487b00c3fb26553c580da29ef1f92953894fcebf968ac201024a7053c8071",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/SetupTests.cs",
+      "bytes": 21630,
+      "sha256": "d38a6589ecfce6f9e0f2f2e03fb717317bb5897d7b06dcd87c1d5e7400903950",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/SetupUpgradeTests.cs",
+      "bytes": 7007,
+      "sha256": "2531471037fcbc2762ab2a777112e36953fc7d695aaf5b1b05742b30b1c6926d",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/TabletCompatibilityTests.cs",
+      "bytes": 3887,
+      "sha256": "0b21c45328a9e96538235edcec78662a082af8a207052ebf87727ce05e2efef5",
+      "component": "project-tests"
+    },
+    {
+      "path": "tests/UpdateTests.cs",
+      "bytes": 14450,
+      "sha256": "2444f402fc4b04843a7bcf3a99691ae42f4ebb7ddc630b32cb223e5260dd3315",
+      "component": "project-tests"
+    },
+    {
+      "path": "Uninstall.cmd",
+      "bytes": 118,
+      "sha256": "69feb21ec86ee2d61a1cd4d3947bda134f1f13c5b2086c8b43a106779f12a980",
+      "component": "project-build-install-scripts"
+    }
+  ]
+}
