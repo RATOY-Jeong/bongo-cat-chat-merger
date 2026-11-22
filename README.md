@@ -6,6 +6,8 @@ Release packages are available in the repository’s Releases section.
 
 **English** · [한국어](README.ko.md) · [日本語](README.ja.md)
 
+**How it works:** [Architecture, source and dependency review](docs/ARCHITECTURE.md#english) · [Complete 0.4.12 file inventory and SHA-256](docs/RELEASE-FILES-0.4.12.json). Includes the connection loader, disk locations, network requests, build instructions and shipped configuration.
+
 **0.4.12:** Fixes joining a Bongo Cat room failing while the companion appeared connected after a game update. The connection runtime now includes the official full **Json.NET 13.0.2** library and checks JSON object compatibility before reporting ready. The game's original assemblies are preserved. Ordinary **Reconnect** keeps a deliberately paused connection off; restoring it remains an explicit action. **Bridge 0.2.5 and a game restart are required.** [Details](docs/RUNTIME-0.4.12.md). The reporting user confirmed room entry and chat reception work after the fix.
 
 
