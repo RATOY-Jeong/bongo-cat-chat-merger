@@ -1,79 +1,57 @@
 # Bongo Cat Chat Merger
 
-**Windows app · Version 0.4.12**
+**[Windows용 다운로드](https://github.com/RATOY-Jeong/bongo-cat-chat-merger/releases/latest)** · **버전 0.4.12**
 
-Release packages are available in the repository’s Releases section.
+**한국어** · [English](README.en.md) · [日本語](README.ja.md)
 
-**English** · [한국어](README.ko.md) · [日本語](README.ja.md)
+Steam 봉고캣의 같은 방 대화를 모아 보여주는 Windows 채팅 앱입니다. 게임 화면을 오가지 않고 채팅을 읽고 보낼 수 있습니다.
 
-**How it works:** [Architecture, source and dependency review](docs/ARCHITECTURE.md#english) · [Complete 0.4.12 file inventory and SHA-256](docs/RELEASE-FILES-0.4.12.json). Includes the connection loader, disk locations, network requests, build instructions and shipped configuration.
+![한국어 미리보기](docs/assets/preview-ko.png)
 
-**0.4.12:** Fixes joining a Bongo Cat room failing while the companion appeared connected after a game update. The connection runtime now includes the official full **Json.NET 13.0.2** library and checks JSON object compatibility before reporting ready. The game's original assemblies are preserved. Ordinary **Reconnect** keeps a deliberately paused connection off; restoring it remains an explicit action. **Bridge 0.2.5 and a game restart are required.** [Details](docs/RUNTIME-0.4.12.md). The reporting user confirmed room entry and chat reception work after the fix.
+## 시작하기
 
+1. 위 다운로드 페이지에서 **BongoCatChatMerger-0.4.12.exe**를 받아 실행합니다.
+2. 처음 한 번 언어를 선택합니다. 앱이 게임 위치와 연결 파일을 자동으로 준비합니다.
+3. 안내가 뜨면 **설치하고 게임 재시작**을 누릅니다. 게임 폴더에 쓰기 권한이 필요할 때 Windows 권한 창이 뜹니다.
+4. 봉고캣에서 원하는 방에 입장하면 채팅창이 연결됩니다.
 
-A lightweight Windows companion for your Steam Bongo Cat room: live chat, direct sending, original emote images, local history/search, and English/Korean/Japanese UI.
+다음부터는 바탕화면이나 시작 메뉴의 **Bongo Cat Chat Merger** 바로가기로 실행하세요. 압축 해제나 별도의 설치 스크립트 실행은 필요 없습니다. 전체 소스와 연결 파일이 필요한 경우 Releases의 ZIP을 받으면 됩니다.
 
-![English preview](docs/assets/preview.png)
+**실행 환경:** Windows 10/11 64비트, .NET Framework 4.5 이상, Steam과 봉고캣. 펜·터치 처리 호환 설정은 .NET Framework 4.7 이상에서 적용됩니다.
 
-## Download and start — 0.4.12
+## 주요 기능
 
-Get **BongoCatChatMerger-0.4.12.exe** from the repository’s Releases section and run it. This single file includes everything required for connection setup. You do not need to extract a ZIP, find a game folder, or run Install.cmd.
+- 같은 방의 채팅 수신과 직접 전송 — Enter 전송, Shift+Enter 줄바꿈
+- 게임 이모티콘 그림 표시·숨김, 정확히 일치하는 야옹 메시지 숨김·횟수 묶음
+- 다크모드, 항상 위, 창 투명도, 텍스트 선택·복사
+- 대화·닉네임 검색과 저장 — 최근 일반 대화 500개와 별도 야옹 묶음
+- 한국어·영어·일본어 선택과 설정 저장
+- 연결 파일 자동 준비·복구, 재연결, 진단 내용 복사
+- 내 상자 자동 열기와 다른 사람 상자 자동 열기 — 각각 별도 선택
 
-1. Run the EXE and choose your language on first launch.
-2. The app finds Bongo Cat and prepares the connection automatically. If the game must restart, click **Set up & restart game**. If Windows requests permission, approve the prompt to allow the required game-folder files to be installed.
-3. Bongo Cat opens automatically. **Join your preferred room**; the companion connects automatically.
+상자 기능은 기본 꺼짐입니다. **다른 사람 상자 열기는 내 게임 포인트를 사용**하며, 게임에서 다른 사람의 상자를 직접 눌렀을 때와 같은 동작입니다. [내 상자 안내](docs/AUTO-CHESTS.md) · [다른 사람 상자 안내](docs/OTHER-CHESTS.md)
 
-A shortcut named **Bongo Cat Chat Merger** is created on the desktop and in the Start menu. Windows 10/11 x64 with .NET Framework 4.5+ is required. Steam and Bongo Cat must already be installed. The ZIP in the repository’s Releases section is an optional full/developer package; the generated Source code archives are not the standalone app.
+## 업데이트와 연결
 
-## Automatic connection setup
+앱 시작 시 한 번 또는 **업데이트 확인**을 눌렀을 때 GitHub의 정식 버전을 조회합니다. 새 버전이 있으면 다운로드 페이지를 안내합니다. 기존 앱을 닫고 새 EXE를 실행하면 됩니다. [업데이트 확인 방식](docs/UPDATES.md)
 
-- Detects Steam libraries and custom game install folder names, and checks the connection files.
-- Installs missing files and repairs an incomplete installation. Existing compatible installations are reused.
-- The restart button requests a normal game exit and opens it again after setup. The app never forcibly kills the game. If normal exit fails, it explains how to exit from the game tray menu.
-- Requests administrator permission only if the game folder denies ordinary writes. Windows permission prompts and choosing a game room remain user actions.
-- Preserves original game EXE/managed assemblies, conversations, and compatible user configuration. Unknown mod loaders or externally modified installation files are preserved and reported.
-- **Connection helper** retries detection/setup. Right-click it for manual game selection or diagnostics.
-- A successful file installation is distinguished from an actual connection: the app waits for the game's fresh heartbeat before showing Connected.
+0.4.12는 게임 업데이트 후 방 입장이 막히던 문제를 수정했습니다. 플러그인 0.2.5와 Json.NET 13.0.2가 EXE에 포함돼 있습니다. 연결을 꺼 둔 경우 **연결 복원하고 게임 재시작**, 교체 안내가 뜨면 **설치하고 게임 재시작**을 누르세요. [수정 내용](docs/RUNTIME-0.4.12.md)
 
-## Updating and settings
+연결 문제가 생기면 **재연결**을 눌러 보세요. 게임 자체의 문제를 비교하려면 **연결 도우미 우클릭 → 연결 기능 끄고 게임 재시작**을 사용할 수 있습니다. [펜 타블렛 안내](docs/TABLET-COMPATIBILITY.md)
 
-Close your old companion, then run the new EXE. Updates are **manual**. The app does not download or execute updates from a server.
+## 기록과 설정
 
-The app checks public GitHub full-release metadata **once when it starts** and when you click **Check updates**. It does not run periodic update checks. A ready newer EXE shows **A new update is available!** and a **Download page** button. The button opens the public repository README in your browser; use the repository’s Releases section to obtain the release package. The app never downloads or installs the file itself. It selects the highest ready stable version among the 20 most recent releases, independently of the Latest label, with a single latest-endpoint fallback on failure. Drafts and prereleases are excluded. Startup results, failures, installed version and check time are visible. Offline and rate-limit errors do not interrupt chat. [Update check details](docs/UPDATES.md).
+앱·설정·진단 로그는 `%LOCALAPPDATA%\BongoCatChatMerger`에, 방 대화는 게임 폴더의 `BepInEx\BongoChat\room_<방 ID>.jsonl`에 저장합니다. 내 전송 기록은 앱 폴더의 `own-sends`에 따로 보관하며 수신·대기·거절 상태를 표시합니다.
 
-The app stores its managed copy, settings, and diagnostic logs under <code>%LOCALAPPDATA%\BongoCatChatMerger</code>. Existing preferences beside the downloaded EXE are imported once without replacing choices already stored there. If your old EXE is in another folder, language/theme may need to be selected again; game conversation records stay in the game folder.
+대화 기록에는 방 ID·Steam ID·이름·본문·시각이 들어갑니다. 설치 이후 받은 대화부터 기록하고 원본은 디스크에 유지합니다. 채팅창을 닫아도 게임의 연결 플러그인이 실행 중이면 기록은 계속됩니다. 별도 대화 서버는 사용하지 않습니다.
 
-The verified bridge **0.2.5** binary adds the separate other-member gifting adapter; the chat protocol remains compatible. An installed compatible bridge does not need to be reinstalled. If an older owned installation needs repair, the helper checks its ownership manifest and keeps backups of replaced files.
+## 소스와 구성
 
-## Chat features
+- [작동 원리와 구조](docs/ARCHITECTURE.md#한국어) — 연결 방식, 저장 위치, 외부 통신, 직접 빌드하는 방법
+- [배포 파일 133개와 내장 파일 39개의 SHA-256](docs/RELEASE-FILES-0.4.12.json)
+- [소스](src) · [빌드·설치·제거 스크립트](scripts) · [검사 기록](docs/VALIDATION.md)
+- [외부 구성요소와 라이선스](licenses/THIRD-PARTY-NOTICES.md)
 
-- Send from the bottom input: Enter sends; Shift+Enter adds a line. IME composition is completed before sending. The game's existing chat filter and send function are used.
-- Show/hide original emote images, dark/light mode, always-on-top, opacity, name/message search, and export of the current room's most recent 500 ordinary conversation events plus compacted meows.
-- Select English / 한국어 / 日本語 from the dropdown. Messages, player/room names and game emote names keep their original text.
-- Changing language keeps drafts and pending requests. Reconnecting cancels uncertain requests without replaying them.
+게임 연결 플러그인은 게임을 닫고 전체 ZIP의 `Uninstall.cmd`로 제거할 수 있습니다. 대화 기록과 외부에서 수정한 파일은 보존합니다.
 
-## Pen tablet compatibility — 0.4.12
-
-For reports of the chat window freezing while a pen tablet is used elsewhere, the app now requests WPF's process-local stylus/touch opt-out before the first window is created. Chat uses ordinary mouse/text input; raw pressure, ink and touch gestures are not used in this window. Other applications and the tablet driver's Windows Ink settings are not changed.
-
-This mitigates a known class of WPF tablet-processing freezes; it does not establish the cause of every Huion report. The opt-out is supported by .NET Framework 4.7+. On an older runtime the app still starts, but the mitigation may be unavailable. Close the old companion before running the new EXE, then test normal pen use in your drawing app. **Huion hardware reproduction is still pending.** [Details and test steps](docs/TABLET-COMPATIBILITY.md).
-
-## Records and privacy
-
-Other players do not need this app. Only messages received after installation are recorded; earlier server history cannot be restored. The game bridge continues recording while the game runs, even if the companion is closed.
-
-Records remain in <code>BepInEx\BongoChat\room_&lt;room ID&gt;.jsonl</code> under the game folder. The app scans backwards in the background to retain up to 500 ordinary chat/emote events, with consecutive exact meows grouped separately. Meows do not consume that limit, even when hidden. Later polls read appended records only. The full original journal remains on disk. Exports contain the retained conversation and meow group summaries, including hidden groups. Local send receipts are stored separately under <code>%LOCALAPPDATA%\BongoCatChatMerger\own-sends</code> (up to 500 per game installation), including rejected/unconfirmed text. They are explicitly labeled in the view and text export, do not prove room delivery and never change the game journal. Records include room IDs, Steam IDs, names, content and timestamps. Emote caches and local send requests are in that same BongoChat folder. This app does not upload conversations to a separate server, add antivirus exclusions, or change Windows security settings.
-
-Future game updates work only while the relevant internal APIs remain compatible. Structural changes can require a new app/bridge release.
-
-## Source, verification and removal
-
-The full ZIP includes <code>runtime</code>, source, scripts, licenses and docs. Build with <code>./scripts/Build.ps1</code> in Windows PowerShell; optional <code>-GamePath</code> selects a game installation. For release reproduction, <code>-BridgeBinary</code> reuses an already verified bridge. Run <code>./scripts/Check.ps1</code> after building. Original game assemblies are not redistributed.
-
-0.4.12 passed **463 isolated checks**: 311 existing checks, 13 Korean/IME Enter checks, 49 automatic-chest policy/UI/native-adapter checks, 23 live-bridge upgrade-flow checks, and 52 other-member UI/permission/native-adapter checks, and 15 JSON runtime/paused reconnect checks. Real-account chest opening and rewards still require user verification.
-
-To remove the game bridge, close Bongo Cat and run <code>Uninstall.cmd</code> from the full ZIP. It preserves journals and modified files. The companion itself uses a per-user app folder and shortcuts rather than a system service.
-
-This is an unofficial companion. See [third-party notices and licenses](licenses/THIRD-PARTY-NOTICES.md). Contact: [parabellum0208@gmail.com](mailto:parabellum0208@gmail.com).
-
-Windows 10 compatibility is targeted through an explicit x64 build, Windows 10/11 application manifest and .NET Framework 4.5 baseline. Windows 11-only title-bar styling is skipped on Windows 10. Checks ran on Windows 11 (build 26300); execution on an actual Windows 10 PC has not yet been verified.
+문의·버그 제보: [parabellum0208@gmail.com](mailto:parabellum0208@gmail.com)
